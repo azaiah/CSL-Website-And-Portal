@@ -1,0 +1,8 @@
+# Netlify configuration for the CSL Next.js app.
+# The official @netlify/plugin-nextjs handles the App Router build automatically.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

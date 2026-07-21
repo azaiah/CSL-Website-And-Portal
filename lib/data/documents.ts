@@ -13,7 +13,12 @@ export interface PortalDocument {
   id: string;
   title: string;
   file: string; // path under /public
-  category: "Core asset" | "Application packet" | "Setup guide" | "Outreach";
+  category:
+    | "Core asset"
+    | "Completed application"
+    | "Application packet"
+    | "Setup guide"
+    | "Outreach";
   status: DocumentStatus;
   summary: string;
   /** What Darren does with this document, in order. */
@@ -43,17 +48,47 @@ export const documents: PortalDocument[] = [
     ],
   },
   {
-    id: "modivcare-packet",
-    title: "Medicaid NEMT Enrollment Packet (ModivCare + Access2Care)",
-    file: "/documents/CSL_ModivCare_NEMT_Enrollment_Packet.pdf",
-    category: "Application packet",
+    id: "swam-completed",
+    title: "SWaM Certification — Completed Application (pre-filled)",
+    file: "/documents/CSL_SWaM_Completed_Application.pdf",
+    category: "Completed application",
     status: "action-required",
     summary:
-      "Step-by-step enrollment into Virginia Medicaid NEMT: one ModivCare credential covers FFS + 4 of 5 MCOs; Access2Care adds Anthem. Includes the DMV for-hire authority prerequisite, the full credentialing checklist, and a company data sheet to read from during calls.",
+      "Every field on Virginia SBSD's SWaM application reproduced with CSL's answers already entered. Gold fields are the only ones Darren must supply (EIN, ownership %, address). This is the transcription sheet — log into the portal and copy each answer across.",
     nextSteps: [
-      "Start the Virginia DMV for-hire passenger authority application (Step 0 in the packet).",
-      "Call ModivCare Network Development: (866) 810-8305 ext. 2645.",
-      "Work the credentialing checklist; save every confirmation to the compliance folder.",
+      "Fill the gold fields: EIN, exact formation date, physical address, ownership %, minority category, employee count, revenue.",
+      "Gather the attachment checklist (the GET items), including the DVS veteran eligibility letter.",
+      "Apply free at certification-app.sbsd.virginia.gov, copying each answer from this sheet.",
+    ],
+    relatedOpportunityIds: ["OPP-2026-009", "OPP-2026-011"],
+  },
+  {
+    id: "modivcare-completed",
+    title: "ModivCare NEMT Provider — Completed Application (pre-filled)",
+    file: "/documents/CSL_ModivCare_Completed_Application.pdf",
+    category: "Completed application",
+    status: "action-required",
+    summary:
+      "The ModivCare provider enrollment and credentialing fields — plus the Virginia DMAS requirements layered on top — reproduced with CSL's answers pre-entered. Gold fields need Darren's data or a step done first (DMV authority, insurance limits, VIN).",
+    nextSteps: [
+      "Do the Virginia DMV for-hire authority first (Section 8) — it's the long pole.",
+      "Call ModivCare Network Development (866-810-8305 x2645) and read these answers down the packet.",
+      "Fill the gold fields: EIN, USDOT #, NPI, VIN/plate, insurance policy #s and limits, banking.",
+    ],
+    relatedOpportunityIds: ["OPP-2026-002", "OPP-2026-008"],
+  },
+  {
+    id: "modivcare-packet",
+    title: "Medicaid NEMT Enrollment Guide (ModivCare + Access2Care)",
+    file: "/documents/CSL_ModivCare_NEMT_Enrollment_Packet.pdf",
+    category: "Setup guide",
+    status: "action-required",
+    summary:
+      "The how-and-why companion to the completed ModivCare application: one credential covers FFS + 4 of 5 MCOs; Access2Care adds Anthem. Covers the DMV prerequisite, credentialing checklist, rates, and enrollment contacts.",
+    nextSteps: [
+      "Read alongside the completed ModivCare application above.",
+      "Use the contact numbers and rate guidance when you call.",
+      "Save every confirmation to the compliance folder.",
     ],
     relatedOpportunityIds: ["OPP-2026-002", "OPP-2026-008"],
   },
@@ -134,7 +169,7 @@ export const documents: PortalDocument[] = [
 /** Ordered this-week action plan shown at the top of the Documents page. */
 export const actionPlan: string[] = [
   "Fill the [FILL IN] blanks on the Capability Statement (EIN, UEI, CAGE, USDOT #) — everything else reuses them.",
-  "Start SWaM certification at sbsd.virginia.gov — the single highest-leverage application.",
+  "Fill the gold fields on the completed SWaM application, then submit at sbsd.virginia.gov — the single highest-leverage application.",
   "Call ModivCare (866-810-8305 x2645) and start the DMV for-hire authority application.",
   "Knock out Medzoomer + Lab Logistics signups (both free, ~15 minutes total).",
   "Approve and send the five outreach drafts.",

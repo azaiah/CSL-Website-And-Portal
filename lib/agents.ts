@@ -93,13 +93,13 @@ export const agents: Agent[] = [
     purpose:
       "Pre-fills vendor registrations and applications and generates a reusable capability statement.",
     phase1Description:
-      "LIVE. The Application Assistant pre-fills vendor registrations and applications — ModivCare NEMT credentialing, symplr (Bon Secours), Quest supplier registration, Lab Logistics contractor profile, eVA alerts, and SAM saved searches — pulling directly from the Company Brain so nothing is re-keyed, and it maintains a reusable, up-to-date capability statement. The current registration queue comes from the July 21 sweep.",
+      "LIVE. The Application Assistant reproduces each application field-by-field with CSL's answers already entered, pulling from the Company Brain so nothing is re-keyed — the SWaM certification and ModivCare NEMT applications are on the Documents page as completed worksheets, with only Darren's private fields (EIN, VIN, ownership %) flagged. It also maintains the capability statement and the registration playbooks for symplr, Quest, Lab Logistics, eVA, and SAM.",
     inputs: [
       "Company Brain: legal identity, codes, credentials, points of contact",
       "Target registration requirements",
     ],
     outputs: [
-      "Pre-filled application packets — downloadable on the Documents page",
+      "Field-by-field completed applications (SWaM, ModivCare) on the Documents page",
       "A reusable capability statement",
     ],
     status: "live",

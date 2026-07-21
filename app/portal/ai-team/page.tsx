@@ -28,6 +28,15 @@ const agentIcons: Record<string, LucideIcon> = {
   "weekly-briefing": CalendarRange,
 };
 
+/** Where each agent's live output lives in the portal. */
+const agentOutputLink: Record<string, { href: string; label: string }> = {
+  "opportunity-finder": { href: "/portal/opportunities", label: "View live opportunities" },
+  "lead-qualifier": { href: "/portal/opportunities", label: "View scored opportunities" },
+  "outreach-writer": { href: "/portal/documents", label: "View outreach drafts" },
+  "application-assistant": { href: "/portal/documents", label: "View pre-filled applications" },
+  "weekly-briefing": { href: "/portal/weekly-report", label: "View this week's briefing" },
+};
+
 export default function AiTeamPage() {
   return (
     <div className="space-y-8">
@@ -107,6 +116,7 @@ export default function AiTeamPage() {
 }
 
 function AgentCard({ agent, Icon }: { agent: Agent; Icon: LucideIcon }) {
+  const output = agentOutputLink[agent.id];
   return (
     <article className="card flex flex-col">
       <div className="flex items-start justify-between gap-4">
@@ -175,6 +185,16 @@ function AgentCard({ agent, Icon }: { agent: Agent; Icon: LucideIcon }) {
           </ul>
         </div>
       </div>
+
+      {output && (
+        <Link
+          href={output.href}
+          className="mt-4 inline-flex items-center gap-1.5 self-start rounded-lg bg-navy-deep px-3 py-2 text-xs font-semibold text-gold-light hover:bg-navy"
+        >
+          {output.label}
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+      )}
     </article>
   );
 }

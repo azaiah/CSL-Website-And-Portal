@@ -39,7 +39,7 @@ export function ServiceDetail({
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
           <Reveal>
             <div>
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-deep text-gold">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl icon-tile">
                 <Icon className="h-7 w-7" aria-hidden />
               </span>
               <p className="mt-6 text-lg leading-relaxed text-ink/80">

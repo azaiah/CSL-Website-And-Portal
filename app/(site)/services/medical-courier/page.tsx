@@ -109,7 +109,7 @@ export default function MedicalCourierPage() {
           {capabilities.map((c, i) => (
             <Reveal key={c.title} delay={i * 0.05}>
               <div className="card h-full">
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                   <c.icon className="h-6 w-6" aria-hidden />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold text-navy-deep">

@@ -51,8 +51,8 @@ export const company = {
     "Professional medical & pharmaceutical courier providing HIPAA-compliant transport of medications, lab specimens, and medical supplies for pharmacies, clinical labs, hospitals, and healthcare facilities across Greater Richmond, Virginia.",
   serviceArea: {
     label: "Greater Richmond, Virginia",
-    radiusMiles: 25,
-    note: "Currently serving a ~25-mile radius around Richmond, VA — built to expand.",
+    radiusMiles: 100,
+    note: "Currently serving a ~100-mile radius around Richmond, VA — built to expand.",
     city: "Richmond",
     state: "VA",
     region: "Virginia",
@@ -60,10 +60,10 @@ export const company = {
   contact: {
     name: "Darren Lewis",
     title: "Managing Member & Director of Operations",
-    phone: "(917) 627-3265",
-    phoneHref: "tel:+19176273265",
-    email: "capitalsolutionslogistics@gmail.com",
-    emailHref: "mailto:capitalsolutionslogistics@gmail.com",
+    phone: "(757) 453-3831",
+    phoneHref: "tel:+17574533831",
+    email: "Info@trustcsl.com",
+    emailHref: "mailto:info@trustcsl.com",
     hours: "Standard routes Mon–Fri, 7:00am–7:00pm. STAT & on-demand available 24/7.",
   },
   insurance:
@@ -94,11 +94,18 @@ export const credentials: Credential[] = [
     status: "registered",
   },
   {
-    label: "USDOT / MC Authority",
-    short: "USDOT / MC",
+    label: "USDOT Number",
+    short: "USDOT",
     description:
-      "U.S. Department of Transportation number and motor carrier operating authority for interstate and for-hire transport.",
+      "U.S. Department of Transportation number registered for interstate and for-hire transport operations.",
     status: "active",
+  },
+  {
+    label: "MC Authority",
+    short: "MC",
+    description:
+      "Motor carrier operating authority for interstate and for-hire transport — application in progress.",
+    status: "in-progress",
   },
   {
     label: "TSA PreCheck®",
@@ -255,7 +262,7 @@ export const capabilityStatement = {
   ],
   differentiators: [
     "Local Richmond team with a compliance-first culture",
-    "Fully credentialed: USDOT/MC, TWIC, TSA PreCheck, SAM/CAGE",
+    "USDOT active; MC authority in progress — plus TWIC, TSA PreCheck, SAM/CAGE",
     "Lloyd's of London cargo & commercial auto coverage",
     "Small-business / diversity designations (SWaM, SDVOSB — in progress)",
     '"On-time, every time" service standard',

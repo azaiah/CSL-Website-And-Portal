@@ -37,7 +37,7 @@ export default function ServicesPage() {
                   }`}
                 >
                   <span
-                    className={`flex items-center justify-center rounded-xl bg-navy-deep text-gold transition-colors group-hover:bg-navy ${
+                    className={`flex items-center justify-center rounded-xl icon-tile transition-colors group-hover:bg-navy ${
                       flagship ? "h-16 w-16 shrink-0" : "h-12 w-12"
                     }`}
                   >

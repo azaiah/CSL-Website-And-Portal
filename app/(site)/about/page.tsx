@@ -66,7 +66,7 @@ export default function AboutPage() {
                   business clients can rely on one accountable partner.
                 </p>
                 <p>
-                  Today we operate across a roughly 25-mile radius around Richmond,
+                  Today we operate across a roughly {company.serviceArea.radiusMiles}-mile radius around Richmond,
                   built to expand as our clients grow — carrying the same
                   compliance-first culture into every mile.
                 </p>
@@ -86,7 +86,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-8 grid grid-cols-2 gap-6 border-t border-navy/10 pt-6">
                 <Stat value="2023" label="Founded" />
-                <Stat value="~25 mi" label="Service radius" />
+                <Stat value={`~${company.serviceArea.radiusMiles} mi`} label="Service radius" />
               </div>
             </div>
           </Reveal>
@@ -106,7 +106,7 @@ export default function AboutPage() {
           {values.map((v, i) => (
             <Reveal key={v.title} delay={i * 0.05}>
               <div className="card h-full text-center">
-                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-deep text-gold">
+                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl icon-tile">
                   <v.icon className="h-7 w-7" aria-hidden />
                 </span>
                 <h3 className="mt-5 text-lg font-semibold text-navy-deep">

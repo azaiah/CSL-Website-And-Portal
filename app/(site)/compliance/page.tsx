@@ -23,7 +23,7 @@ import {
 export const metadata: Metadata = {
   title: "Compliance & Credentials — HIPAA, OSHA, DOT HazMat, SAM/CAGE",
   description:
-    "CSL's credential wall: HIPAA/HITECH, OSHA Bloodborne Pathogens, DOT HazMat, USDOT/MC authority, TWIC, TSA PreCheck, SAM/CAGE, eVA, SWaM, plus Lloyd's of London cargo coverage. Compliance you can verify.",
+    "CSL's credential wall: HIPAA/HITECH, OSHA Bloodborne Pathogens, DOT HazMat, USDOT authority (MC in progress), TWIC, TSA PreCheck, SAM/CAGE, eVA, SWaM, plus Lloyd's of London cargo coverage. Compliance you can verify.",
 };
 
 const statusStyles: Record<CredentialStatus, string> = {
@@ -80,7 +80,7 @@ export default function CompliancePage() {
             <Reveal key={c.label} delay={(i % 3) * 0.05}>
               <div className="card h-full">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl icon-tile">
                     <ShieldCheck className="h-5 w-5" aria-hidden />
                   </span>
                   <StatusBadge status={c.status} />
@@ -144,7 +144,7 @@ export default function CompliancePage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <Reveal>
             <div className="card h-full">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-deep text-gold">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                 <Umbrella className="h-6 w-6" aria-hidden />
               </span>
               <h3 className="mt-5 text-xl font-semibold text-navy-deep">
@@ -171,7 +171,7 @@ export default function CompliancePage() {
           </Reveal>
           <Reveal delay={0.1}>
             <div className="card h-full">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-deep text-gold">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                 <Hash className="h-6 w-6" aria-hidden />
               </span>
               <h3 className="mt-5 text-xl font-semibold text-navy-deep">

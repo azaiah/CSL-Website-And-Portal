@@ -27,7 +27,7 @@ const whyCsl = [
   {
     icon: BadgeCheck,
     title: "Reliable & credentialed",
-    body: "USDOT/MC authority, TWIC, TSA PreCheck, and Lloyd's of London cargo coverage — a carrier you can stand behind.",
+    body: "USDOT authority (MC in progress), TWIC, TSA PreCheck, and Lloyd's of London cargo coverage — a carrier you can stand behind.",
   },
   {
     icon: Handshake,
@@ -42,15 +42,15 @@ export default function HomePage() {
       <Hero />
 
       {/* Trust badges strip */}
-      <div className="border-y border-navy/10 bg-surface">
-        <div className="container-page flex flex-wrap items-center justify-center gap-x-8 gap-y-3 py-6">
-          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-ink/50">
+      <div className="border-b border-navy/10 bg-surface">
+        <div className="container-page flex flex-wrap items-center justify-center gap-x-3 gap-y-3 py-6">
+          <span className="mr-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink/45">
             Credentialed &amp; Compliant
           </span>
           {trustBadges.map((b) => (
             <span
               key={b}
-              className="text-sm font-semibold text-navy"
+              className="rounded-full border border-navy/10 bg-white px-3.5 py-1.5 text-xs font-semibold text-navy shadow-sm"
             >
               {b}
             </span>
@@ -59,7 +59,7 @@ export default function HomePage() {
       </div>
 
       {/* Services overview */}
-      <Section tone="light">
+      <Section tone="light" pattern="dots">
         <Reveal>
           <SectionHeading
             eyebrow="What we do"
@@ -76,7 +76,7 @@ export default function HomePage() {
                   href={`/services/${s.slug}`}
                   className="card-hover group flex h-full flex-col"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-deep text-gold transition-colors group-hover:bg-navy">
+                  <span className="icon-tile h-12 w-12 transition-transform duration-300 group-hover:scale-105">
                     <Icon className="h-6 w-6" aria-hidden />
                   </span>
                   <h3 className="mt-5 text-lg font-semibold text-navy-deep">
@@ -108,8 +108,8 @@ export default function HomePage() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {whyCsl.map((item, i) => (
             <Reveal key={item.title} delay={i * 0.05}>
-              <div className="card flex h-full gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold">
+              <div className="card-hover flex h-full gap-4">
+                <span className="icon-tile-gold h-11 w-11 shrink-0">
                   <item.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <div>
@@ -124,9 +124,9 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
-        <div className="mt-14 grid grid-cols-2 gap-8 rounded-2xl border border-navy/10 bg-white p-8 sm:grid-cols-4">
+        <div className="card mt-14 grid grid-cols-2 gap-8 p-8 sm:grid-cols-4">
           <Stat value="2023" label="Founded in Richmond" />
-          <Stat value="~25 mi" label="Greater Richmond radius" />
+          <Stat value={`~${company.serviceArea.radiusMiles} mi`} label="Greater Richmond radius" />
           <Stat value="24/7" label="STAT & on-demand" />
           <Stat value="100%" label="Compliance-first culture" />
         </div>
@@ -170,7 +170,7 @@ export default function HomePage() {
                   Richmond, Virginia
                 </p>
                 <p className="mt-1 text-sm text-white/70">
-                  ~25-mile service radius, built to expand
+                  ~{company.serviceArea.radiusMiles}-mile service radius, built to expand
                 </p>
               </div>
             </div>

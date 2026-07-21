@@ -7,7 +7,7 @@ interface Crumb {
   href?: string;
 }
 
-/** Navy hero band used at the top of interior pages. */
+/** Navy hero band used at the top of interior pages — layered + textured. */
 export function PageHeader({
   eyebrow,
   title,
@@ -22,13 +22,18 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden bg-navy-deep">
+    <section className="grain relative overflow-hidden bg-navy-deep">
+      <div className="bg-grid-dark mask-fade absolute inset-0 opacity-60" aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0 opacity-50"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(50% 70% at 85% 0%, rgba(193,154,62,0.22), transparent 60%)",
+            "radial-gradient(45% 70% at 88% 0%, rgba(193,154,62,0.24), transparent 60%), radial-gradient(40% 60% at 0% 100%, rgba(22,54,92,0.6), transparent 60%)",
         }}
+        aria-hidden
+      />
+      <div
+        className="absolute right-[14%] top-6 h-40 w-40 rounded-full bg-gold/15 blur-3xl animate-float"
         aria-hidden
       />
       <div className="container-page relative py-16 sm:py-20">
@@ -53,7 +58,7 @@ export function PageHeader({
           </nav>
         )}
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1 className="mt-3 max-w-3xl text-4xl font-bold text-white sm:text-5xl">
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold text-white sm:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           {title}
         </h1>
         {lead && (

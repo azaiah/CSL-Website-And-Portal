@@ -9,7 +9,7 @@ import { company } from "@/lib/company-brain";
 export const metadata: Metadata = {
   title: "Contact & Request Service — Medical Courier Quote, Richmond VA",
   description:
-    "Request a pickup or get a quote from Capital Solutions & Logistics. STAT, same-day, and scheduled medical courier and delivery service across Greater Richmond, VA. Call (917) 627-3265.",
+    `Request a pickup or get a quote from Capital Solutions & Logistics. STAT, same-day, and scheduled medical courier and delivery service across Greater Richmond, VA. Call ${company.contact.phone}.`,
 };
 
 export default function ContactPage() {
@@ -40,7 +40,7 @@ export default function ContactPage() {
                       href={company.contact.phoneHref}
                       className="flex items-start gap-3 text-ink/80 hover:text-gold"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl icon-tile">
                         <Phone className="h-5 w-5" aria-hidden />
                       </span>
                       <span>
@@ -58,7 +58,7 @@ export default function ContactPage() {
                       href={company.contact.emailHref}
                       className="flex items-start gap-3 text-ink/80 hover:text-gold"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl icon-tile">
                         <Mail className="h-5 w-5" aria-hidden />
                       </span>
                       <span className="min-w-0">
@@ -72,7 +72,7 @@ export default function ContactPage() {
                     </a>
                   </li>
                   <li className="flex items-start gap-3 text-ink/80">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl icon-tile">
                       <Clock className="h-5 w-5" aria-hidden />
                     </span>
                     <span>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                     </span>
                   </li>
                   <li className="flex items-start gap-3 text-ink/80">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl icon-tile">
                       <MapPin className="h-5 w-5" aria-hidden />
                     </span>
                     <span>
@@ -93,8 +93,7 @@ export default function ContactPage() {
                         Service area
                       </span>
                       <span className="block text-xs text-ink/60">
-                        {company.serviceArea.label} · ~{company.serviceArea.radiusMiles}
-                        -mile radius
+                        {company.serviceArea.label} ({company.serviceArea.radiusMiles} mi)
                       </span>
                     </span>
                   </li>

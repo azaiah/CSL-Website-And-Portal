@@ -3,26 +3,53 @@ import type { ReactNode } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** Section wrapper with consistent vertical rhythm. */
+/** Section wrapper with consistent vertical rhythm and optional texture. */
 export function Section({
   children,
   className,
   tone = "light",
+  pattern,
   id,
 }: {
   children: ReactNode;
   className?: string;
   tone?: "light" | "surface" | "navy";
+  pattern?: "grid" | "dots" | "none";
   id?: string;
 }) {
   const tones = {
     light: "bg-white",
     surface: "bg-surface",
-    navy: "bg-navy-deep text-white",
+    navy: "bg-navy-deep text-white grain",
   };
+  const patternClass =
+    pattern === "grid"
+      ? tone === "navy"
+        ? "bg-grid-dark"
+        : "bg-grid"
+      : pattern === "dots"
+      ? "bg-dots"
+      : "";
+
   return (
-    <section id={id} className={cn("py-16 sm:py-20 lg:py-24", tones[tone], className)}>
-      <div className="container-page">{children}</div>
+    <section
+      id={id}
+      className={cn(
+        "relative overflow-hidden py-16 sm:py-20 lg:py-24",
+        tones[tone],
+        className
+      )}
+    >
+      {patternClass && (
+        <div
+          className={cn("mask-fade absolute inset-0 opacity-70", patternClass)}
+          aria-hidden
+        />
+      )}
+      {tone === "navy" && (
+        <div className="glow-gold absolute inset-0" aria-hidden />
+      )}
+      <div className="container-page relative">{children}</div>
     </section>
   );
 }
@@ -43,10 +70,14 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center")}>
-      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+      {eyebrow && (
+        <p className={cn("eyebrow", align === "center" && "justify-center")}>
+          {eyebrow}
+        </p>
+      )}
       <h2
         className={cn(
-          "mt-3 text-3xl font-semibold sm:text-4xl",
+          "mt-4 text-3xl font-semibold sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]",
           invert ? "text-white" : "text-navy-deep"
         )}
       >
@@ -78,7 +109,7 @@ export function CheckItem({ children }: { children: ReactNode }) {
   );
 }
 
-/** Closing call-to-action band (navy + gold). */
+/** Closing call-to-action band (navy + gold, textured). */
 export function CtaBand({
   title = "Ready to move medical deliveries you can trust?",
   subtitle = "Tell us your route and urgency — we'll respond fast with a quote.",
@@ -95,17 +126,23 @@ export function CtaBand({
   secondaryLabel?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-navy-deep">
+    <section className="grain relative overflow-hidden bg-navy-deep">
+      <div className="bg-grid-dark mask-fade absolute inset-0 opacity-60" aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(60% 80% at 80% 0%, rgba(193,154,62,0.25), transparent 60%)",
+            "radial-gradient(55% 80% at 50% -10%, rgba(193,154,62,0.28), transparent 60%)",
         }}
         aria-hidden
       />
-      <div className="container-page relative flex flex-col items-center gap-6 py-16 text-center sm:py-20">
-        <h2 className="max-w-2xl text-3xl font-semibold text-white sm:text-4xl">
+      <div
+        className="absolute right-[10%] top-1/2 h-48 w-48 -translate-y-1/2 rounded-full bg-gold/15 blur-3xl animate-float"
+        aria-hidden
+      />
+      <div className="container-page relative flex flex-col items-center gap-6 py-16 text-center sm:py-24">
+        <div className="rule-gold max-w-[120px]" />
+        <h2 className="max-w-2xl text-3xl font-semibold text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
           {title}
         </h2>
         <p className="max-w-xl text-lg text-white/75">{subtitle}</p>
@@ -123,11 +160,13 @@ export function CtaBand({
   );
 }
 
-/** Small labeled stat. */
+/** Small labeled stat with gradient number. */
 export function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <div className="text-3xl font-bold text-gold sm:text-4xl">{value}</div>
+      <div className="text-gradient-gold text-3xl font-bold sm:text-4xl">
+        {value}
+      </div>
       <div className="mt-1 text-sm text-ink/60">{label}</div>
     </div>
   );

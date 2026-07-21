@@ -55,7 +55,7 @@ export default function CareersPage() {
           {perks.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.05}>
               <div className="card h-full">
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy-deep text-gold">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                   <p.icon className="h-6 w-6" aria-hidden />
                 </span>
                 <h3 className="mt-5 text-base font-semibold text-navy-deep">

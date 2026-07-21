@@ -1,40 +1,45 @@
 import type { ReactNode } from "react";
-import { Radio, FlaskConical, type LucideIcon } from "lucide-react";
+import { Radio, Satellite, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AGENT_STATUS_LABEL } from "@/lib/agents";
+import { ENGINE_META } from "@/lib/data/engine-meta";
 
-/** "Coming online — Phase 1 build" status badge for agents. */
+/** "Live — engine running" status badge for agents. */
 export function ComingOnlineBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-[#8a6c1f]",
+        "inline-flex items-center gap-1.5 rounded-full border border-success/40 bg-success/10 px-3 py-1 text-xs font-semibold text-success",
         className
       )}
     >
       <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
       </span>
       {AGENT_STATUS_LABEL}
     </span>
   );
 }
 
-/** "Sample data — engine activating" ribbon shown atop mock-data pages. */
+/** "Live data" ribbon shown atop engine-data pages. */
 export function SampleDataRibbon({ className }: { className?: string }) {
+  const lastRun = new Date(ENGINE_META.lastRunISO + "T12:00:00").toLocaleDateString(
+    "en-US",
+    { month: "long", day: "numeric", year: "numeric" }
+  );
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-xl border border-gold/40 bg-gold/10 px-4 py-2.5 text-sm text-[#8a6c1f]",
+        "flex items-center gap-2 rounded-xl border border-success/40 bg-success/10 px-4 py-2.5 text-sm text-success",
         className
       )}
     >
-      <FlaskConical className="h-4 w-4 shrink-0" aria-hidden />
+      <Satellite className="h-4 w-4 shrink-0" aria-hidden />
       <span>
-        <strong className="font-semibold">Sample data — engine activating.</strong>{" "}
-        These are illustrative mock records. Live results appear once the Phase 1
-        agents come online.
+        <strong className="font-semibold">Live data.</strong>{" "}
+        Real opportunities found and scored by the AI engine — last sweep {lastRun}.{" "}
+        {ENGINE_META.cadence}.
       </span>
     </div>
   );
@@ -56,7 +61,7 @@ export function PortalPageHeader({
     <div className="flex flex-col gap-4 border-b border-navy/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="flex items-start gap-4">
         {Icon && (
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl icon-tile">
             <Icon className="h-6 w-6" aria-hidden />
           </span>
         )}
@@ -88,7 +93,7 @@ export function StatCard({
     <div className="card">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-ink/60">{label}</span>
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold/15 text-gold">
+        <span className="icon-tile-gold h-9 w-9 rounded-lg">
           <Icon className="h-5 w-5" aria-hidden />
         </span>
       </div>
@@ -98,10 +103,11 @@ export function StatCard({
   );
 }
 
-/** Phase 1 status banner shown on the dashboard. */
+/** Engine status banner shown on the dashboard. */
 export function Phase1Banner() {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-navy/10 bg-navy-deep p-6 text-white">
+    <div className="grain relative overflow-hidden rounded-2xl border border-navy/10 bg-navy-deep p-6 text-white">
+      <div className="bg-grid-dark mask-fade absolute inset-0 opacity-50" aria-hidden />
       <div
         className="pointer-events-none absolute inset-0 opacity-50"
         style={{
@@ -111,18 +117,20 @@ export function Phase1Banner() {
         aria-hidden
       />
       <div className="relative flex items-start gap-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold">
+        <span className="icon-tile-gold h-11 w-11 shrink-0">
           <Radio className="h-6 w-6" aria-hidden />
         </span>
         <div>
           <h2 className="text-lg font-semibold text-white">
-            Phase 1: the engine is being activated
+            The engine is live
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-white/75">
-            Your lead-generation engine is fully built and previewed with sample
-            data. The five AI agents are described and ready — live scanning,
-            scoring, and outreach switch on in the next phase without changing this
-            interface.
+            All five AI agents are running. The latest sweep covered SAM.gov and
+            federal VA contracting, Virginia eVA and state-local procurement, the
+            Medicaid NEMT broker network, and 30+ Richmond-area health systems,
+            labs, and pharmacies — every opportunity in this portal is a real,
+            verified finding. Outreach is drafted for approval before anything is
+            sent.
           </p>
         </div>
       </div>

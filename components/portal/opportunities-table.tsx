@@ -15,7 +15,7 @@ import {
   opportunities as allOpps,
   type Opportunity,
   type OpportunityStatus,
-} from "@/lib/mock/opportunities";
+} from "@/lib/data/opportunities";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
 type SortKey = "fitScore" | "dueDate" | "estValue";
@@ -36,7 +36,7 @@ function fitColor(score: number) {
   return "bg-navy/15 text-navy";
 }
 
-const sources = ["All", "SAM.gov", "eVA", "DMAS", "VA Medical Center", "Hospital System", "Independent Lab"];
+const sources = ["All", ...Array.from(new Set(allOpps.map((o) => o.source)))];
 const statuses = ["All", "Found", "Qualified", "Contacted", "Meeting", "Bid", "Won", "Lost"];
 
 export function OpportunitiesTable() {
@@ -205,7 +205,7 @@ export function OpportunitiesTable() {
                   <div>
                     <p className="text-sm font-semibold text-navy-deep">Fit score</p>
                     <p className="text-xs text-ink/60">
-                      Scored by the Lead Qualifier (sample)
+                      Scored by the Lead Qualifier
                     </p>
                   </div>
                 </div>
@@ -224,8 +224,8 @@ export function OpportunitiesTable() {
                 </div>
 
                 <p className="text-xs text-ink/40">
-                  Sample opportunity · ID {selected.id}. Live opportunities appear
-                  here once the Opportunity Finder is switched on.
+                  Live opportunity · ID {selected.id}. Found by the Opportunity
+                  Finder and scored by the Lead Qualifier.
                 </p>
               </div>
             </motion.aside>

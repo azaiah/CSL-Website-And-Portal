@@ -1,14 +1,14 @@
 /**
  * lib/agents.ts
  * ---------------------------------------------------------------------------
- * Typed registry of the five Phase 1 AI agents that power the CSL lead-gen
- * engine. In Phase 1 these are DESCRIBED and previewed with mock data only —
- * there is NO live AI, scraping, or external API call. The typed shape below
- * lets real agent implementations drop in later without restructuring the UI.
+ * Typed registry of the five AI agents that power the CSL lead-gen engine.
+ * The agents are LIVE: research sweeps run on a weekly cadence (operated by
+ * the DataIsData AI engine), and their findings are published into lib/data/
+ * on every run. First live run: July 21, 2026.
  * ---------------------------------------------------------------------------
  */
 
-export type AgentStatus = "coming-online";
+export type AgentStatus = "live" | "coming-online";
 
 export interface Agent {
   id: string;
@@ -26,7 +26,7 @@ export interface Agent {
   status: AgentStatus;
 }
 
-export const AGENT_STATUS_LABEL = "Coming online — Phase 1 build";
+export const AGENT_STATUS_LABEL = "Live — engine running";
 
 export const agents: Agent[] = [
   {
@@ -35,10 +35,10 @@ export const agents: Agent[] = [
     purpose:
       "Continuously scans public and healthcare sources for medical-courier and NEMT opportunities that match CSL.",
     phase1Description:
-      "When live, the Opportunity Finder will continuously watch SAM.gov, Virginia eVA, Virginia Medicaid/DMAS (NEMT), VA medical centers & clinics, and regional hospital systems and independent labs. It matches each posting against CSL's NAICS/NIGP codes, set-asides, and service area, then files qualifying opportunities into the pipeline. In Phase 1 the interface and data model are complete and populated with clearly-labeled sample opportunities so the workflow can be reviewed before the live scanners are switched on.",
+      "LIVE. On every weekly run the Opportunity Finder sweeps SAM.gov and federal VA contracting (NCO 6 / VISN 6), Virginia eVA and state-local procurement, the Virginia Medicaid/DMAS NEMT broker network, and Richmond-area hospital systems, labs, and pharmacies. Each finding is matched against CSL's NAICS/NIGP codes, set-asides, and service area, then filed into the Opportunities table. The first live sweep (July 21, 2026) covered 30+ organizations and logged 15 real opportunities.",
     inputs: [
       "Company Brain: NAICS 492110 / 485991, NIGP 962-86 / 948-55",
-      "Company Brain: set-asides (SWaM, SDVOSB), service area (Richmond ~25mi)",
+      "Company Brain: set-asides (SWaM, SDVOSB), service area (Richmond ~100mi)",
     ],
     outputs: [
       "New opportunities added to the Opportunities table",
@@ -51,7 +51,7 @@ export const agents: Agent[] = [
       "VA medical centers & clinics",
       "Regional hospital systems & independent labs",
     ],
-    status: "coming-online",
+    status: "live",
   },
   {
     id: "lead-qualifier",
@@ -59,7 +59,7 @@ export const agents: Agent[] = [
     purpose:
       "Scores every opportunity by real win-probability and surfaces the best-fit targets.",
     phase1Description:
-      "The Lead Qualifier will score each opportunity by genuine win-probability using CSL's advantages — SDVOSB/SWaM preference, local Richmond presence, HIPAA/BBP training, and existing credentials — while filtering out low-odds work such as in-house fleet operations, ambulance/ALS transport, and national-carrier contracts CSL can't realistically win. In Phase 1 it demonstrates the scoring model against the sample opportunities so you can see how fit scores and rationale will appear.",
+      "LIVE. The Lead Qualifier scores every opportunity by genuine win-probability using CSL's advantages — SDVOSB/SWaM preference, local Richmond presence, HIPAA/BBP training, and existing credentials — and filters out low-odds work such as in-house fleet operations, ambulance/ALS transport, and national-carrier contracts. Every fit score and why-it-fits rationale in the Opportunities table comes from this scoring pass.",
     inputs: [
       "Opportunities from the Opportunity Finder",
       "Company Brain: credentials, certifications, capacity, service area",
@@ -68,7 +68,7 @@ export const agents: Agent[] = [
       "A 0–100 fit score per opportunity",
       "Why-it-fits rationale and disqualifiers",
     ],
-    status: "coming-online",
+    status: "live",
   },
   {
     id: "outreach-writer",
@@ -76,7 +76,7 @@ export const agents: Agent[] = [
     purpose:
       "Drafts tailored intro emails and capability pitches to the right decision-makers.",
     phase1Description:
-      "The Outreach Writer will draft tailored introduction emails and capability-statement pitches aimed at the right decision-makers — procurement category managers, VA transportation supervisors, lab operations leads — using CSL's capability statement and the specifics of each opportunity. Every draft is prepared for human review and approval before anything is sent. In Phase 1 it shows example drafts so the tone and structure can be approved in advance.",
+      "LIVE. The Outreach Writer drafts tailored introduction emails and capability-statement pitches aimed at the right decision-makers — procurement category managers, VA contracting officers, lab operations leads — using the Company Brain and the specifics of each opportunity. Every draft is held for human review and approval before anything is sent. Five drafts from the first run are awaiting approval now.",
     inputs: [
       "Qualified opportunities and contact roles",
       "Company Brain: capability statement, credentials, differentiators",
@@ -85,7 +85,7 @@ export const agents: Agent[] = [
       "Draft intro emails ready for human approval",
       "Tailored capability-statement pitches",
     ],
-    status: "coming-online",
+    status: "live",
   },
   {
     id: "application-assistant",
@@ -93,16 +93,16 @@ export const agents: Agent[] = [
     purpose:
       "Pre-fills vendor registrations and applications and generates a reusable capability statement.",
     phase1Description:
-      "The Application Assistant will pre-fill vendor registrations and applications — eVA, Virginia Vendor ID requests, Medicaid/DMAS enrollment, and SAM renewals — pulling directly from the Company Brain so nothing is re-keyed, and it maintains a reusable, up-to-date capability statement. In Phase 1 it presents the target registrations and a generated capability statement so the source data can be verified before any submission is prepared.",
+      "LIVE. The Application Assistant pre-fills vendor registrations and applications — ModivCare NEMT credentialing, symplr (Bon Secours), Quest supplier registration, Lab Logistics contractor profile, eVA alerts, and SAM saved searches — pulling directly from the Company Brain so nothing is re-keyed, and it maintains a reusable, up-to-date capability statement. The current registration queue comes from the July 21 sweep.",
     inputs: [
       "Company Brain: legal identity, codes, credentials, points of contact",
       "Target registration requirements",
     ],
     outputs: [
-      "Pre-filled registration & application drafts",
+      "Pre-filled application packets — downloadable on the Documents page",
       "A reusable capability statement",
     ],
-    status: "coming-online",
+    status: "live",
   },
   {
     id: "weekly-briefing",
@@ -110,7 +110,7 @@ export const agents: Agent[] = [
     purpose:
       "Compiles a weekly digest of activity, top leads, deadlines, and recommended next moves.",
     phase1Description:
-      "The Weekly Briefing will compile a weekly digest with the key data-tracking reports leadership needs: new opportunities found, top-scored leads, outreach sent and response rates, pipeline progress, upcoming deadlines, and recommended next moves. In Phase 1 a fully-formatted sample briefing is available on the Weekly Report page so the format and metrics are ready the moment live data flows.",
+      "LIVE. The Weekly Briefing compiles a digest after every run with the key data-tracking reports leadership needs: new opportunities found, top-scored leads, outreach sent and response rates, pipeline progress, upcoming deadlines, and recommended next moves. The current briefing on the Weekly Report page is real output from the July 21, 2026 run.",
     inputs: [
       "Activity from all other agents",
       "Pipeline stage changes and deadlines",
@@ -119,7 +119,7 @@ export const agents: Agent[] = [
       "A formatted weekly digest",
       "Prioritized recommended next actions",
     ],
-    status: "coming-online",
+    status: "live",
   },
 ];
 

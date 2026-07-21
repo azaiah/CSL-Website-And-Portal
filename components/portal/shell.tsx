@@ -10,6 +10,7 @@ import {
   Bot,
   Brain,
   FileBarChart,
+  FolderDown,
   Settings,
   LogOut,
   Menu,
@@ -29,6 +30,7 @@ const nav = [
   { label: "AI Team", href: "/portal/ai-team", icon: Bot },
   { label: "Company Brain", href: "/portal/company-brain", icon: Brain },
   { label: "Weekly Report", href: "/portal/weekly-report", icon: FileBarChart },
+  { label: "Documents", href: "/portal/documents", icon: FolderDown },
   { label: "Settings", href: "/portal/settings", icon: Settings },
 ];
 
@@ -205,9 +207,9 @@ function Sidebar({
             );
           })}
           <div className="mt-auto rounded-xl border border-gold/30 bg-gold/10 p-3">
-            <p className="text-xs font-semibold text-[#8a6c1f]">Phase 1 preview</p>
+            <p className="text-xs font-semibold text-success">Engine live</p>
             <p className="mt-1 text-xs text-ink/60">
-              Sample data. Agents come online next phase.
+              Live data. Agents run weekly sweeps.
             </p>
           </div>
         </nav>

@@ -12,8 +12,8 @@ import {
   Phase1Banner,
   ComingOnlineBadge,
 } from "@/components/portal/portal-ui";
-import { opportunityStats } from "@/lib/mock/opportunities";
-import { weeklyReport } from "@/lib/mock/weekly-report";
+import { opportunityStats } from "@/lib/data/opportunities";
+import { weeklyReport } from "@/lib/data/weekly-report";
 import { agents } from "@/lib/agents";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -26,8 +26,8 @@ export default function DashboardPage() {
           Welcome to your lead-gen engine
         </h1>
         <p className="mt-1 text-sm text-ink/60">
-          A live snapshot of opportunities and pipeline. Numbers below are sample
-          data for the Phase 1 preview.
+          A live snapshot of opportunities and pipeline from the engine&apos;s
+          latest weekly sweep.
         </p>
       </div>
 
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-semibold text-navy-deep">AI Team</h2>
           </div>
           <p className="mt-1 text-xs text-ink/50">
-            Five agents, ready to activate.
+            Five agents, live and running weekly.
           </p>
           <ul className="mt-4 space-y-3">
             {agents.map((a) => (

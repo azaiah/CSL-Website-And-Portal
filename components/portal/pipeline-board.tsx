@@ -7,7 +7,7 @@ import {
   PIPELINE_STAGES,
   type PipelineCard,
   type PipelineStage,
-} from "@/lib/mock/pipeline";
+} from "@/lib/data/pipeline";
 import { formatCurrency, cn } from "@/lib/utils";
 
 const stageAccent: Record<PipelineStage, string> = {

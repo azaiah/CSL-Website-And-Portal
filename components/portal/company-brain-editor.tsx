@@ -61,7 +61,7 @@ export function CompanyBrainEditor() {
           <BField label="Email" value={company.contact.email} editing={editing} />
           <BField
             label="Service area"
-            value={`${company.serviceArea.label} (~${company.serviceArea.radiusMiles} mi)`}
+            value={`${company.serviceArea.label} (${company.serviceArea.radiusMiles} mi)`}
             editing={editing}
             className="sm:col-span-2"
           />

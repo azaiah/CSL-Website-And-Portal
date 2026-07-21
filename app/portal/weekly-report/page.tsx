@@ -7,7 +7,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
-import { weeklyReport } from "@/lib/mock/weekly-report";
+import { weeklyReport } from "@/lib/data/weekly-report";
 import { formatDate } from "@/lib/utils";
 
 export default function WeeklyReportPage() {
@@ -21,7 +21,7 @@ export default function WeeklyReportPage() {
     <div className="space-y-6">
       <PortalPageHeader
         title="Weekly Report"
-        subtitle={`Compiled by the Weekly Briefing agent. Sample briefing for the week of ${formatDate(r.weekOf)}.`}
+        subtitle={`Compiled by the Weekly Briefing agent. Live briefing for the week of ${formatDate(r.weekOf)}.`}
         icon={FileBarChart}
       />
       <SampleDataRibbon />

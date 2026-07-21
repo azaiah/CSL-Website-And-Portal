@@ -1,0 +1,129 @@
+import {
+  FolderDown,
+  Download,
+  FileText,
+  ClipboardCheck,
+  ListChecks,
+  ArrowRight,
+} from "lucide-react";
+import Link from "next/link";
+import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
+import {
+  documents,
+  actionPlan,
+  DOCUMENT_STATUS_LABEL,
+  type PortalDocument,
+} from "@/lib/data/documents";
+import { cn } from "@/lib/utils";
+
+const statusStyles: Record<PortalDocument["status"], string> = {
+  ready: "bg-success/10 text-success border-success/40",
+  "action-required": "bg-gold/10 text-[#8a6c1f] border-gold/40",
+  "awaiting-approval": "bg-navy/10 text-navy border-navy/30",
+};
+
+export default function DocumentsPage() {
+  return (
+    <div className="space-y-6">
+      <PortalPageHeader
+        title="Documents"
+        subtitle="Application packets, the capability statement, setup guides, and outreach drafts — prepared by the Application Assistant and Outreach Writer, pre-filled from the Company Brain, with step-by-step instructions on every one."
+        icon={FolderDown}
+      />
+      <SampleDataRibbon />
+
+      {/* This-week action plan */}
+      <section className="card">
+        <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-navy-deep">
+          <ListChecks className="h-5 w-5 text-gold" aria-hidden />
+          This week&apos;s action plan
+        </h2>
+        <ol className="space-y-2.5">
+          {actionPlan.map((step, i) => (
+            <li key={step} className="flex items-start gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-xs font-bold text-navy-deep">
+                {i + 1}
+              </span>
+              <span className="text-sm text-ink/75">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Document cards */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {documents.map((doc) => (
+          <article key={doc.id} className="card flex flex-col">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl icon-tile">
+                  <FileText className="h-5 w-5" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink/45">
+                    {doc.category}
+                  </p>
+                  <h3 className="mt-0.5 text-base font-semibold leading-snug text-navy-deep">
+                    {doc.title}
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            <span
+              className={cn(
+                "mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
+                statusStyles[doc.status]
+              )}
+            >
+              <ClipboardCheck className="h-3.5 w-3.5" aria-hidden />
+              {DOCUMENT_STATUS_LABEL[doc.status]}
+            </span>
+
+            <p className="mt-3 text-sm leading-relaxed text-ink/70">{doc.summary}</p>
+
+            <div className="mt-4 rounded-xl border border-navy/10 bg-surface p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                What to do next
+              </p>
+              <ol className="mt-2 space-y-1.5">
+                {doc.nextSteps.map((s, i) => (
+                  <li key={s} className="flex items-start gap-2 text-xs text-ink/75">
+                    <span className="mt-px font-bold text-gold">{i + 1}.</span>
+                    {s}
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between gap-3 pt-1">
+              <a href={doc.file} download className="btn-navy text-sm">
+                <Download className="h-4 w-4" aria-hidden />
+                Download
+              </a>
+              {doc.relatedOpportunityIds && (
+                <Link
+                  href="/portal/opportunities"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline"
+                >
+                  {doc.relatedOpportunityIds.length} linked{" "}
+                  {doc.relatedOpportunityIds.length === 1
+                    ? "opportunity"
+                    : "opportunities"}
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </Link>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p className="text-xs text-ink/40">
+        Prepared by the Application Assistant and Outreach Writer from the Company
+        Brain. Online portals (ModivCare, symplr, eVA, SAM.gov) require CSL&apos;s
+        own accounts to submit — these packets pre-fill every answer and list the
+        exact steps, so each submission takes minutes, not hours.
+      </p>
+    </div>
+  );
+}

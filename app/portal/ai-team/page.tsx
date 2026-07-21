@@ -18,7 +18,7 @@ import {
   ComingOnlineBadge,
 } from "@/components/portal/portal-ui";
 import { agents, type Agent } from "@/lib/agents";
-import { credentials, codes } from "@/lib/company-brain";
+import { company, credentials, codes } from "@/lib/company-brain";
 
 const agentIcons: Record<string, LucideIcon> = {
   "opportunity-finder": Search,
@@ -33,13 +33,14 @@ export default function AiTeamPage() {
     <div className="space-y-8">
       <PortalPageHeader
         title="AI Team"
-        subtitle="Five specialized agents that will find, qualify, and pursue medical-delivery contracts for CSL. Each is described below and previewed with sample data — live AI activates in the next phase."
+        subtitle="Five specialized agents actively finding, qualifying, and pursuing medical-delivery contracts for CSL. The engine is live — first sweep completed July 21, 2026, refreshed weekly. Every opportunity in this portal is a real finding."
         icon={Bot}
         action={<ComingOnlineBadge />}
       />
 
       {/* Company Brain — shared foundation */}
-      <section className="relative overflow-hidden rounded-2xl border border-navy/10 bg-navy-deep p-7 text-white">
+      <section className="grain relative overflow-hidden rounded-2xl border border-navy/10 bg-navy-deep p-7 text-white">
+        <div className="bg-grid-dark mask-fade absolute inset-0 opacity-50" aria-hidden />
         <div
           className="pointer-events-none absolute inset-0 opacity-50"
           style={{
@@ -77,7 +78,7 @@ export default function AiTeamPage() {
             {[
               { label: "Credentials", value: credentials.length },
               { label: "Proc. codes", value: codes.length },
-              { label: "Service radius", value: "25mi" },
+              { label: "Service radius", value: `${company.serviceArea.radiusMiles}mi` },
             ].map((s) => (
               <div
                 key={s.label}
@@ -110,7 +111,7 @@ function AgentCard({ agent, Icon }: { agent: Agent; Icon: LucideIcon }) {
     <article className="card flex flex-col">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-navy-deep text-gold">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl icon-tile">
             <Icon className="h-6 w-6" aria-hidden />
           </span>
           <div>

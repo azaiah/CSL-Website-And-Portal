@@ -126,7 +126,10 @@ export function CompanyBrainEditor() {
                 {c.system}
               </span>
               <span className="font-mono text-sm text-navy-deep">{c.code}</span>
-              <span className="truncate text-xs text-ink/60">{c.label}</span>
+              {/* Wrap the code description so the full wording is readable. */}
+              <span className="min-w-0 break-words text-xs text-ink/60">
+                {c.label}
+              </span>
             </div>
           ))}
         </div>

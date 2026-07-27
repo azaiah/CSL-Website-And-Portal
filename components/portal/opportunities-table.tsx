@@ -130,8 +130,11 @@ export function OpportunitiesTable() {
                 className="cursor-pointer transition-colors hover:bg-surface"
               >
                 <td className="max-w-xs px-4 py-3">
-                  <p className="truncate font-medium text-navy-deep">{o.title}</p>
-                  <p className="truncate text-xs text-ink/50">{o.agency}</p>
+                  {/* The table already scrolls sideways inside its own box, so
+                      wrap these instead of truncating — the full opportunity
+                      name and agency stay readable. */}
+                  <p className="break-words font-medium text-navy-deep">{o.title}</p>
+                  <p className="break-words text-xs text-ink/50">{o.agency}</p>
                 </td>
                 <td className="px-4 py-3 text-ink/70">{o.source}</td>
                 <td className="px-4 py-3 font-mono text-xs text-ink/70">{o.naics}</td>

@@ -89,7 +89,8 @@ export function PipelineBoard() {
                       <p className="text-sm font-medium leading-snug text-navy-deep">
                         {card.title}
                       </p>
-                      <p className="mt-1 truncate text-xs text-ink/50">
+                      {/* Wrap the agency name so it is not cut off mid-word. */}
+                      <p className="mt-1 break-words text-xs text-ink/50">
                         {card.agency}
                       </p>
                       <div className="mt-2 flex items-center justify-between">

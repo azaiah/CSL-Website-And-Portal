@@ -80,6 +80,13 @@
   /* Gradient-hairline border via double background (padding-box + border-box). */
   .card {
     @apply relative rounded-2xl bg-white p-6 shadow-card transition-all duration-300;
+    /* Cards usually sit inside a CSS grid. A grid item defaults to
+       `min-width: auto`, which means it refuses to shrink below the width of
+       its widest unbreakable content. One long no-wrap line inside a card was
+       therefore stretching the whole grid column wider than the phone screen,
+       which pushed every sibling card off-screen too. `min-width: 0` lets the
+       card shrink to its column so its text wraps instead. */
+    min-width: 0;
     border: 1px solid transparent;
     background-image:
       linear-gradient(#fff, #fff),

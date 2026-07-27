@@ -79,7 +79,10 @@ function Topbar({
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <Logo href="/portal" size={34} />
+          {/* The portal topbar also holds a hamburger and the role selector.
+              On a phone there is not enough room for the wordmark too, so the
+              text was being cut off mid-word. Show the mark only until `sm`. */}
+          <Logo href="/portal" size={34} wordmarkClassName="hidden sm:block" />
           <span className="hidden rounded-full bg-navy-deep px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold-light sm:inline">
             Lead-Gen Engine
           </span>

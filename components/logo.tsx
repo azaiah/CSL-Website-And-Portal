@@ -11,12 +11,19 @@ export function Logo({
   className,
   knockout = false,
   showWordmark = true,
+  wordmarkClassName,
   href = "/",
   size = 40,
 }: {
   className?: string;
   knockout?: boolean;
   showWordmark?: boolean;
+  /**
+   * Extra classes for the wordmark text only. Lets a caller hide the text on
+   * narrow screens (e.g. "hidden sm:block") while keeping the logo mark, so a
+   * cramped header shows a smaller lockup instead of clipping the words.
+   */
+  wordmarkClassName?: string;
   href?: string | null;
   size?: number;
 }) {
@@ -32,7 +39,7 @@ export function Logo({
         priority
       />
       {showWordmark && (
-        <span className="leading-tight">
+        <span className={cn("leading-tight", wordmarkClassName)}>
           <span
             className={cn(
               "block text-[15px] font-bold tracking-tight",

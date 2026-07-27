@@ -54,7 +54,8 @@ export default function WeeklyReportPage() {
             {r.newOpportunities.map((o) => (
               <li key={o.title} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-navy-deep">
+                  {/* Wrap long opportunity names so they stay fully readable. */}
+                  <p className="break-words text-sm font-medium text-navy-deep">
                     {o.title}
                   </p>
                   <p className="text-xs text-ink/50">{o.source}</p>
@@ -103,7 +104,8 @@ export default function WeeklyReportPage() {
           <ul className="divide-y divide-navy/5">
             {r.deadlines.map((d) => (
               <li key={d.title} className="flex items-center justify-between gap-3 py-2.5">
-                <span className="min-w-0 truncate text-sm text-ink/80">
+                {/* Wrap the deadline name so the whole task is visible. */}
+                <span className="min-w-0 break-words text-sm text-ink/80">
                   {d.title}
                 </span>
                 <span className="shrink-0 text-xs font-semibold text-navy">

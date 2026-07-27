@@ -107,7 +107,9 @@ export default function DashboardPage() {
                   key={lead.title}
                   className="flex items-center justify-between gap-4 rounded-lg border border-navy/5 px-3 py-2"
                 >
-                  <span className="min-w-0 truncate text-sm text-ink/80">
+                  {/* Wrap the lead title instead of cutting it off with an
+                      ellipsis, so the whole name is readable on a phone. */}
+                  <span className="min-w-0 break-words text-sm text-ink/80">
                     {lead.title}
                   </span>
                   <span className="shrink-0 rounded-full bg-navy-deep px-2 py-0.5 text-xs font-semibold text-gold">
@@ -132,9 +134,9 @@ export default function DashboardPage() {
             {agents.map((a) => (
               <li key={a.id} className="rounded-xl border border-navy/10 p-3">
                 <p className="text-sm font-semibold text-navy-deep">{a.name}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs text-ink/60">
-                  {a.purpose}
-                </p>
+                {/* Show each agent's full purpose. It used to be clamped to two
+                    lines, which hid the end of the sentence on narrow screens. */}
+                <p className="mt-0.5 text-xs text-ink/60">{a.purpose}</p>
               </li>
             ))}
           </ul>

@@ -18,10 +18,16 @@ import {
 } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
-import { isAllowedPortalEmail, getDefaultRoleForEmail, canSwitchRoles, type Role } from "@/lib/auth/config";
+import {
+  ROLES,
+  isAllowedPortalEmail,
+  getDefaultRoleForEmail,
+  canSwitchRoles,
+  type Role,
+} from "@/lib/auth/config";
 
 export type { Role } from "@/lib/auth/config";
-export { ROLES } from "@/lib/auth/config";
+export { ROLES };
 
 export interface PortalProfile {
   id: string;

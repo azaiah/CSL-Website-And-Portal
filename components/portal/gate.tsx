@@ -110,8 +110,7 @@ export function PortalGate() {
           <div className="mt-5 flex items-start gap-2 rounded-xl border border-navy/10 bg-surface p-3">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
             <p className="text-xs text-ink/60">
-              Secured with Google sign-in and Supabase. Your session is encrypted
-              and protected by row-level security.
+              Your session is encrypted and protected by row-level security.
             </p>
           </div>
         </div>

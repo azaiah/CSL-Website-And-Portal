@@ -49,6 +49,33 @@ interface PortalState {
 
 const PortalContext = createContext<PortalState | null>(null);
 
+/** Brief pause so auth cookies are readable right after the OAuth redirect. */
+const SESSION_RETRY_MS = 250;
+
+async function resolveSessionUser(
+  supabase: ReturnType<typeof createClient>
+): Promise<User | null> {
+  const readSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session?.user ?? null;
+  };
+
+  let user = await readSession();
+  if (user) return user;
+
+  // Cookies may not be available on the first client tick after redirect.
+  await new Promise((resolve) => setTimeout(resolve, SESSION_RETRY_MS));
+  user = await readSession();
+  if (user) return user;
+
+  const {
+    data: { user: verifiedUser },
+  } = await supabase.auth.getUser();
+  return verifiedUser ?? null;
+}
+
 async function fetchProfile(userId: string): Promise<PortalProfile | null> {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -100,11 +127,8 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<PortalProfile | null>(null);
 
-  const loadSession = useCallback(async () => {
+  const syncUser = useCallback(async (sessionUser: User | null) => {
     const supabase = createClient();
-    const {
-      data: { user: sessionUser },
-    } = await supabase.auth.getUser();
 
     if (!sessionUser || !isAllowedPortalEmail(sessionUser.email)) {
       if (sessionUser) await supabase.auth.signOut();
@@ -118,6 +142,12 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     setProfile(p);
   }, []);
 
+  const loadSession = useCallback(async () => {
+    const supabase = createClient();
+    const sessionUser = await resolveSessionUser(supabase);
+    await syncUser(sessionUser);
+  }, [syncUser]);
+
   useEffect(() => {
     const supabase = createClient();
 
@@ -125,18 +155,21 @@ export function PortalProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session?.user || !isAllowedPortalEmail(session.user.email)) {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // Ignore transient null sessions — only clear state on explicit sign-out.
+      if (event === "SIGNED_OUT") {
         setUser(null);
         setProfile(null);
         return;
       }
-      setUser(session.user);
-      ensureProfile(session.user).then(setProfile);
+
+      if (session?.user) {
+        void syncUser(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [loadSession]);
+  }, [loadSession, syncUser]);
 
   async function signInWithGoogle() {
     const supabase = createClient();

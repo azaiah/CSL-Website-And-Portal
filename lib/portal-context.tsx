@@ -171,6 +171,34 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [loadSession, syncUser]);
 
+  // Mobile browsers (iOS Safari, Android Chrome) often restore the previous page
+  // from the back/forward cache instead of reloading it. When that happens the
+  // effect above never re-runs, so a stale "signed out" login screen stays on
+  // screen even though the sign-in already succeeded. Re-check the session
+  // whenever the page is restored or becomes visible again.
+  useEffect(() => {
+    function recheckSession() {
+      void loadSession();
+    }
+
+    function handlePageShow(event: PageTransitionEvent) {
+      // `persisted` is true only for back/forward cache restores.
+      if (event.persisted) recheckSession();
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") recheckSession();
+    }
+
+    window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [loadSession]);
+
   async function signInWithGoogle() {
     const supabase = createClient();
     const redirectTo = `${window.location.origin}/portal/auth/callback`;

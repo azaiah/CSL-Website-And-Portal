@@ -134,8 +134,9 @@ export function QuoteForm() {
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-ink/50">Route</dt>
-              <dd className="text-right font-medium text-navy-deep">
+              <dt className="shrink-0 text-ink/50">Route</dt>
+              {/* Addresses can be long, so this cell must be allowed to shrink and wrap. */}
+              <dd className="min-w-0 break-words text-right font-medium text-navy-deep">
                 {form.pickup} → {form.dropoff}
               </dd>
             </div>

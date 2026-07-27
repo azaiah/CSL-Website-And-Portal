@@ -57,7 +57,7 @@ export function PortalGate() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-navy-deep px-6 py-16">
+    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-deep px-5 py-12 sm:px-6 sm:py-16">
       <div
         className="pointer-events-none absolute inset-0 opacity-60"
         style={{
@@ -76,7 +76,7 @@ export function PortalGate() {
           <Logo knockout href="/" size={48} />
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white p-8 shadow-card-hover">
+        <div className="rounded-2xl border border-white/10 bg-white p-6 shadow-card-hover sm:p-8">
           <div className="flex items-center gap-2 text-gold">
             <Lock className="h-5 w-5" aria-hidden />
             <span className="text-xs font-semibold uppercase tracking-[0.16em]">

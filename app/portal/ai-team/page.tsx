@@ -83,7 +83,7 @@ export default function AiTeamPage() {
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
-          <div className="grid shrink-0 grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:shrink-0">
             {[
               { label: "Credentials", value: credentials.length },
               { label: "Proc. codes", value: codes.length },
@@ -91,9 +91,9 @@ export default function AiTeamPage() {
             ].map((s) => (
               <div
                 key={s.label}
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center"
+                className="rounded-xl border border-white/10 bg-white/5 px-2 py-3 text-center sm:px-4"
               >
-                <p className="text-2xl font-bold text-gold">{s.value}</p>
+                <p className="text-xl font-bold text-gold sm:text-2xl">{s.value}</p>
                 <p className="mt-0.5 text-xs text-white/60">{s.label}</p>
               </div>
             ))}

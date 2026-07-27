@@ -124,7 +124,7 @@ export default function HomePage() {
             </Reveal>
           ))}
         </div>
-        <div className="card mt-14 grid grid-cols-2 gap-8 p-8 sm:grid-cols-4">
+        <div className="card mt-14 grid grid-cols-2 gap-6 p-6 sm:grid-cols-4 sm:gap-8 sm:p-8">
           <Stat value="2023" label="Founded in Richmond" />
           <Stat value={`~${company.serviceArea.radiusMiles} mi`} label="Greater Richmond radius" />
           <Stat value="24/7" label="STAT & on-demand" />

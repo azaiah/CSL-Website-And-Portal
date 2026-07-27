@@ -35,10 +35,22 @@ export function SiteHeader() {
     setServicesOpen(false);
   }, [pathname]);
 
+  // Stop the page behind the mobile menu from scrolling while it is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
+
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
+        // `transition-colors`, not `transition-all`: `transition-all` also
+        // animated the backdrop blur on every scroll, which stutters on phones.
+        "sticky top-0 z-50 w-full transition-colors duration-200",
         scrolled
           ? "border-b border-navy/10 bg-white/90 backdrop-blur-md"
           : "border-b border-transparent bg-white"
@@ -130,7 +142,9 @@ export function SiteHeader() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-navy/10 bg-white lg:hidden">
+        // The menu is taller than a phone screen, so it scrolls on its own now
+        // that we lock the page behind it. `5rem` is the header height.
+        <div className="max-h-[calc(100svh-5rem)] overflow-y-auto border-t border-navy/10 bg-white lg:hidden">
           <nav className="container-page flex flex-col gap-1 py-4" aria-label="Mobile">
             <span className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-ink/50">
               Services

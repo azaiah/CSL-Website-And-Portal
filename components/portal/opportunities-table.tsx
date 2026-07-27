@@ -103,7 +103,9 @@ export function OpportunitiesTable() {
       </div>
 
       {/* Table */}
-      <div className="mt-5 overflow-x-auto rounded-2xl border border-navy/10 bg-white shadow-card">
+      {/* `min-w-0` lets this wrapper shrink below the table's width so the table
+          scrolls inside its own box instead of widening the whole page. */}
+      <div className="mt-5 min-w-0 overflow-x-auto rounded-2xl border border-navy/10 bg-white shadow-card">
         <table className="w-full min-w-[880px] text-left text-sm">
           <thead className="border-b border-navy/10 bg-surface text-xs uppercase tracking-wide text-ink/60">
             <tr>
@@ -255,7 +257,8 @@ function Meta({ icon: Icon, label, value }: { icon: typeof MapPin; label: string
         <Icon className="h-3.5 w-3.5" aria-hidden />
         {label}
       </p>
-      <p className="mt-0.5 text-sm font-medium text-navy-deep">{value}</p>
+      {/* `break-words` so long agency or location names wrap instead of overflowing. */}
+      <p className="mt-0.5 break-words text-sm font-medium text-navy-deep">{value}</p>
     </div>
   );
 }

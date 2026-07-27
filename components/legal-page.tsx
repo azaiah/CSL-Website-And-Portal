@@ -46,7 +46,9 @@ export function LegalHeading({ children }: { children: ReactNode }) {
 }
 
 export function LegalText({ children }: { children: ReactNode }) {
-  return <p className="leading-relaxed text-ink/75">{children}</p>;
+  // `break-words` keeps long email addresses and URLs from pushing the page
+  // wider than a phone screen.
+  return <p className="break-words leading-relaxed text-ink/75">{children}</p>;
 }
 
 export function LegalList({ items }: { items: string[] }) {

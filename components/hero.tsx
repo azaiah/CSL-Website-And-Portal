@@ -28,7 +28,10 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="grain relative flex min-h-[92vh] items-center overflow-hidden bg-navy-deep">
+    // `svh` (small viewport height) instead of `vh`: on phones the address bar
+    // hides and shows while you scroll, which changes `vh` and makes the whole
+    // hero resize mid-scroll. `svh` stays fixed, so nothing jumps.
+    <section className="grain relative flex min-h-[92svh] items-center overflow-hidden bg-navy-deep">
       {/* Media layer */}
       <div className="absolute inset-0">
         {videoOk && (

@@ -22,8 +22,9 @@ export function CompanyBrainEditor() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between rounded-xl border border-navy/10 bg-white px-4 py-3">
-        <p className="flex items-center gap-2 text-sm text-ink/60">
+      {/* `flex-wrap` so the note and the button stack instead of overflowing on a phone. */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-navy/10 bg-white px-4 py-3">
+        <p className="flex min-w-0 items-center gap-2 text-sm text-ink/60">
           <Lock className="h-4 w-4 text-gold" aria-hidden />
           Secure profile every agent reads from.
           {editing && (

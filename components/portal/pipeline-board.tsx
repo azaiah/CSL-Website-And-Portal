@@ -44,7 +44,9 @@ export function PipelineBoard() {
   }
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
+    // `min-w-0` keeps the wide column strip scrolling inside this box rather
+    // than stretching the page sideways on a phone.
+    <div className="flex min-w-0 gap-4 overflow-x-auto pb-4">
       {PIPELINE_STAGES.map((stage) => {
         const stageCards = cards.filter((c) => c.stage === stage);
         const total = stageCards.reduce((s, c) => s + c.estValue, 0);

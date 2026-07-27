@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, type ReactNode } from "react";
+import { useState, useEffect, Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -22,21 +22,34 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const { ready, signedIn } = usePortal();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Stop the page behind the mobile menu from scrolling while the menu is open.
+  // Without this the dashboard slides around under the drawer on a phone.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
+
   // Avoid a flash before hydration resolves the session.
+  // `min-h-svh` rather than `min-h-screen` so the height does not change when a
+  // phone's address bar hides or shows during scrolling.
   if (!ready) {
-    return <div className="min-h-screen bg-surface" aria-hidden />;
+    return <div className="min-h-svh bg-surface" aria-hidden />;
   }
 
   if (!signedIn) {
     return (
-      <Suspense fallback={<div className="min-h-screen bg-surface" aria-hidden />}>
+      <Suspense fallback={<div className="min-h-svh bg-surface" aria-hidden />}>
         <PortalGate />
       </Suspense>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-svh bg-surface">
       <Topbar onMenu={() => setMobileOpen((v) => !v)} mobileOpen={mobileOpen} />
       <div className="mx-auto flex max-w-[1400px]">
         <Sidebar mobileOpen={mobileOpen} onNavigate={() => setMobileOpen(false)} />
@@ -57,8 +70,8 @@ function Topbar({
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-navy/10 bg-white">
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-5 sm:px-8">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-3 px-4 sm:gap-4 sm:px-8">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             className="rounded-lg p-2 text-navy-deep lg:hidden"
             onClick={onMenu}
@@ -187,7 +200,8 @@ function Sidebar({
       )}
       <aside
         className={cn(
-          "fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] w-64 shrink-0 border-r border-navy/10 bg-white transition-transform lg:static lg:z-auto lg:h-auto lg:translate-x-0",
+          // `100svh` keeps the drawer a fixed height while scrolling on a phone.
+          "fixed left-0 top-16 z-30 h-[calc(100svh-4rem)] w-64 shrink-0 overflow-y-auto border-r border-navy/10 bg-white transition-transform lg:static lg:z-auto lg:h-auto lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

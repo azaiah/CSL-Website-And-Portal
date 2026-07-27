@@ -152,7 +152,7 @@ export default function CompliancePage() {
       {/* Insurance + codes */}
       <Section>
         <div className="grid gap-8 lg:grid-cols-2">
-          <Reveal>
+          <Reveal className="min-w-0">
             <div className="card h-full">
               <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                 <Umbrella className="h-6 w-6" aria-hidden />
@@ -179,7 +179,9 @@ export default function CompliancePage() {
               </ul>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          {/* `min-w-0` lets this grid column shrink below the table's min-width so
+              the table scrolls inside its own box instead of being clipped. */}
+          <Reveal delay={0.1} className="min-w-0">
             <div className="card h-full">
               <span className="flex h-12 w-12 items-center justify-center rounded-xl icon-tile">
                 <Hash className="h-6 w-6" aria-hidden />
@@ -190,8 +192,10 @@ export default function CompliancePage() {
               <p className="mt-3 leading-relaxed text-ink/70">
                 The NAICS and NIGP codes buyers use to find and contract CSL.
               </p>
-              <div className="mt-5 overflow-hidden rounded-xl border border-navy/10">
-                <table className="w-full text-left text-sm">
+              {/* Scrolls sideways inside its own box on a phone instead of
+                  squeezing the three columns down to unreadable widths. */}
+              <div className="mt-5 overflow-x-auto rounded-xl border border-navy/10">
+                <table className="w-full min-w-[400px] text-left text-sm">
                   <thead className="bg-surface text-xs uppercase tracking-wide text-ink/60">
                     <tr>
                       <th className="px-4 py-2 font-semibold">System</th>

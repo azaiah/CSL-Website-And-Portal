@@ -15,11 +15,19 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Safety net so nothing can ever scroll the page sideways on a phone.
+       We use `clip` instead of `hidden` on purpose: `hidden` would turn <html>
+       into a scroll container and break every `sticky` header in the app. */
+    overflow-x: clip;
   }
   body {
     @apply bg-white text-ink antialiased;
     font-feature-settings: "cv11", "ss01";
     text-rendering: optimizeLegibility;
+    /* Same sideways-scroll guard, plus stop any single wide child (a long URL,
+       a table, a decorative blur) from stretching the page wider than the screen. */
+    overflow-x: clip;
+    max-width: 100%;
   }
   /* Accessible focus ring, brand-tinted */
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {

@@ -91,7 +91,7 @@ export const weeklyReport: WeeklyReport = {
     { title: "ModivCare credentialing started", dueDate: "2026-08-14" },
   ],
   recommendedMoves: [
-    "Finish the SWaM certification — the single highest-leverage action: Virginia purchases from $10k–$100k can be set aside for certified small businesses, and CSL is invisible to those buyers until certified.",
+    "Upload the SWaM designation certificate to eVA and vendor portals — CSL is now certified as a Virginia Small + Minority-Owned business.",
     "Call ModivCare Network Development at (866) 810-8305 x2645 and confirm VA DMV intrastate for-hire passenger authority — one credential unlocks five Medicaid payer channels.",
     "Approve and send the five outreach drafts (VAMC prime subcontract inquiry, GENETWORx, Virginia Cancer Institute, Bremo, MedRVA).",
     "Create SAM.gov saved searches on office 36C246 + PSC R602 + NAICS 492110/485991, and set eVA alerts on NIGP 962-86 / 948-55.",

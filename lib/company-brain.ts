@@ -15,6 +15,11 @@ export interface Credential {
   short: string;
   description: string;
   status: CredentialStatus;
+  /** Optional proof document stored in /public/documents. */
+  proofDocument?: {
+    label: string;
+    file: string;
+  };
 }
 
 export interface Certification {
@@ -62,8 +67,8 @@ export const company = {
     title: "Managing Member & Director of Operations",
     phone: "(757) 453-3831",
     phoneHref: "tel:+17574533831",
-    email: "Info@trustcsl.com",
-    emailHref: "mailto:info@trustcsl.com",
+    email: "capitalsolutionslogistics@gmail.com",
+    emailHref: "mailto:capitalsolutionslogistics@gmail.com",
     hours: "Standard routes Mon–Fri, 7:00am–7:00pm. STAT & on-demand available 24/7.",
   },
   insurance:
@@ -129,25 +134,26 @@ export const credentials: Credential[] = [
     status: "registered",
   },
   {
-    label: "SWaM (Virginia SBSD)",
+    label: "SWaM — Small Business (Virginia SBSD)",
     short: "SWaM",
     description:
-      "Small, Women-owned, and Minority-owned business certification through the Virginia Department of Small Business & Supplier Diversity.",
-    status: "in-progress",
+      "Virginia SBSD certification as a Small Business. Capital Investment Group LLC (CSL) is certified and eligible for Virginia small-business set-asides.",
+    status: "active",
+    proofDocument: {
+      label: "View SWaM designation certificate (PDF)",
+      file: "/documents/CSL_SWaM_Designation_Certificate.pdf",
+    },
   },
   {
-    label: "Service-Disabled Veteran-Owned",
-    short: "SDVOSB",
-    description:
-      "Service-Disabled Veteran-Owned small business designation — supports federal and state set-aside preferences.",
-    status: "in-progress",
-  },
-  {
-    label: "Minority-Owned Business",
+    label: "Minority-Owned Business (Virginia SBSD)",
     short: "MBE",
     description:
-      "Minority-Owned Business designation supporting supplier-diversity and set-aside preferences.",
-    status: "in-progress",
+      "Virginia SBSD certification as a Minority-Owned Business. CSL qualified for this designation; certificate on file with the SWaM designation.",
+    status: "active",
+    proofDocument: {
+      label: "View SWaM designation certificate (PDF)",
+      file: "/documents/CSL_SWaM_Designation_Certificate.pdf",
+    },
   },
 ];
 
@@ -249,6 +255,7 @@ export const trustBadges: string[] = [
   "SAM / CAGE",
   "eVA",
   "SWaM",
+  "MBE",
 ];
 
 /** Reusable capability-statement content (used by the portal Company Brain). */
@@ -264,7 +271,7 @@ export const capabilityStatement = {
     "Local Richmond team with a compliance-first culture",
     "USDOT active; MC authority in progress — plus TWIC, TSA PreCheck, SAM/CAGE",
     "Lloyd's of London cargo & commercial auto coverage",
-    "Small-business / diversity designations (SWaM, SDVOSB — in progress)",
+    "Virginia SWaM certified — Small Business + Minority-Owned (designation certificate on file)",
     '"On-time, every time" service standard',
   ],
   pastPerformanceNote:

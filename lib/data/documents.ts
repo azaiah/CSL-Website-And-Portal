@@ -34,6 +34,21 @@ export const DOCUMENT_STATUS_LABEL: Record<DocumentStatus, string> = {
 
 export const documents: PortalDocument[] = [
   {
+    id: "swam-designation-certificate",
+    title: "SWaM Designation Certificate — Small & Minority-Owned Business",
+    file: "/documents/CSL_SWaM_Designation_Certificate.pdf",
+    category: "Core asset",
+    status: "ready",
+    summary:
+      "Official Virginia SBSD designation certificate for Capital Investment Group LLC (CSL). Confirms qualification as a Small Business and Minority-Owned Business. Service-Disabled Veteran designation was not awarded — attach this PDF to eVA, vendor diversity portals, and set-aside applications as proof.",
+    nextSteps: [
+      "Download and save to the compliance folder — this is the proof-of-designation file.",
+      "Upload to eVA supplier profile, Bon Secours symplr, and any vendor-diversity portal that asks for SWaM/MBE documentation.",
+      "Reference the certificate number on outreach and capability materials.",
+    ],
+    relatedOpportunityIds: ["OPP-2026-009", "OPP-2026-011"],
+  },
+  {
     id: "capability-statement",
     title: "CSL Capability Statement",
     file: "/documents/CSL_Capability_Statement.pdf",
@@ -52,13 +67,12 @@ export const documents: PortalDocument[] = [
     title: "SWaM Certification — Completed Application (pre-filled)",
     file: "/documents/CSL_SWaM_Completed_Application.pdf",
     category: "Completed application",
-    status: "action-required",
+    status: "ready",
     summary:
-      "Every field on Virginia SBSD's SWaM application reproduced with CSL's answers already entered. Gold fields are the only ones Darren must supply (EIN, ownership %, address). This is the transcription sheet — log into the portal and copy each answer across.",
+      "Transcription sheet used to apply for Virginia SWaM certification. CSL is now certified — see the official designation certificate above. Keep this file as the application record.",
     nextSteps: [
-      "Fill the gold fields: EIN, exact formation date, physical address, ownership %, minority category, employee count, revenue.",
-      "Gather the attachment checklist (the GET items), including the DVS veteran eligibility letter.",
-      "Apply free at certification-app.sbsd.virginia.gov, copying each answer from this sheet.",
+      "No action needed — certification is complete.",
+      "Use the official designation certificate (above) as proof going forward.",
     ],
     relatedOpportunityIds: ["OPP-2026-009", "OPP-2026-011"],
   },
@@ -97,13 +111,12 @@ export const documents: PortalDocument[] = [
     title: "SWaM Certification Checklist",
     file: "/documents/CSL_SWaM_Certification_Checklist.pdf",
     category: "Application packet",
-    status: "action-required",
+    status: "ready",
     summary:
-      "The #1-priority application: Virginia sets aside $10k–$100k purchases for SWaM-certified businesses, and same-day courier is bought in exactly that band. Free to apply. Includes the full document checklist and post-certification activation steps.",
+      "Checklist used during the SWaM application process. CSL is now certified as a Small and Minority-Owned Business. Keep for records; use the official designation certificate as live proof.",
     nextSteps: [
-      "Gather the documents on the checklist (formation docs, EIN letter, tax return, VA disability letter).",
-      "Apply at sbsd.virginia.gov under Small + Minority-Owned + Service-Disabled Veteran categories.",
-      "Respond same-day to any SBSD correction emails — that's the usual delay.",
+      "No action needed — certification is complete.",
+      "Download the designation certificate and upload to vendor portals.",
     ],
     relatedOpportunityIds: ["OPP-2026-009", "OPP-2026-011"],
   },
@@ -153,7 +166,7 @@ export const documents: PortalDocument[] = [
       "Five ready-to-send emails from the Outreach Writer: the VAMC prime subcontract inquiry, GENETWORx, Virginia Cancer Institute, Bremo Pharmacy, and MedRVA. Nothing sends without Darren's approval.",
     nextSteps: [
       "Review each draft; edit tone or details as needed.",
-      "Send from Info@trustcsl.com with the finished Capability Statement attached.",
+      "Send from capitalsolutionslogistics@gmail.com with the finished Capability Statement attached.",
       "Report replies back so the engine updates pipeline stages and response rates.",
     ],
     relatedOpportunityIds: [
@@ -168,8 +181,8 @@ export const documents: PortalDocument[] = [
 
 /** Ordered this-week action plan shown at the top of the Documents page. */
 export const actionPlan: string[] = [
+  "Upload the SWaM designation certificate to eVA, symplr, and vendor-diversity portals — certification is complete.",
   "Fill the [FILL IN] blanks on the Capability Statement (EIN, UEI, CAGE, USDOT #) — everything else reuses them.",
-  "Fill the gold fields on the completed SWaM application, then submit at sbsd.virginia.gov — the single highest-leverage application.",
   "Call ModivCare (866-810-8305 x2645) and start the DMV for-hire authority application.",
   "Knock out Medzoomer + Lab Logistics signups (both free, ~15 minutes total).",
   "Approve and send the five outreach drafts.",

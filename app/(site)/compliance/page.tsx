@@ -91,6 +91,16 @@ export default function CompliancePage() {
                 <p className="mt-2 text-sm leading-relaxed text-ink/70">
                   {c.description}
                 </p>
+                {c.proofDocument && (
+                  <a
+                    href={c.proofDocument.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex text-sm font-medium text-gold hover:underline"
+                  >
+                    {c.proofDocument.label}
+                  </a>
+                )}
               </div>
             </Reveal>
           ))}

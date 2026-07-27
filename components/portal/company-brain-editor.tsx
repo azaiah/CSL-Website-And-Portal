@@ -81,21 +81,33 @@ export function CompanyBrainEditor() {
           {credentials.map((c) => (
             <div
               key={c.label}
-              className="flex items-center justify-between rounded-xl border border-navy/10 bg-surface px-3 py-2.5"
+              className="rounded-xl border border-navy/10 bg-surface px-3 py-2.5"
             >
-              <span className="text-sm font-medium text-navy-deep">{c.short}</span>
-              <span
-                className={cn(
-                  "rounded-full px-2 py-0.5 text-xs font-semibold",
-                  c.status === "active"
-                    ? "bg-success/10 text-success"
-                    : c.status === "registered"
-                    ? "bg-navy/10 text-navy"
-                    : "bg-gold/15 text-[#8a6c1f]"
-                )}
-              >
-                {helpers.statusLabel(c.status)}
-              </span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium text-navy-deep">{c.short}</span>
+                <span
+                  className={cn(
+                    "shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold",
+                    c.status === "active"
+                      ? "bg-success/10 text-success"
+                      : c.status === "registered"
+                      ? "bg-navy/10 text-navy"
+                      : "bg-gold/15 text-[#8a6c1f]"
+                  )}
+                >
+                  {helpers.statusLabel(c.status)}
+                </span>
+              </div>
+              {c.proofDocument && (
+                <a
+                  href={c.proofDocument.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 block text-xs font-medium text-gold hover:underline"
+                >
+                  {c.proofDocument.label}
+                </a>
+              )}
             </div>
           ))}
         </div>

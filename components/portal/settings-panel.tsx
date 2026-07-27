@@ -42,7 +42,7 @@ export function SettingsPanel() {
         </h2>
         <p className="mb-4 text-sm text-ink/60">
           Roles change labels and access hints in this Phase 1 preview.{" "}
-          <span className="font-mono text-ink/45">TODO: enforce with real auth.</span>
+          Google sign-in via Supabase. Access limited to allowlisted accounts.
         </p>
         <div className="flex flex-wrap gap-2">
           {ROLES.map((r: Role) => (

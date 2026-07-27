@@ -38,7 +38,7 @@ export const agents: Agent[] = [
       "LIVE. On every weekly run the Opportunity Finder sweeps SAM.gov and federal VA contracting (NCO 6 / VISN 6), Virginia eVA and state-local procurement, the Virginia Medicaid/DMAS NEMT broker network, and Richmond-area hospital systems, labs, and pharmacies. Each finding is matched against CSL's NAICS/NIGP codes, set-asides, and service area, then filed into the Opportunities table. The first live sweep (July 21, 2026) covered 30+ organizations and logged 15 real opportunities.",
     inputs: [
       "Company Brain: NAICS 492110 / 485991, NIGP 962-86 / 948-55",
-      "Company Brain: set-asides (SWaM, SDVOSB), service area (Richmond ~100mi)",
+      "Company Brain: set-asides (SWaM Small + MBE), service area (Richmond ~100mi)",
     ],
     outputs: [
       "New opportunities added to the Opportunities table",
@@ -59,7 +59,7 @@ export const agents: Agent[] = [
     purpose:
       "Scores every opportunity by real win-probability and surfaces the best-fit targets.",
     phase1Description:
-      "LIVE. The Lead Qualifier scores every opportunity by genuine win-probability using CSL's advantages — SDVOSB/SWaM preference, local Richmond presence, HIPAA/BBP training, and existing credentials — and filters out low-odds work such as in-house fleet operations, ambulance/ALS transport, and national-carrier contracts. Every fit score and why-it-fits rationale in the Opportunities table comes from this scoring pass.",
+      "LIVE. The Lead Qualifier scores every opportunity by genuine win-probability using CSL's advantages — Virginia SWaM Small + MBE preference, local Richmond presence, HIPAA/BBP training, and existing credentials — and filters out low-odds work such as in-house fleet operations, ambulance/ALS transport, and national-carrier contracts. Every fit score and why-it-fits rationale in the Opportunities table comes from this scoring pass.",
     inputs: [
       "Opportunities from the Opportunity Finder",
       "Company Brain: credentials, certifications, capacity, service area",

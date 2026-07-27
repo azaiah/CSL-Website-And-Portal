@@ -63,7 +63,7 @@ export const opportunities: Opportunity[] = [
     description:
       "The Richmond VA Medical Center's courier requirement (solicitation 36C24625Q0784) was awarded July 21, 2025 as a 5-year SDVOSB set-aside IDIQ — ceiling $769,850, period of performance through July 2030 — to All American Express Solutions LLC of Indianapolis, IN. 18 offers were received. Delivery orders are actively being issued. Value shown is the published contract ceiling.",
     whyItFits:
-      "This is CSL's core service at a facility inside its radius, set aside for SDVOSBs — CSL's designation. The prime is an out-of-state company; a local, HIPAA/BBP-trained operator is a natural subcontractor now and a credible recompete bidder in FY2030. NCO 6 also issues separate short-window courier solicitations (e.g., surgical-department courier) for this facility.",
+      "This is CSL's core service at a facility inside its radius on an SDVOSB set-aside contract — a subcontract opportunity for CSL as a Virginia SWaM-certified small business. The prime is an out-of-state company; a local, HIPAA/BBP-trained operator is a natural subcontractor now and a credible recompete bidder in FY2030. NCO 6 also issues separate short-window courier solicitations (e.g., surgical-department courier) for this facility.",
     suggestedAction:
       "Contact All American Express Solutions about local subcontracting; create SAM.gov saved searches on office 36C246 + PSC R602 + NAICS 492110/485991 (their response windows run 3–9 days); run the VISN 6 forecast query at vendorportal.ecms.va.gov.",
   },
@@ -225,7 +225,7 @@ export const opportunities: Opportunity[] = [
     description:
       "Three Richmond-area hospitals plus ASCs with inter-facility lab and pharmacy movement. Vendor credentialing runs through symplr (support 888-476-0377); the system operates a Supplier Diversity Initiative. Value is CSL-estimated annual potential.",
     whyItFits:
-      "CSL's SDVOSB + minority-owned status is a direct match for the supplier-diversity program — the warmest door into a large system.",
+      "CSL's SWaM Small + Minority-Owned certification is a direct match for the supplier-diversity program — the warmest door into a large system.",
     suggestedAction:
       "Register in symplr and the Bon Secours supplier-diversity program, then request an introduction to supply chain via the diversity office.",
   },
@@ -279,7 +279,7 @@ export const opportunities: Opportunity[] = [
     description:
       "Quest procures logistics/courier services corporately and runs an active supplier-diversity program that tracks diverse-supplier spend. Richmond-area patient service centers generate daily specimen logistics. Value is CSL-estimated annual potential.",
     whyItFits:
-      "SDVOSB + minority-owned status is a scored advantage inside a corporate supplier-diversity program; overflow, STAT, and rural-edge routes are the realistic entry point.",
+      "SWaM Small + Minority-Owned certification is a scored advantage inside a corporate supplier-diversity program; overflow, STAT, and rural-edge routes are the realistic entry point.",
     suggestedAction:
       "Register in Quest's supplier portal and flag diversity status; the Application Assistant has the profile data staged.",
   },

@@ -58,8 +58,26 @@ export interface Opportunity {
 
 export const IS_SAMPLE_DATA = false;
 
-/** ISO date of the most recent sweep — drives the "New" badge in the UI. */
-export const LATEST_RUN_ISO = "2026-07-28";
+/**
+ * Every sweep the engine has run, oldest first. This is what gives each
+ * opportunity a permanent W1 / W2 label — "New this week" alone would silently
+ * become wrong on the next run, whereas "W2" stays true forever.
+ * Add one entry per run.
+ */
+export const SWEEPS = [
+  { run: 1, label: "W1", iso: "2026-07-21", weekOf: "2026-07-20" },
+  { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27" },
+] as const;
+
+export type Sweep = (typeof SWEEPS)[number];
+
+/** ISO date of the most recent sweep. */
+export const LATEST_RUN_ISO = SWEEPS[SWEEPS.length - 1].iso;
+
+/** Which sweep first surfaced this opportunity. */
+export function sweepFor(o: Pick<Opportunity, "addedISO">): Sweep | undefined {
+  return SWEEPS.find((s) => s.iso === o.addedISO);
+}
 
 export const opportunities: Opportunity[] = [
   // ───────────────────────── Run 2 — 2026-07-28 ─────────────────────────

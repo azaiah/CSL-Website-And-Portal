@@ -14,6 +14,8 @@ import {
 import {
   opportunities as allOpps,
   LATEST_RUN_ISO,
+  SWEEPS,
+  sweepFor,
   type Opportunity,
   type OpportunityStatus,
 } from "@/lib/data/opportunities";
@@ -47,19 +49,17 @@ const statuses = ["All", "Found", "Qualified", "Contacted", "Meeting", "Bid", "W
 export function OpportunitiesTable() {
   const [source, setSource] = useState("All");
   const [status, setStatus] = useState("All");
-  const [onlyNew, setOnlyNew] = useState(false);
+  const [sweep, setSweep] = useState("All");
   const [sortKey, setSortKey] = useState<SortKey>("fitScore");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selected, setSelected] = useState<Opportunity | null>(null);
-
-  const newCount = useMemo(() => allOpps.filter(isNew).length, []);
 
   const rows = useMemo(() => {
     let r = allOpps.filter(
       (o) =>
         (source === "All" || o.source === source) &&
         (status === "All" || o.status === status) &&
-        (!onlyNew || isNew(o))
+        (sweep === "All" || o.addedISO === sweep)
     );
     r = [...r].sort((a, b) => {
       let cmp = 0;
@@ -68,7 +68,7 @@ export function OpportunitiesTable() {
       return sortDir === "asc" ? cmp : -cmp;
     });
     return r;
-  }, [source, status, onlyNew, sortKey, sortDir]);
+  }, [source, status, sweep, sortKey, sortDir]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -107,29 +107,26 @@ export function OpportunitiesTable() {
           </select>
         </label>
 
-        {/* Quick filter for whatever the latest sweep added, so Darren can see
-            what changed without re-reading the whole board. */}
-        <button
-          type="button"
-          onClick={() => setOnlyNew((v) => !v)}
-          aria-pressed={onlyNew}
-          className={cn(
-            "rounded-xl border px-3 py-2 text-sm font-medium transition-colors",
-            onlyNew
-              ? "border-gold bg-gold text-navy-deep"
-              : "border-navy/15 bg-white text-navy hover:bg-surface"
-          )}
-        >
-          New this week
-          <span
-            className={cn(
-              "ml-2 rounded-full px-1.5 py-0.5 text-xs font-bold",
-              onlyNew ? "bg-navy-deep text-gold" : "bg-navy/10 text-navy"
-            )}
+        {/* Filter by which weekly sweep surfaced the opportunity, so it stays
+            obvious what run 2 added versus what carried over from run 1. */}
+        <label className="text-sm">
+          <span className="mb-1.5 block font-medium text-navy-deep">Sweep</span>
+          <select
+            value={sweep}
+            onChange={(e) => setSweep(e.target.value)}
+            className="rounded-xl border border-navy/15 bg-white px-3 py-2 text-sm"
           >
-            {newCount}
-          </span>
-        </button>
+            <option value="All">All sweeps</option>
+            {[...SWEEPS]
+              .reverse()
+              .map((s) => (
+                <option key={s.iso} value={s.iso}>
+                  {s.label} — {formatDate(s.iso)} (
+                  {allOpps.filter((o) => o.addedISO === s.iso).length})
+                </option>
+              ))}
+          </select>
+        </label>
 
         <p className="ml-auto text-sm text-ink/50">
           {rows.length} {rows.length === 1 ? "opportunity" : "opportunities"}
@@ -168,9 +165,19 @@ export function OpportunitiesTable() {
                       wrap these instead of truncating — the full opportunity
                       name and agency stay readable. */}
                   <p className="break-words font-medium text-navy-deep">
-                    {isNew(o) && (
-                      <span className="mr-2 inline-flex rounded-full bg-gold px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-navy-deep">
-                        New
+                    {sweepFor(o) && (
+                      <span
+                        title={`Found on the ${formatDate(
+                          sweepFor(o)!.iso
+                        )} sweep`}
+                        className={cn(
+                          "mr-2 inline-flex rounded-full px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide",
+                          isNew(o)
+                            ? "bg-gold text-navy-deep"
+                            : "bg-navy/10 text-navy/70"
+                        )}
+                      >
+                        {sweepFor(o)!.label}
                       </span>
                     )}
                     {o.title}
@@ -231,9 +238,17 @@ export function OpportunitiesTable() {
                     <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", statusColors[selected.status])}>
                       {selected.status}
                     </span>
-                    {isNew(selected) && (
-                      <span className="inline-flex rounded-full bg-gold px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-navy-deep">
-                        New this week
+                    {sweepFor(selected) && (
+                      <span
+                        className={cn(
+                          "inline-flex rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wide",
+                          isNew(selected)
+                            ? "bg-gold text-navy-deep"
+                            : "bg-navy/10 text-navy/70"
+                        )}
+                      >
+                        {sweepFor(selected)!.label} sweep
+                        {isNew(selected) ? " · new" : ""}
                       </span>
                     )}
                   </div>

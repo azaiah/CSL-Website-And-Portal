@@ -174,11 +174,6 @@ export function EntryForm({
 
         <form
           onSubmit={handleSubmit}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && e.target instanceof HTMLInputElement) {
-              handleSubmit();
-            }
-          }}
           className="flex-1 space-y-5 px-6 py-6"
         >
           {/* Date */}

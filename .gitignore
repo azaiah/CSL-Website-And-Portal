@@ -12,3 +12,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Scratch folder for files git could not unlink under OneDrive
+_to_delete/

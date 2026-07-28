@@ -126,3 +126,27 @@ export function isUntouched(card: {
 }): boolean {
   return card.stage === "Found" && !card.isLatestSweep;
 }
+
+/**
+ * "Needs attention", defined once for every view.
+ *
+ * The dashboard banner and the pipeline's attention lens must flag the *same
+ * records*, so neither is allowed to spell this rule out for itself — widening
+ * ATTENTION_KEYS has to move both numbers together or the portal starts
+ * contradicting itself.
+ *
+ * Before `today` resolves on the client this falls back to the untouched check
+ * alone, which needs no date.
+ */
+export function needsAttention(
+  card: { stage: string; dueDate: string; isLatestSweep: boolean },
+  today: string | null
+): boolean {
+  // Won/Lost is settled; it should never nag.
+  if (card.stage === "Won/Lost") return false;
+  const health = healthFor(card.dueDate, today);
+  return (
+    (health !== null && ATTENTION_KEYS.includes(health.key)) ||
+    isUntouched(card)
+  );
+}

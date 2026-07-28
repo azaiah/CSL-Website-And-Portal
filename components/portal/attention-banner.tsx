@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { pipelineCards } from "@/lib/data/pipeline";
-import { healthFor, todayISO, isUntouched } from "@/lib/health";
+import { healthFor, todayISO, isUntouched, needsAttention } from "@/lib/health";
 import { cn } from "@/lib/utils";
 
 export function AttentionBanner() {
@@ -28,22 +28,21 @@ export function AttentionBanner() {
     let thisWeek = 0;
     let untouched = 0;
 
+    // One pass, one rule. `flagged` counts distinct records via the shared
+    // needsAttention() so this headline number is the pipeline's attention
+    // lens by construction, not by two tallies that happen to agree. The
+    // three sub-counts below it are a breakdown, not a partition — an item
+    // that is both overdue and untouched appears in two of them.
+    let flagged = 0;
+
     for (const c of pipelineCards) {
       if (c.stage === "Won/Lost") continue;
+      if (needsAttention(c, today)) flagged++;
       const h = healthFor(c.dueDate, today);
       if (h?.key === "expired") overdue++;
       else if (h?.key === "urgent") thisWeek++;
       if (isUntouched(c)) untouched++;
     }
-    // An item can be both overdue and untouched; count distinct records so the
-    // total matches the pipeline's own "Needs attention" lens exactly.
-    const flagged = pipelineCards.filter((c) => {
-      if (c.stage === "Won/Lost") return false;
-      const h = healthFor(c.dueDate, today);
-      return (
-        (h && (h.key === "expired" || h.key === "urgent")) || isUntouched(c)
-      );
-    }).length;
 
     return { overdue, thisWeek, untouched, flagged };
   }, [today]);

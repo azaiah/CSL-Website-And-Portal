@@ -12,6 +12,7 @@ import {
   Phase1Banner,
   ComingOnlineBadge,
 } from "@/components/portal/portal-ui";
+import { AttentionBanner } from "@/components/portal/attention-banner";
 import { opportunityStats } from "@/lib/data/opportunities";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { agents } from "@/lib/agents";
@@ -62,6 +63,9 @@ export default function DashboardPage() {
           hint="Est. contract value"
         />
       </div>
+
+      {/* Same records and thresholds the pipeline board flags — see lib/health. */}
+      <AttentionBanner />
 
       <Phase1Banner />
 

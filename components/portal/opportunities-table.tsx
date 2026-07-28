@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowUpDown,
@@ -19,6 +19,7 @@ import {
   type Opportunity,
   type OpportunityStatus,
 } from "@/lib/data/opportunities";
+import { healthFor, todayISO } from "@/lib/health";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
 type SortKey = "fitScore" | "dueDate" | "estValue";
@@ -53,6 +54,12 @@ export function OpportunitiesTable() {
   const [sortKey, setSortKey] = useState<SortKey>("fitScore");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selected, setSelected] = useState<Opportunity | null>(null);
+
+  // Client-only: this page is statically generated, so a build-time "today"
+  // would be wrong for every visitor after day one. Shared with the pipeline
+  // board via lib/health so both views agree on what "overdue" means.
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => setToday(todayISO()), []);
 
   const rows = useMemo(() => {
     let r = allOpps.filter(
@@ -188,12 +195,28 @@ export function OpportunitiesTable() {
                 <td className="px-4 py-3 font-mono text-xs text-ink/70">{o.naics}</td>
                 <td className="px-4 py-3 text-ink/70">{o.location}</td>
                 <td className="px-4 py-3 text-ink/70">
-                  {formatDate(o.dueDate)}
+                  <span className="whitespace-nowrap">{formatDate(o.dueDate)}</span>
                   {o.hardDeadline && (
-                    <span className="ml-1.5 inline-flex items-center rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-600">
+                    <span
+                      title="Published deadline, not an internal target"
+                      className="ml-1.5 inline-flex items-center rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-purple-700"
+                    >
                       Hard
                     </span>
                   )}
+                  {(() => {
+                    const h = healthFor(o.dueDate, today);
+                    return h ? (
+                      <span
+                        className={cn(
+                          "mt-1 block w-fit rounded px-1.5 py-0.5 text-[10px] font-semibold",
+                          h.chip
+                        )}
+                      >
+                        {h.label}
+                      </span>
+                    ) : null;
+                  })()}
                 </td>
                 <td className="px-4 py-3">
                   <span className={cn("inline-flex h-7 w-9 items-center justify-center rounded-md text-xs font-bold", fitColor(o.fitScore))}>

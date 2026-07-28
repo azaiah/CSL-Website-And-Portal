@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, type DragEvent } from "react";
-import { GripVertical } from "lucide-react";
+import { useEffect, useMemo, useState, type DragEvent } from "react";
+import { GripVertical, AlertTriangle, Sparkles, Clock, Layers } from "lucide-react";
 import {
   pipelineCards as seed,
   PIPELINE_STAGES,
   type PipelineCard,
   type PipelineStage,
 } from "@/lib/data/pipeline";
+import { SWEEPS } from "@/lib/data/opportunities";
+import {
+  healthFor,
+  todayISO,
+  isUntouched,
+  ATTENTION_KEYS,
+  type Health,
+} from "@/lib/health";
 import { formatCurrency, cn } from "@/lib/utils";
 
 const stageAccent: Record<PipelineStage, string> = {
@@ -19,20 +27,81 @@ const stageAccent: Record<PipelineStage, string> = {
   "Won/Lost": "border-t-ink",
 };
 
+/** Board-level views. Each answers a different question about the same cards. */
+type Lens = "all" | "new" | "carried" | "attention";
+
+const LENSES: { key: Lens; label: string; icon: typeof Layers; hint: string }[] = [
+  { key: "all", label: "All", icon: Layers, hint: "Everything on the board" },
+  {
+    key: "new",
+    label: "New this sweep",
+    icon: Sparkles,
+    hint: "Surfaced by the most recent run",
+  },
+  {
+    key: "carried",
+    label: "Carried over",
+    icon: Clock,
+    hint: "Found on an earlier run and still open",
+  },
+  {
+    key: "attention",
+    label: "Needs attention",
+    icon: AlertTriangle,
+    hint: "Overdue, due within 7 days, or never actioned",
+  },
+];
+
 export function PipelineBoard() {
   const [cards, setCards] = useState<PipelineCard[]>(seed);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overStage, setOverStage] = useState<PipelineStage | null>(null);
+  const [lens, setLens] = useState<Lens>("all");
 
-  function onDragStart(id: string) {
-    setDragId(id);
-  }
+  // Resolved after mount only. These pages are statically generated, so a
+  // build-time "today" would be wrong for every visitor after day one.
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => setToday(todayISO()), []);
+
+  /** Everything the board needs to know about one card, computed once. */
+  const decorated = useMemo(
+    () =>
+      cards.map((c) => {
+        const closed = c.stage === "Won/Lost";
+        const health = healthFor(c.dueDate, today, closed);
+        const untouched = isUntouched(c);
+        const needsAttention =
+          !closed &&
+          ((health && ATTENTION_KEYS.includes(health.key)) || untouched);
+        return { card: c, health, untouched, needsAttention };
+      }),
+    [cards, today]
+  );
+
+  const counts = useMemo(
+    () => ({
+      all: decorated.length,
+      new: decorated.filter((d) => d.card.isLatestSweep).length,
+      carried: decorated.filter((d) => !d.card.isLatestSweep).length,
+      attention: decorated.filter((d) => d.needsAttention).length,
+    }),
+    [decorated]
+  );
+
+  const visible = useMemo(
+    () =>
+      decorated.filter((d) => {
+        if (lens === "new") return d.card.isLatestSweep;
+        if (lens === "carried") return !d.card.isLatestSweep;
+        if (lens === "attention") return d.needsAttention;
+        return true;
+      }),
+    [decorated, lens]
+  );
 
   function onDrop(stage: PipelineStage) {
     if (dragId) {
-      setCards((cs) =>
-        cs.map((c) => (c.id === dragId ? { ...c, stage } : c))
-      );
+      setCards((cs) => cs.map((c) => (c.id === dragId ? { ...c, stage } : c)));
     }
     setDragId(null);
     setOverStage(null);
@@ -44,80 +113,235 @@ export function PipelineBoard() {
   }
 
   return (
-    // `min-w-0` keeps the wide column strip scrolling inside this box rather
-    // than stretching the page sideways on a phone.
-    <div className="flex min-w-0 gap-4 overflow-x-auto pb-4">
-      {PIPELINE_STAGES.map((stage) => {
-        const stageCards = cards.filter((c) => c.stage === stage);
-        const total = stageCards.reduce((s, c) => s + c.estValue, 0);
-        return (
-          <div
-            key={stage}
-            onDragOver={(e) => allowDrop(e, stage)}
-            onDrop={() => onDrop(stage)}
-            className={cn(
-              "flex w-72 shrink-0 flex-col rounded-2xl border border-t-4 border-navy/10 bg-surface p-3 transition-colors",
-              stageAccent[stage],
-              overStage === stage && "bg-gold/5 ring-2 ring-gold/40"
-            )}
-          >
-            <div className="flex items-center justify-between px-1 pb-3">
-              <h3 className="text-sm font-semibold text-navy-deep">{stage}</h3>
-              <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-ink/60">
-                {stageCards.length}
+    <div className="space-y-4">
+      {/* Lenses — the same cards, filtered by the question being asked. */}
+      <div className="flex flex-wrap items-center gap-2">
+        {LENSES.map((l) => {
+          const active = lens === l.key;
+          const count = counts[l.key];
+          const alarm = l.key === "attention" && count > 0;
+          return (
+            <button
+              key={l.key}
+              type="button"
+              onClick={() => setLens(l.key)}
+              aria-pressed={active}
+              title={l.hint}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-sm font-medium transition-colors",
+                active
+                  ? "border-navy-deep bg-navy-deep text-white"
+                  : alarm
+                    ? "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                    : "border-navy/15 bg-white text-navy hover:bg-surface"
+              )}
+            >
+              <l.icon className="h-3.5 w-3.5" aria-hidden />
+              {l.label}
+              <span
+                className={cn(
+                  "rounded-full px-1.5 text-xs font-bold",
+                  active
+                    ? "bg-white/20 text-white"
+                    : alarm
+                      ? "bg-red-200/70 text-red-800"
+                      : "bg-navy/10 text-navy"
+                )}
+              >
+                {count}
               </span>
-            </div>
+            </button>
+          );
+        })}
 
-            <div className="flex flex-1 flex-col gap-2.5">
-              {stageCards.map((card) => (
-                <article
-                  key={card.id}
-                  draggable
-                  onDragStart={() => onDragStart(card.id)}
-                  onDragEnd={() => {
-                    setDragId(null);
-                    setOverStage(null);
-                  }}
-                  className={cn(
-                    "group cursor-grab rounded-xl border border-navy/10 bg-white p-3 shadow-sm transition-all active:cursor-grabbing",
-                    dragId === card.id && "opacity-50"
+        <p className="ml-auto text-xs text-ink/50">
+          Drag a card to move it between stages.
+        </p>
+      </div>
+
+      {/* Legend — the colour rail is meaningless without it. */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-navy/10 bg-surface px-3 py-2 text-xs text-ink/60">
+        <span className="font-semibold text-navy-deep">Deadline</span>
+        <LegendDot className="bg-red-500" label="Overdue" />
+        <LegendDot className="bg-gold" label="Within 7 days" />
+        <LegendDot className="bg-blue-400" label="Within 3 weeks" />
+        <LegendDot className="bg-success" label="On track" />
+        <span className="ml-2 font-semibold text-navy-deep">Sweep</span>
+        {[...SWEEPS].reverse().map((s) => (
+          <span key={s.iso} className="inline-flex items-center gap-1">
+            <span
+              className={cn(
+                "rounded px-1 py-0.5 text-[10px] font-bold",
+                s.iso === SWEEPS[SWEEPS.length - 1].iso
+                  ? "bg-gold text-navy-deep"
+                  : "bg-navy/10 text-navy/70"
+              )}
+            >
+              {s.label}
+            </span>
+            {s.label === SWEEPS[SWEEPS.length - 1].label ? "newest" : "earlier"}
+          </span>
+        ))}
+        <span className="inline-flex items-center gap-1">
+          <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-bold uppercase text-red-700">
+            Untouched
+          </span>
+          never actioned since an earlier sweep
+        </span>
+      </div>
+
+      {/* Board */}
+      {/* `min-w-0` keeps the wide column strip scrolling inside this box rather
+          than stretching the page sideways on a phone. */}
+      <div className="flex min-w-0 gap-4 overflow-x-auto pb-4">
+        {PIPELINE_STAGES.map((stage) => {
+          const stageCards = visible.filter((d) => d.card.stage === stage);
+          const total = stageCards.reduce((s, d) => s + d.card.estValue, 0);
+          const flagged = stageCards.filter((d) => d.needsAttention).length;
+          return (
+            <div
+              key={stage}
+              onDragOver={(e) => allowDrop(e, stage)}
+              onDrop={() => onDrop(stage)}
+              className={cn(
+                "flex w-72 shrink-0 flex-col rounded-2xl border border-t-4 border-navy/10 bg-surface p-3 transition-colors",
+                stageAccent[stage],
+                overStage === stage && "bg-gold/5 ring-2 ring-gold/40"
+              )}
+            >
+              <div className="flex items-center justify-between px-1 pb-3">
+                <h3 className="text-sm font-semibold text-navy-deep">{stage}</h3>
+                <div className="flex items-center gap-1.5">
+                  {flagged > 0 && (
+                    <span
+                      title={`${flagged} need attention`}
+                      className="inline-flex items-center gap-1 rounded-full bg-red-100 px-1.5 py-0.5 text-xs font-bold text-red-700"
+                    >
+                      <AlertTriangle className="h-3 w-3" aria-hidden />
+                      {flagged}
+                    </span>
                   )}
-                >
-                  <div className="flex items-start gap-2">
-                    <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-ink/25 group-hover:text-ink/40" aria-hidden />
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium leading-snug text-navy-deep">
-                        {card.title}
-                      </p>
-                      {/* Wrap the agency name so it is not cut off mid-word. */}
-                      <p className="mt-1 break-words text-xs text-ink/50">
-                        {card.agency}
-                      </p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-xs font-semibold text-success">
-                          {formatCurrency(card.estValue)}
-                        </span>
-                        <span className="rounded bg-navy-deep px-1.5 py-0.5 text-[10px] font-bold text-gold">
-                          {card.fitScore}
-                        </span>
+                  <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-ink/60">
+                    {stageCards.length}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-1 flex-col gap-2.5">
+                {stageCards.map(({ card, health, untouched }) => (
+                  <article
+                    key={card.id}
+                    draggable
+                    onDragStart={() => setDragId(card.id)}
+                    onDragEnd={() => {
+                      setDragId(null);
+                      setOverStage(null);
+                    }}
+                    className={cn(
+                      "group relative cursor-grab overflow-hidden rounded-xl border border-navy/10 bg-white p-3 pl-4 shadow-sm transition-all active:cursor-grabbing",
+                      dragId === card.id && "opacity-50"
+                    )}
+                  >
+                    {/* Deadline rail — readable at a glance down a column. */}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute left-0 top-0 h-full w-1.5",
+                        health ? health.rail : "bg-navy/10"
+                      )}
+                    />
+
+                    <div className="flex items-start gap-2">
+                      <GripVertical
+                        className="mt-0.5 h-4 w-4 shrink-0 text-ink/25 group-hover:text-ink/40"
+                        aria-hidden
+                      />
+                      <div className="min-w-0 flex-1">
+                        {/* Sweep + state tags */}
+                        <div className="mb-1 flex flex-wrap items-center gap-1">
+                          {card.sweepLabel && (
+                            <span
+                              className={cn(
+                                "rounded px-1 py-0.5 text-[10px] font-bold",
+                                card.isLatestSweep
+                                  ? "bg-gold text-navy-deep"
+                                  : "bg-navy/10 text-navy/70"
+                              )}
+                            >
+                              {card.sweepLabel}
+                            </span>
+                          )}
+                          {untouched && (
+                            <span className="rounded bg-red-100 px-1 py-0.5 text-[10px] font-bold uppercase tracking-wide text-red-700">
+                              Untouched
+                            </span>
+                          )}
+                          {card.hardDeadline && (
+                            <span
+                              title="Published deadline, not an internal target"
+                              className="rounded bg-purple-100 px-1 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-700"
+                            >
+                              Hard date
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-sm font-medium leading-snug text-navy-deep">
+                          {card.title}
+                        </p>
+                        {/* Wrap the agency name so it is not cut off mid-word. */}
+                        <p className="mt-1 break-words text-xs text-ink/50">
+                          {card.agency}
+                        </p>
+
+                        {health && (
+                          <p className="mt-1.5">
+                            <span
+                              className={cn(
+                                "inline-flex rounded px-1.5 py-0.5 text-[10px] font-semibold",
+                                health.chip
+                              )}
+                            >
+                              {health.label}
+                            </span>
+                          </p>
+                        )}
+
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-xs font-semibold text-success">
+                            {formatCurrency(card.estValue)}
+                          </span>
+                          <span className="rounded bg-navy-deep px-1.5 py-0.5 text-[10px] font-bold text-gold">
+                            {card.fitScore}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                  </article>
+                ))}
+                {stageCards.length === 0 && (
+                  <div className="rounded-xl border border-dashed border-navy/15 py-8 text-center text-xs text-ink/40">
+                    {lens === "all" ? "Drop here" : "Nothing in this view"}
                   </div>
-                </article>
-              ))}
-              {stageCards.length === 0 && (
-                <div className="rounded-xl border border-dashed border-navy/15 py-8 text-center text-xs text-ink/40">
-                  Drop here
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            <p className="mt-3 border-t border-navy/10 px-1 pt-2 text-xs text-ink/50">
-              {formatCurrency(total)} total
-            </p>
-          </div>
-        );
-      })}
+              <p className="mt-3 border-t border-navy/10 px-1 pt-2 text-xs text-ink/50">
+                {formatCurrency(total)} total
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
+  );
+}
+
+function LegendDot({ className, label }: { className: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span className={cn("h-2 w-2 rounded-full", className)} aria-hidden />
+      {label}
+    </span>
   );
 }

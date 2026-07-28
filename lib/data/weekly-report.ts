@@ -6,6 +6,8 @@
  * ---------------------------------------------------------------------------
  */
 
+import { outreachStats } from "./outreach";
+
 export interface WeeklyMetric {
   label: string;
   value: string;
@@ -16,13 +18,31 @@ export interface WeeklyReport {
   weekOf: string;
   summary: string;
   metrics: WeeklyMetric[];
-  newOpportunities: { title: string; source: string; fitScore: number }[];
-  topLeads: { title: string; fitScore: number; note: string }[];
+  newOpportunities: {
+    title: string;
+    source: string;
+    fitScore: number;
+    /** Links the headline back to the full record so it can be opened. */
+    opportunityId?: string;
+  }[];
+  topLeads: {
+    title: string;
+    fitScore: number;
+    note: string;
+    opportunityId?: string;
+  }[];
   outreach: { drafted: number; sent: number; responses: number };
   deadlines: { title: string; dueDate: string }[];
   recommendedMoves: string[];
   corrections?: { item: string; detail: string }[];
 }
+
+/**
+ * Derived once, here, so the briefing cannot quote a different outreach number
+ * than the dashboard or the opportunity detail. Previously these were three
+ * literals that had to be edited in lockstep by hand.
+ */
+const outreach = outreachStats();
 
 export const weeklyReport: WeeklyReport = {
   weekOf: "2026-07-27",
@@ -31,7 +51,14 @@ export const weeklyReport: WeeklyReport = {
   metrics: [
     { label: "New opportunities found", value: "14", delta: "Board now at 29" },
     { label: "Top-scored leads (80+ fit)", value: "14" },
-    { label: "Outreach drafted", value: "5", delta: "Still unsent from run 1" },
+    {
+      label: "Outreach drafted",
+      value: String(outreach.drafted),
+      delta:
+        outreach.sent === 0
+          ? "Still unsent from run 1"
+          : `${outreach.sent} sent`,
+    },
     { label: "Pipeline value", value: "$2.07M", delta: "Up from $1.59M" },
   ],
   newOpportunities: [
@@ -39,56 +66,66 @@ export const weeklyReport: WeeklyReport = {
       title: "Virginia DSS — Statewide Courier Services (Future Procurement, issues 8/1)",
       source: "eVA",
       fitScore: 94,
+      opportunityId: "OPP-2026-016",
     },
     {
       title: "Richmond Gastroenterology — 7-Site Biopsy & Endoscopy Route",
       source: "Commercial",
       fitScore: 88,
+      opportunityId: "OPP-2026-017",
     },
     {
       title: "Virginia Urology — 7-Site Pathology, Pharmacy & Surgery Center Route",
       source: "Commercial",
       fitScore: 87,
+      opportunityId: "OPP-2026-018",
     },
     {
       title: "Dermatology Associates of Virginia — Mohs STAT Specimen Runs",
       source: "Commercial",
       fitScore: 86,
+      opportunityId: "OPP-2026-019",
     },
     {
       title: "Owens & Minor — Supplier Diversity Registration (Mechanicsville HQ)",
       source: "Commercial",
       fitScore: 79,
+      opportunityId: "OPP-2026-020",
     },
   ],
   topLeads: [
     {
       title: "Virginia DSS — Statewide Courier Services (OGS-27-005)",
       fitScore: 94,
+      opportunityId: "OPP-2026-016",
       note: "The only live public bid on the board and it issues August 1. Buyer Pedro Andrade, pedro.andrade@dss.virginia.gov, (804) 726-7184. Contact him BEFORE the solicitation drops — ask whether it splits into regional lots and whether SWaM preference applies. One van cannot cover the state, so the play is a regional lot or a teaming position.",
     },
     {
       title: "GENETWORx — Daily Specimen Routes",
       fitScore: 90,
+      opportunityId: "OPP-2026-003",
       note: "Still the strongest commercial lead, still not contacted. CLIA lab 15 minutes away in Glen Allen. Call (800) 858-5909 — the draft has been ready for seven days.",
     },
     {
       title: "Virginia Cancer Institute — 6-Site Route",
       fitScore: 89,
+      opportunityId: "OPP-2026-004",
       note: "Independent oncology group, 6+ metro sites; chemo safe-handling training is CSL's differentiator. Business office (804) 673-2024. Draft also still awaiting approval.",
     },
     {
       title: "ModivCare NEMT Enrollment",
       fitScore: 88,
+      opportunityId: "OPP-2026-002",
       note: "One enrollment covers Medicaid FFS plus 4 of 5 MCOs. Correction this week: the DMV filing is Form OA-151, not OA-150 — OA-150 is the broker application and would have been rejected. DMV now accepts it online. $350k liability minimum, $25k bond, $50 fee.",
     },
     {
       title: "Richmond Gastroenterology Associates",
       fitScore: 88,
+      opportunityId: "OPP-2026-017",
       note: "New this week and the best commercial add: seven sites plus their own endoscopy center, which means high, scheduled biopsy volume. Independent and physician-owned, so they choose their own vendor. (804) 330-4021.",
     },
   ],
-  outreach: { drafted: 5, sent: 0, responses: 0 },
+  outreach,
   deadlines: [
     { title: "Contact VDSS buyer before solicitation issues (OGS-27-005)", dueDate: "2026-08-01" },
     { title: "Medzoomer courier signup — OVERDUE from run 1", dueDate: "2026-07-31" },

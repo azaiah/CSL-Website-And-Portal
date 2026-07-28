@@ -13,6 +13,7 @@ import {
   ComingOnlineBadge,
 } from "@/components/portal/portal-ui";
 import { AttentionBanner } from "@/components/portal/attention-banner";
+import { OpportunityButton } from "@/components/portal/opportunity-trigger";
 import { opportunityStats } from "@/lib/data/opportunities";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { agents } from "@/lib/agents";
@@ -117,9 +118,14 @@ export default function DashboardPage() {
                 >
                   {/* Wrap the lead title instead of cutting it off with an
                       ellipsis, so the whole name is readable on a phone. */}
-                  <span className="min-w-0 break-words text-sm text-ink/80">
-                    {lead.title}
-                  </span>
+                  <OpportunityButton
+                    opportunityId={lead.opportunityId}
+                    className="min-w-0"
+                  >
+                    <span className="break-words text-sm text-ink/80">
+                      {lead.title}
+                    </span>
+                  </OpportunityButton>
                   <span className="shrink-0 rounded-full bg-navy-deep px-2 py-0.5 text-xs font-semibold text-gold">
                     {lead.fitScore}
                   </span>

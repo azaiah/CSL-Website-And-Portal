@@ -8,6 +8,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
+import { OpportunityButton } from "@/components/portal/opportunity-trigger";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { formatDate } from "@/lib/utils";
 
@@ -56,9 +57,11 @@ export default function WeeklyReportPage() {
               <li key={o.title} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="min-w-0">
                   {/* Wrap long opportunity names so they stay fully readable. */}
-                  <p className="break-words text-sm font-medium text-navy-deep">
-                    {o.title}
-                  </p>
+                  <OpportunityButton opportunityId={o.opportunityId}>
+                    <span className="break-words text-sm font-medium text-navy-deep">
+                      {o.title}
+                    </span>
+                  </OpportunityButton>
                   <p className="text-xs text-ink/50">{o.source}</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-navy-deep px-2 py-0.5 text-xs font-semibold text-gold">
@@ -75,7 +78,11 @@ export default function WeeklyReportPage() {
             {r.topLeads.map((l) => (
               <li key={l.title} className="rounded-xl border border-navy/10 p-3">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="text-sm font-medium text-navy-deep">{l.title}</p>
+                  <OpportunityButton opportunityId={l.opportunityId}>
+                    <span className="break-words text-sm font-medium text-navy-deep">
+                      {l.title}
+                    </span>
+                  </OpportunityButton>
                   <span className="shrink-0 rounded-full bg-success/10 px-2 py-0.5 text-xs font-semibold text-success">
                     {l.fitScore}
                   </span>

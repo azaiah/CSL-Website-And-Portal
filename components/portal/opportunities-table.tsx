@@ -1,44 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowUpDown,
-  X,
-  MapPin,
-  Calendar,
-  Building2,
-  Lightbulb,
-  AlertCircle,
-} from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import {
   opportunities as allOpps,
   LATEST_RUN_ISO,
   SWEEPS,
   sweepFor,
   type Opportunity,
-  type OpportunityStatus,
 } from "@/lib/data/opportunities";
 import { healthFor, todayISO } from "@/lib/health";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { OpportunityModal } from "@/components/portal/opportunity-modal";
+import {
+  OPPORTUNITY_STATUS_STYLE,
+  fitColor,
+} from "@/components/portal/opportunity-detail";
+import { formatDate, cn } from "@/lib/utils";
 
 type SortKey = "fitScore" | "dueDate" | "estValue";
-
-const statusColors: Record<OpportunityStatus, string> = {
-  Found: "bg-navy/10 text-navy",
-  Qualified: "bg-success/10 text-success",
-  Contacted: "bg-gold/15 text-[#8a6c1f]",
-  Meeting: "bg-blue-100 text-blue-700",
-  Bid: "bg-purple-100 text-purple-700",
-  Won: "bg-success/15 text-success",
-  Lost: "bg-red-100 text-red-600",
-};
-
-function fitColor(score: number) {
-  if (score >= 85) return "bg-success text-white";
-  if (score >= 70) return "bg-gold text-navy-deep";
-  return "bg-navy/15 text-navy";
-}
 
 function isNew(o: Opportunity) {
   return o.addedISO === LATEST_RUN_ISO;
@@ -53,7 +32,9 @@ export function OpportunitiesTable() {
   const [sweep, setSweep] = useState("All");
   const [sortKey, setSortKey] = useState<SortKey>("fitScore");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [selected, setSelected] = useState<Opportunity | null>(null);
+  // Only the id — the modal resolves the record, so there is no second copy of
+  // an opportunity living in component state.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // Client-only: this page is statically generated, so a build-time "today"
   // would be wrong for every visitor after day one. Shared with the pipeline
@@ -164,7 +145,7 @@ export function OpportunitiesTable() {
             {rows.map((o) => (
               <tr
                 key={o.id}
-                onClick={() => setSelected(o)}
+                onClick={() => setSelectedId(o.id)}
                 className="cursor-pointer transition-colors hover:bg-surface"
               >
                 <td className="max-w-xs px-4 py-3">
@@ -205,7 +186,14 @@ export function OpportunitiesTable() {
                     </span>
                   )}
                   {(() => {
-                    const h = healthFor(o.dueDate, today);
+                    // Won/Lost is settled — pass `closed` so a finished deal
+                    // reads "Closed" here exactly as it does on the board,
+                    // rather than nagging about a date nobody has to hit.
+                    const h = healthFor(
+                      o.dueDate,
+                      today,
+                      o.status === "Won" || o.status === "Lost"
+                    );
                     return h ? (
                       <span
                         className={cn(
@@ -224,7 +212,7 @@ export function OpportunitiesTable() {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", statusColors[o.status])}>
+                  <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", OPPORTUNITY_STATUS_STYLE[o.status])}>
                     {o.status}
                   </span>
                 </td>
@@ -234,120 +222,12 @@ export function OpportunitiesTable() {
         </table>
       </div>
 
-      {/* Detail drawer */}
-      <AnimatePresence>
-        {selected && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-50 bg-navy-deep/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelected(null)}
-              aria-hidden
-            />
-            <motion.aside
-              className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col overflow-y-auto bg-white shadow-2xl"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              role="dialog"
-              aria-label="Opportunity details"
-            >
-              <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-navy/10 bg-white p-6">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", statusColors[selected.status])}>
-                      {selected.status}
-                    </span>
-                    {sweepFor(selected) && (
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wide",
-                          isNew(selected)
-                            ? "bg-gold text-navy-deep"
-                            : "bg-navy/10 text-navy/70"
-                        )}
-                      >
-                        {sweepFor(selected)!.label} sweep
-                        {isNew(selected) ? " · new" : ""}
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="mt-2 text-lg font-semibold text-navy-deep">
-                    {selected.title}
-                  </h2>
-                </div>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="rounded-lg p-1.5 text-ink/50 hover:bg-surface"
-                  aria-label="Close details"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="space-y-6 p-6">
-                <div className="grid grid-cols-2 gap-3">
-                  <Meta icon={Building2} label="Agency" value={selected.agency} />
-                  <Meta icon={MapPin} label="Location" value={selected.location} />
-                  <Meta
-                    icon={Calendar}
-                    label={selected.hardDeadline ? "Published deadline" : "Action by"}
-                    value={formatDate(selected.dueDate)}
-                  />
-                  <Meta icon={ArrowUpDown} label="Est. value" value={formatCurrency(selected.estValue)} />
-                </div>
-
-                {selected.hardDeadline && (
-                  <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" aria-hidden />
-                    <p className="text-xs text-red-700">
-                      This is a real published date from the issuing body — not
-                      an internal target. Missing it forfeits the opportunity.
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-3 rounded-xl bg-surface p-4">
-                  <span className={cn("flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold", fitColor(selected.fitScore))}>
-                    {selected.fitScore}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-navy-deep">Fit score</p>
-                    <p className="text-xs text-ink/60">
-                      Scored by the Lead Qualifier
-                    </p>
-                  </div>
-                </div>
-
-                <Detail title="Description">{selected.description}</Detail>
-                <Detail title="Why it fits">{selected.whyItFits}</Detail>
-
-                <div className="rounded-xl border border-gold/30 bg-gold/10 p-4">
-                  <p className="flex items-center gap-1.5 text-sm font-semibold text-[#8a6c1f]">
-                    <Lightbulb className="h-4 w-4" aria-hidden />
-                    Suggested next action
-                  </p>
-                  <p className="mt-1.5 text-sm text-ink/75">
-                    {selected.suggestedAction}
-                  </p>
-                </div>
-
-                <p className="text-xs text-ink/40">
-                  Live opportunity · ID {selected.id}
-                  {selected.addedISO
-                    ? ` · first found ${formatDate(selected.addedISO)}`
-                    : ""}
-                  . Found by the Opportunity Finder and scored by the Lead
-                  Qualifier.
-                </p>
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {/* The shared detail — same component the pipeline board and the
+          /portal/opportunities/[id] page render. */}
+      <OpportunityModal
+        opportunityId={selectedId}
+        onClose={() => setSelectedId(null)}
+      />
     </div>
   );
 }
@@ -361,27 +241,5 @@ function SortBtn({ label, active, onClick }: { label: string; active: boolean; o
       {label}
       <ArrowUpDown className="h-3.5 w-3.5" aria-hidden />
     </button>
-  );
-}
-
-function Meta({ icon: Icon, label, value }: { icon: typeof MapPin; label: string; value: string }) {
-  return (
-    <div>
-      <p className="flex items-center gap-1.5 text-xs text-ink/50">
-        <Icon className="h-3.5 w-3.5" aria-hidden />
-        {label}
-      </p>
-      {/* `break-words` so long agency or location names wrap instead of overflowing. */}
-      <p className="mt-0.5 break-words text-sm font-medium text-navy-deep">{value}</p>
-    </div>
-  );
-}
-
-function Detail({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <h3 className="text-sm font-semibold text-navy-deep">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-ink/70">{children}</p>
-    </div>
   );
 }

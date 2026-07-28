@@ -4,10 +4,9 @@ import {
   FileText,
   ClipboardCheck,
   ListChecks,
-  ArrowRight,
 } from "lucide-react";
-import Link from "next/link";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
+import { OpportunityChips } from "@/components/portal/opportunity-trigger";
 import {
   documents,
   actionPlan,
@@ -96,23 +95,30 @@ export default function DocumentsPage() {
               </ol>
             </div>
 
-            <div className="mt-4 flex items-center justify-between gap-3 pt-1">
+            {/* Linked opportunities open the shared detail in place, so the
+                document and the record it was prepared for stay one click
+                apart rather than a page apart. */}
+            {doc.relatedOpportunityIds &&
+              doc.relatedOpportunityIds.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                    {doc.relatedOpportunityIds.length} linked{" "}
+                    {doc.relatedOpportunityIds.length === 1
+                      ? "opportunity"
+                      : "opportunities"}
+                  </p>
+                  <OpportunityChips
+                    ids={doc.relatedOpportunityIds}
+                    className="mt-2"
+                  />
+                </div>
+              )}
+
+            <div className="mt-4 flex items-center gap-3 pt-1">
               <a href={doc.file} download className="btn-navy text-sm">
                 <Download className="h-4 w-4" aria-hidden />
                 Download
               </a>
-              {doc.relatedOpportunityIds && (
-                <Link
-                  href="/portal/opportunities"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline"
-                >
-                  {doc.relatedOpportunityIds.length} linked{" "}
-                  {doc.relatedOpportunityIds.length === 1
-                    ? "opportunity"
-                    : "opportunities"}
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </Link>
-              )}
             </div>
           </article>
         ))}

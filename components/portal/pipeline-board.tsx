@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState, type DragEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+  type PointerEvent as ReactPointerEvent,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { GripVertical, AlertTriangle, Sparkles, Clock, Layers } from "lucide-react";
 import {
   pipelineCards as seed,
@@ -13,10 +21,19 @@ import {
   healthFor,
   todayISO,
   isUntouched,
-  ATTENTION_KEYS,
+  needsAttention,
   type Health,
 } from "@/lib/health";
+import { OpportunityModal } from "@/components/portal/opportunity-modal";
 import { formatCurrency, cn } from "@/lib/utils";
+
+/**
+ * A drag that ends on the card it started from still fires a click in some
+ * browsers, which would pop the detail modal open every time someone reorders
+ * the board. Anything past this many pixels of pointer travel is a drag, not a
+ * click.
+ */
+const CLICK_SLOP_PX = 5;
 
 const stageAccent: Record<PipelineStage, string> = {
   Found: "border-t-navy",
@@ -57,6 +74,12 @@ export function PipelineBoard() {
   const [dragId, setDragId] = useState<string | null>(null);
   const [overStage, setOverStage] = useState<PipelineStage | null>(null);
   const [lens, setLens] = useState<Lens>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  // Refs, not state: these are read inside the click handler of the same
+  // gesture that sets them, so a re-render would be both wasted and too late.
+  const didDragRef = useRef(false);
+  const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
 
   // Resolved after mount only. These pages are statically generated, so a
   // build-time "today" would be wrong for every visitor after day one.
@@ -69,11 +92,14 @@ export function PipelineBoard() {
       cards.map((c) => {
         const closed = c.stage === "Won/Lost";
         const health = healthFor(c.dueDate, today, closed);
-        const untouched = isUntouched(c);
-        const needsAttention =
-          !closed &&
-          ((health && ATTENTION_KEYS.includes(health.key)) || untouched);
-        return { card: c, health, untouched, needsAttention };
+        return {
+          card: c,
+          health,
+          untouched: isUntouched(c),
+          // Shared rule — see lib/health. The dashboard banner counts this
+          // exact predicate, so the two can never disagree.
+          needsAttention: needsAttention(c, today),
+        };
       }),
     [cards, today]
   );
@@ -110,6 +136,17 @@ export function PipelineBoard() {
   function allowDrop(e: DragEvent, stage: PipelineStage) {
     e.preventDefault();
     if (overStage !== stage) setOverStage(stage);
+  }
+
+  /** Open the detail only for a genuine click — never at the end of a drag. */
+  function onCardClick(e: ReactMouseEvent, id: string) {
+    const start = pointerDownRef.current;
+    const travelled = start
+      ? Math.hypot(e.clientX - start.x, e.clientY - start.y)
+      : 0;
+    pointerDownRef.current = null;
+    if (didDragRef.current || travelled > CLICK_SLOP_PX) return;
+    setOpenId(id);
   }
 
   return (
@@ -232,13 +269,30 @@ export function PipelineBoard() {
                   <article
                     key={card.id}
                     draggable
-                    onDragStart={() => setDragId(card.id)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open details for ${card.title}`}
+                    onPointerDown={(e: ReactPointerEvent) => {
+                      pointerDownRef.current = { x: e.clientX, y: e.clientY };
+                    }}
+                    onDragStart={() => {
+                      didDragRef.current = true;
+                      setDragId(card.id);
+                    }}
                     onDragEnd={() => {
+                      didDragRef.current = false;
                       setDragId(null);
                       setOverStage(null);
                     }}
+                    onClick={(e) => onCardClick(e, card.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setOpenId(card.id);
+                      }
+                    }}
                     className={cn(
-                      "group relative cursor-grab overflow-hidden rounded-xl border border-navy/10 bg-white p-3 pl-4 shadow-sm transition-all active:cursor-grabbing",
+                      "group relative cursor-grab overflow-hidden rounded-xl border border-navy/10 bg-white p-3 pl-4 text-left shadow-sm transition-all hover:border-gold/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gold active:cursor-grabbing",
                       dragId === card.id && "opacity-50"
                     )}
                   >
@@ -333,6 +387,12 @@ export function PipelineBoard() {
           );
         })}
       </div>
+
+      {/* Same detail component the opportunities table opens. */}
+      <OpportunityModal
+        opportunityId={openId}
+        onClose={() => setOpenId(null)}
+      />
     </div>
   );
 }

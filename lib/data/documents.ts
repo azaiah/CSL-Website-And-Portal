@@ -34,6 +34,20 @@ export const DOCUMENT_STATUS_LABEL: Record<DocumentStatus, string> = {
 
 export const documents: PortalDocument[] = [
   {
+    id: "ein-verification-letter",
+    title: "IRS EIN Verification Letter",
+    file: "/documents/CSL_EIN_Verification_Letter.pdf",
+    category: "Core asset",
+    status: "ready",
+    summary:
+      "Official IRS EIN Verification Letter for Capital Investment Group LLC (CSL). Required by many government agencies, vendor portals, and procurement partners when registering or completing applications.",
+    nextSteps: [
+      "Download and save to the compliance folder alongside the SWaM certificate.",
+      "Attach when a registration or application asks for EIN proof or IRS verification.",
+      "Reference alongside the Capability Statement when filling vendor profiles.",
+    ],
+  },
+  {
     id: "swam-designation-certificate",
     title: "SWaM Designation Certificate — Small & Minority-Owned Business",
     file: "/documents/CSL_SWaM_Designation_Certificate.pdf",
@@ -179,8 +193,27 @@ export const documents: PortalDocument[] = [
   },
 ];
 
+/**
+ * Documents linked to one opportunity. Reads `relatedOpportunityIds` rather
+ * than keeping a second index, so a document only has to declare its links in
+ * one place.
+ */
+export function documentsForOpportunity(
+  opportunityId: string
+): PortalDocument[] {
+  return documents.filter((d) =>
+    d.relatedOpportunityIds?.includes(opportunityId)
+  );
+}
+
+/** The reverse lookup — which opportunities a document was prepared for. */
+export function opportunityIdsForDocument(documentId: string): string[] {
+  return documents.find((d) => d.id === documentId)?.relatedOpportunityIds ?? [];
+}
+
 /** Ordered this-week action plan shown at the top of the Documents page. */
 export const actionPlan: string[] = [
+  "Download the IRS EIN Verification Letter from Documents and attach it anywhere a registration asks for EIN proof.",
   "Upload the SWaM designation certificate to eVA, symplr, and vendor-diversity portals — certification is complete.",
   "Fill the [FILL IN] blanks on the Capability Statement (EIN, UEI, CAGE, USDOT #) — everything else reuses them.",
   "Call ModivCare (866-810-8305 x2645) and start the DMV for-hire authority application.",

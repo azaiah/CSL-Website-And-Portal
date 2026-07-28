@@ -42,8 +42,13 @@ export interface ServiceLine {
 }
 
 export const company = {
+  /** Public brand name used on the marketing site. */
   name: "Capital Solutions & Logistics",
   shortName: "CSL",
+  /** IRS / state filings legal entity — shown in the portal Company Brain only. */
+  legalName: "Capital Investment Group LLC",
+  /** Trade name — shown as "Doing business as" in the portal Company Brain. */
+  dba: "Capital Solutions & Logistics",
   legalNote: 'Capital Solutions & Logistics ("CSL")',
   founded: 2023,
   domain: "trustcsl.com",
@@ -67,8 +72,8 @@ export const company = {
     title: "Managing Member & Director of Operations",
     phone: "(757) 453-3831",
     phoneHref: "tel:+17574533831",
-    email: "capitalsolutionslogistics@gmail.com",
-    emailHref: "mailto:capitalsolutionslogistics@gmail.com",
+    email: "Info@trustcsl.com",
+    emailHref: "mailto:Info@trustcsl.com",
     hours: "Standard routes Mon–Fri, 7:00am–7:00pm. STAT & on-demand available 24/7.",
   },
   insurance:

@@ -111,8 +111,11 @@ export function Hero() {
           </motion.span>
 
           <h1 className="mt-7 text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-[3.75rem]">
-            Medical delivery Richmond trusts —{" "}
-            <span className="text-gradient-gold">on time, every time.</span>
+            When Every Second Counts —{" "}
+            <span className="text-gradient-gold">
+              Virginia&apos;s Most Reliable Delivery and Medical Courier. On
+              Time, Every Time.
+            </span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80 sm:text-xl">

@@ -111,6 +111,7 @@ export function CheckItem({ children }: { children: ReactNode }) {
 
 /** Closing call-to-action band (navy + gold, textured). */
 export function CtaBand({
+  eyebrow,
   title = "Ready to move medical deliveries you can trust?",
   subtitle = "Tell us your route and urgency — we'll respond fast with a quote.",
   primaryHref = "/contact",
@@ -118,6 +119,7 @@ export function CtaBand({
   secondaryHref = "/services",
   secondaryLabel = "Explore Services",
 }: {
+  eyebrow?: string;
   title?: string;
   subtitle?: string;
   primaryHref?: string;
@@ -141,7 +143,11 @@ export function CtaBand({
         aria-hidden
       />
       <div className="container-page relative flex flex-col items-center gap-6 py-16 text-center sm:py-24">
-        <div className="rule-gold max-w-[120px]" />
+        {eyebrow ? (
+          <p className="eyebrow justify-center text-gold-light">{eyebrow}</p>
+        ) : (
+          <div className="rule-gold max-w-[120px]" />
+        )}
         <h2 className="max-w-2xl text-3xl font-semibold text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
           {title}
         </h2>

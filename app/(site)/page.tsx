@@ -63,7 +63,7 @@ export default function HomePage() {
         <Reveal>
           <SectionHeading
             eyebrow="What we do"
-            title="Five service lines, one standard of trust"
+            title="Five Services — One Standard to help scale your business"
             lead="Medical courier is our flagship. Around it we run four supporting lines so healthcare and business clients can rely on a single, compliant partner."
           />
         </Reveal>
@@ -101,7 +101,7 @@ export default function HomePage() {
         <Reveal>
           <SectionHeading
             eyebrow="Why CSL"
-            title="A courier healthcare teams trust with what matters"
+            title="Delivering what matters most — Safe, on-time, handled with trust & care"
             lead="Missed deliveries have clinical consequences. We built CSL to remove that risk — compliant, dependable, and genuinely professional."
           />
         </Reveal>
@@ -178,7 +178,10 @@ export default function HomePage() {
         </div>
       </Section>
 
-      <CtaBand />
+      <CtaBand
+        eyebrow="Request a Pickup"
+        title="Need delivery services you can trust?"
+      />
     </>
   );
 }

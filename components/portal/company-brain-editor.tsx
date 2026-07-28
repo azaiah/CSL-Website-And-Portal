@@ -52,8 +52,8 @@ export function CompanyBrainEditor() {
       {/* Identity */}
       <Panel title="Business identity">
         <div className="grid gap-4 sm:grid-cols-2">
-          <BField label="Legal name" value={company.name} editing={editing} />
-          <BField label="Doing business as" value={company.shortName} editing={editing} />
+          <BField label="Legal name" value={company.legalName} editing={editing} />
+          <BField label="Doing business as" value={company.dba} editing={editing} />
           <BField label="Founded" value={String(company.founded)} editing={editing} />
           <BField label="Website" value={company.domain} editing={editing} />
           <BField label="Primary contact" value={company.contact.name} editing={editing} />

@@ -199,6 +199,68 @@
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Print
+   ---------------------------------------------------------------------------
+   The portal renders engine-written documents to a printable page and lets the
+   browser's "Save as PDF" produce the file. That is why there is no PDF
+   library in package.json: this stylesheet IS the PDF generator, and it costs
+   nothing to ship.
+
+   Anything marked .no-print is screen-only chrome — the print button, the back
+   link, and internal notes that must never reach a client.
+   --------------------------------------------------------------------------- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ink economy and legibility: a printed page should be black on white, with
+     none of the screen's shadows or tinted surfaces. */
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  @page {
+    margin: 0.6in;
+  }
+
+  /* The page shell already has the @page margin, so drop its screen padding
+     and width cap rather than paying for both. */
+  .print-page {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  /* Keep a heading with its content, and never split a callout across pages —
+     a warning cut in half reads as two weaker warnings. */
+  .print-section,
+  .print-callout,
+  .print-header,
+  .print-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Force background tints that carry meaning (gold "needs input" rows, tone
+     colours on callouts) to survive the browser's default of dropping them. */
+  .print-callout,
+  [class*="bg-gold"],
+  [class*="bg-red"],
+  [class*="bg-navy"] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

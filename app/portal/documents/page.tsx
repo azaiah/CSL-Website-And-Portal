@@ -13,6 +13,7 @@ import {
   DOCUMENT_STATUS_LABEL,
   type PortalDocument,
 } from "@/lib/data/documents";
+import { generatedDocuments } from "@/lib/data/generated-docs";
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<PortalDocument["status"], string> = {
@@ -49,8 +50,98 @@ export default function DocumentsPage() {
         </ol>
       </section>
 
-      {/* Document cards */}
+      {/* Document cards.
+          Generated documents come first: they render from engine data on
+          demand, so they are always current, whereas the static files below are
+          artefacts that cannot be regenerated (a certificate issued by
+          Virginia, an IRS letter, and two field-by-field form reproductions). */}
       <div className="grid gap-6 lg:grid-cols-2">
+        {generatedDocuments.map((doc) => (
+          <article key={doc.id} className="card flex flex-col">
+            <div className="flex items-start gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl icon-tile">
+                <FileText className="h-5 w-5" aria-hidden />
+              </span>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink/45">
+                    {doc.category}
+                  </p>
+                  <span className="inline-flex rounded-full bg-navy/5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy">
+                    Generated
+                  </span>
+                </div>
+                <h3 className="mt-0.5 break-words text-base font-semibold leading-snug text-navy-deep">
+                  {doc.title}
+                </h3>
+                {doc.subtitle && (
+                  <p className="mt-0.5 break-words text-xs text-ink/55">
+                    {doc.subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <span
+              className={cn(
+                "mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
+                statusStyles[doc.status]
+              )}
+            >
+              <ClipboardCheck className="h-3.5 w-3.5" aria-hidden />
+              {DOCUMENT_STATUS_LABEL[doc.status]}
+            </span>
+
+            <p className="mt-3 break-words text-sm leading-relaxed text-ink/70">
+              {doc.summary}
+            </p>
+
+            <div className="mt-4 rounded-xl border border-navy/10 bg-surface p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                What to do next
+              </p>
+              <ol className="mt-2 space-y-1.5">
+                {doc.nextSteps.map((s, i) => (
+                  <li
+                    key={s}
+                    className="flex items-start gap-2 break-words text-xs text-ink/75"
+                  >
+                    <span className="mt-px font-bold text-gold">{i + 1}.</span>
+                    {s}
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {doc.relatedOpportunityIds.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                  {doc.relatedOpportunityIds.length} linked{" "}
+                  {doc.relatedOpportunityIds.length === 1
+                    ? "opportunity"
+                    : "opportunities"}
+                </p>
+                <OpportunityChips
+                  ids={doc.relatedOpportunityIds}
+                  className="mt-2"
+                />
+              </div>
+            )}
+
+            <div className="mt-4 flex items-center gap-3 pt-1">
+              <a
+                href={`/portal/print/doc/${doc.id}?auto=1`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-navy text-sm"
+              >
+                <Download className="h-4 w-4" aria-hidden />
+                Download PDF
+              </a>
+            </div>
+          </article>
+        ))}
+
         {documents.map((doc) => (
           <article key={doc.id} className="card flex flex-col">
             <div className="flex items-start justify-between gap-3">

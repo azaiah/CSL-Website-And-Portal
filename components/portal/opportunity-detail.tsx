@@ -41,6 +41,7 @@ import {
   Mail,
   User,
   FileWarning,
+  FileSpreadsheet,
 } from "lucide-react";
 import {
   sweepFor,
@@ -59,6 +60,11 @@ import {
   type OutreachRecord,
   type OutreachStatus,
 } from "@/lib/data/outreach";
+import {
+  generatedDocsForOpportunity,
+  type GeneratedDocument,
+} from "@/lib/data/generated-docs";
+import { PrintableDocument } from "@/components/portal/printable-document";
 import { healthFor, todayISO } from "@/lib/health";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
@@ -82,6 +88,19 @@ export function fitColor(score: number) {
 /** Canonical deep link for an opportunity. */
 export function opportunityHref(id: string) {
   return `/portal/opportunities/${id}`;
+}
+
+/**
+ * Print routes for engine-written content. `auto=1` opens the tab straight
+ * into the browser's print dialog, which is where "Save as PDF" lives — that
+ * is the whole PDF pipeline, and it needs no dependency.
+ */
+export function printDocHref(id: string) {
+  return `/portal/print/doc/${id}?auto=1`;
+}
+
+export function printOutreachHref(id: string) {
+  return `/portal/print/outreach/${id}?auto=1`;
 }
 
 const outreachStatusStyle: Record<OutreachStatus, string> = {
@@ -115,15 +134,29 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
   // Which document is open in the inline viewer. Non-null replaces the detail
   // body so a PDF can be read without leaving the modal.
   const [viewing, setViewing] = useState<PortalDocument | null>(null);
+  // Generated documents render from data rather than a file, so they get their
+  // own viewer slot instead of being forced through the PDF iframe.
+  const [viewingGenerated, setViewingGenerated] =
+    useState<GeneratedDocument | null>(null);
 
   const sweep = sweepFor(o);
   const closed = o.status === "Won" || o.status === "Lost";
   const health = healthFor(o.dueDate, today, closed);
   const docs = documentsForOpportunity(o.id);
+  const generated = generatedDocsForOpportunity(o.id);
   const drafts = outreachForOpportunity(o.id);
 
   if (viewing) {
     return <DocumentViewer doc={viewing} onBack={() => setViewing(null)} />;
+  }
+
+  if (viewingGenerated) {
+    return (
+      <GeneratedDocumentViewer
+        doc={viewingGenerated}
+        onBack={() => setViewingGenerated(null)}
+      />
+    );
   }
 
   return (
@@ -308,6 +341,100 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
         )}
       </section>
 
+      {/* ── Generated documents ────────────────────────────────────────── */}
+      {/* Styled identically to the static documents above so the two read as
+          one list — from Darren's side the only difference that matters is
+          that these are never stale, because they render from engine data at
+          the moment he asks rather than from a binary committed weeks ago. */}
+      <section>
+        <SectionTitle
+          icon={FileSpreadsheet}
+          title="Generated documents"
+          count={generated.length}
+        />
+        {generated.length === 0 ? (
+          <EmptyNote>
+            No generated documents are linked to this opportunity yet.
+          </EmptyNote>
+        ) : (
+          <ul className="mt-3 space-y-3">
+            {generated.map((d) => (
+              <li
+                key={d.id}
+                className="rounded-xl border border-navy/10 bg-white p-4"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink/45">
+                    {d.category}
+                  </p>
+                  <span className="inline-flex rounded-full bg-navy/5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-navy">
+                    Generated
+                  </span>
+                </div>
+                <h4 className="mt-0.5 break-words text-sm font-semibold leading-snug text-navy-deep">
+                  {d.title}
+                </h4>
+                {d.subtitle && (
+                  <p className="mt-0.5 break-words text-xs text-ink/55">
+                    {d.subtitle}
+                  </p>
+                )}
+
+                <span
+                  className={cn(
+                    "mt-2 inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+                    documentStatusStyle[d.status]
+                  )}
+                >
+                  {DOCUMENT_STATUS_LABEL[d.status]}
+                </span>
+
+                <p className="mt-2 break-words text-xs leading-relaxed text-ink/70">
+                  {d.summary}
+                </p>
+
+                <div className="mt-3 rounded-lg border border-navy/10 bg-surface p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                    What to do next
+                  </p>
+                  <ol className="mt-1.5 space-y-1">
+                    {d.nextSteps.map((s, i) => (
+                      <li
+                        key={s}
+                        className="flex items-start gap-2 break-words text-xs text-ink/75"
+                      >
+                        <span className="mt-px font-bold text-gold">{i + 1}.</span>
+                        {s}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setViewingGenerated(d)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-surface"
+                  >
+                    <Eye className="h-3.5 w-3.5" aria-hidden />
+                    Open
+                  </button>
+                  <a
+                    href={printDocHref(d.id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-surface"
+                  >
+                    <Download className="h-3.5 w-3.5" aria-hidden />
+                    Download PDF
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       {/* ── Outreach ───────────────────────────────────────────────────── */}
       <section>
         <SectionTitle icon={Send} title="Outreach" count={drafts.length} />
@@ -415,6 +542,49 @@ function DocumentViewer({
   );
 }
 
+/* ───────────────────── Inline generated document viewer ─────────────────── */
+
+/**
+ * Renders a generated document in place using the same component the print
+ * route uses, so what is read on screen and what comes out of the printer are
+ * the same markup — there is no second rendering to drift out of sync.
+ */
+function GeneratedDocumentViewer({
+  doc,
+  onBack,
+}: {
+  doc: GeneratedDocument;
+  onBack: () => void;
+}) {
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-navy/10 pb-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-surface"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+          Back to opportunity
+        </button>
+        <a
+          href={printDocHref(doc.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-surface"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden />
+          Download PDF
+        </a>
+      </div>
+
+      <div className="mt-3 max-h-[70vh] min-h-[420px] overflow-y-auto rounded-xl border border-navy/10 bg-surface">
+        <PrintableDocument document={doc} />
+      </div>
+    </div>
+  );
+}
+
 /* ──────────────────────────────── Outreach card ─────────────────────────── */
 
 function OutreachCard({ record: r }: { record: OutreachRecord }) {
@@ -485,6 +655,17 @@ function OutreachCard({ record: r }: { record: OutreachRecord }) {
           text={`Subject: ${r.subject}\n\n${r.body}`}
           icon={Copy}
         />
+        {/* The printed version omits `notes` — see printable-document.tsx —
+            so this is safe to hand to someone. */}
+        <a
+          href={printOutreachHref(r.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-navy/15 bg-white px-3 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-surface"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden />
+          Download PDF
+        </a>
       </div>
 
       {r.notes && (

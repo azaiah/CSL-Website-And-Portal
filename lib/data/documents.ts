@@ -24,6 +24,14 @@ export interface PortalDocument {
   /** What Darren does with this document, in order. */
   nextSteps: string[];
   relatedOpportunityIds?: string[];
+  /**
+   * True for company-wide credentials that get attached to essentially every
+   * approach — the capability statement, the SWaM designation, the EIN letter.
+   * Listing all 29 opportunity ids on each would be duplication that goes stale
+   * the moment a sweep adds a lead, so they are flagged instead and
+   * documentsForOpportunity() folds them in.
+   */
+  appliesToAll?: boolean;
 }
 
 export const DOCUMENT_STATUS_LABEL: Record<DocumentStatus, string> = {
@@ -35,6 +43,7 @@ export const DOCUMENT_STATUS_LABEL: Record<DocumentStatus, string> = {
 export const documents: PortalDocument[] = [
   {
     id: "ein-verification-letter",
+    appliesToAll: true,
     title: "IRS EIN Verification Letter",
     file: "/documents/CSL_EIN_Verification_Letter.pdf",
     category: "Core asset",
@@ -49,6 +58,7 @@ export const documents: PortalDocument[] = [
   },
   {
     id: "swam-designation-certificate",
+    appliesToAll: true,
     title: "SWaM Designation Certificate — Small & Minority-Owned Business",
     file: "/documents/CSL_SWaM_Designation_Certificate.pdf",
     category: "Core asset",
@@ -64,6 +74,7 @@ export const documents: PortalDocument[] = [
   },
   {
     id: "capability-statement",
+    appliesToAll: true,
     title: "CSL Capability Statement",
     file: "/documents/CSL_Capability_Statement.pdf",
     category: "Core asset",
@@ -201,9 +212,21 @@ export const documents: PortalDocument[] = [
 export function documentsForOpportunity(
   opportunityId: string
 ): PortalDocument[] {
-  return documents.filter((d) =>
+  const specific = documents.filter((d) =>
     d.relatedOpportunityIds?.includes(opportunityId)
   );
+  // Universal credentials come last: they apply everywhere, so they are the
+  // least informative thing on the list and should not push the documents
+  // actually prepared for this opportunity below the fold.
+  const universal = documents.filter(
+    (d) => d.appliesToAll && !specific.includes(d)
+  );
+  return [...specific, ...universal];
+}
+
+/** Company-wide credentials attached to essentially every approach. */
+export function universalDocuments(): PortalDocument[] {
+  return documents.filter((d) => d.appliesToAll);
 }
 
 /** The reverse lookup — which opportunities a document was prepared for. */

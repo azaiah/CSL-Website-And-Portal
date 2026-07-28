@@ -68,7 +68,8 @@ export async function listEntries(
 type EntryInsert = {
   entry_date: string;
   kind: FinanceKind;
-  category_id: string;
+  /** Nullable, matching `on delete set null` on the column. */
+  category_id: string | null;
   description: string;
   amount: number;
   opportunity_id?: string | null;

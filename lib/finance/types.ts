@@ -60,7 +60,9 @@ export interface FinanceEntry {
   id: string;
   entry_date: string; // ISO yyyy-mm-dd
   kind: FinanceKind;
-  category_id: string;
+  /** Null when the category was deleted — the SQL uses `on delete set null`.
+      Code must handle orphans rather than assume a category always exists. */
+  category_id: string | null;
   description: string;
   amount: number; // numeric(12, 2), always positive; sign comes from kind
   opportunity_id: string | null;

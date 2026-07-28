@@ -83,11 +83,15 @@ export function StatCard({
   value,
   icon: Icon,
   hint,
+  valueStyle,
 }: {
   label: string;
   value: string;
   icon: LucideIcon;
   hint?: string;
+  /** Optional inline colour for the value, e.g. profit vs loss. Colour must
+      never be the only signal — pair it with a sign or an icon. */
+  valueStyle?: React.CSSProperties;
 }) {
   return (
     <div className="card">
@@ -97,7 +101,9 @@ export function StatCard({
           <Icon className="h-5 w-5" aria-hidden />
         </span>
       </div>
-      <p className="mt-3 text-3xl font-bold text-navy-deep">{value}</p>
+      <p className="mt-3 text-3xl font-bold tabular-nums text-navy-deep" style={valueStyle}>
+        {value}
+      </p>
       {hint && <p className="mt-1 text-xs text-ink/50">{hint}</p>}
     </div>
   );

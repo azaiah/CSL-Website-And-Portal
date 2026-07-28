@@ -112,7 +112,11 @@ export function EntryTable({
               </tr>
             ) : (
               rows.map((entry) => {
-                const cat = categoryById.get(entry.category_id);
+                // category_id is null when the category was deleted; show the entry
+                // as Uncategorised rather than blank, so the money stays visible.
+                const cat = entry.category_id
+                  ? categoryById.get(entry.category_id)
+                  : undefined;
                 return (
                   <tr
                     key={entry.id}
@@ -138,7 +142,7 @@ export function EntryTable({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-ink/70">
-                      {cat ? cat.name : "Unknown"}
+                      {cat ? cat.name : "Uncategorised"}
                     </td>
                     <td className="max-w-xs px-4 py-3">
                       <p className="break-words font-medium text-navy-deep">

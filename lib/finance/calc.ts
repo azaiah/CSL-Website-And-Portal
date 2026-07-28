@@ -112,28 +112,46 @@ export interface CategoryTotal {
 }
 
 /**
- * Sum entries by category. Returns one row per category that has at least one
- * entry in the input set; categories with zero entries are omitted so the
- * chart stays focused.
+ * Bucket id used when an entry's category no longer exists. finance_entries
+ * has `category_id ... on delete set null`, so deleting a category orphans its
+ * entries. Those entries still count toward plSummary(), so silently skipping
+ * them here would make the category chart disagree with Net Profit with no
+ * warning. They are surfaced as "Uncategorised" instead.
+ */
+export const UNCATEGORISED_ID = "__uncategorised__";
+
+/**
+ * Sum entries by category, largest first.
+ *
+ * Pass `kind` to scope the result to expenses or income. Charts should always
+ * pass one: expenses and income are different measures, and putting them on a
+ * single scale makes a large income bar flatten every expense beside it.
+ *
+ * Categories with no entries are omitted so the chart stays focused, but
+ * entries whose category was deleted are NOT dropped — see UNCATEGORISED_ID.
  */
 export function totalsByCategory(
   entries: FinanceEntry[],
-  categories: FinanceCategory[]
+  categories: FinanceCategory[],
+  kind?: "expense" | "income"
 ): CategoryTotal[] {
+  const scoped = kind ? entries.filter((e) => e.kind === kind) : entries;
   const map = new Map<string, CategoryTotal>();
   const catById = new Map(categories.map((c) => [c.id, c]));
 
-  for (const e of entries) {
-    const cat = catById.get(e.category_id);
-    if (!cat) continue;
-    const existing = map.get(cat.id);
+  for (const e of scoped) {
+    const cat = e.category_id ? catById.get(e.category_id) : undefined;
+    // Keep orphans separated by kind so an uncategorised expense never lands in
+    // the same bucket as uncategorised income.
+    const id = cat ? cat.id : `${UNCATEGORISED_ID}:${e.kind}`;
+    const existing = map.get(id);
     if (existing) {
       existing.amount += e.amount;
     } else {
-      map.set(cat.id, {
-        categoryId: cat.id,
-        name: cat.name,
-        kind: cat.kind,
+      map.set(id, {
+        categoryId: id,
+        name: cat ? cat.name : "Uncategorised",
+        kind: cat ? cat.kind : e.kind,
         amount: e.amount,
       });
     }

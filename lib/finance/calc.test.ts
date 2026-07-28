@@ -9,7 +9,13 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { plSummary, totalsByCategory, monthOverMonth, filterByDateRange } from "./calc";
+import {
+  plSummary,
+  totalsByCategory,
+  monthOverMonth,
+  filterByDateRange,
+  UNCATEGORISED_ID,
+} from "./calc";
 import type { FinanceEntry, FinanceCategory, MonthlyPL } from "./types";
 
 const categories: FinanceCategory[] = [
@@ -105,5 +111,64 @@ describe("monthOverMonth", () => {
     assert.equal(mom.previousNet, 3000);
     assert.equal(mom.delta, 3800);
     assert.equal(mom.percentChange, (3800 / 3000) * 100);
+  });
+});
+
+/**
+ * Regression test for a real bug: totalsByCategory() used to skip any entry
+ * whose category had been deleted, while plSummary() still counted it. Since
+ * finance_entries.category_id is `on delete set null`, deleting a category made
+ * the chart total silently disagree with Net Profit. These assertions fail if
+ * that behaviour ever comes back.
+ */
+describe("totalsByCategory with orphaned entries", () => {
+  const orphan: FinanceEntry = {
+    id: "orphan-1",
+    entry_date: "2026-07-15",
+    kind: "expense",
+    category_id: null,
+    description: "Category since deleted",
+    amount: 450,
+    opportunity_id: null,
+    custom_fields: {},
+    notes: null,
+    created_at: "",
+    updated_at: "",
+    created_by: null,
+  };
+
+  const withOrphan = [...entries, orphan];
+
+  it("keeps orphaned money instead of dropping it", () => {
+    const totals = totalsByCategory(withOrphan, categories);
+    const charted = totals.reduce((sum, t) => sum + t.amount, 0);
+    const { income, expenses } = plSummary(withOrphan);
+    assert.equal(
+      charted,
+      income + expenses,
+      "chart total must equal the P&L total, orphans included"
+    );
+  });
+
+  it("surfaces orphans as an Uncategorised row", () => {
+    const totals = totalsByCategory(withOrphan, categories);
+    const row = totals.find((t) => t.categoryId.startsWith(UNCATEGORISED_ID));
+    assert.ok(row, "an Uncategorised row should exist");
+    assert.equal(row!.name, "Uncategorised");
+    assert.equal(row!.amount, 450);
+    assert.equal(row!.kind, "expense");
+  });
+
+  it("scopes to one kind when asked, so measures never share a scale", () => {
+    const onlyExpenses = totalsByCategory(withOrphan, categories, "expense");
+    assert.ok(
+      onlyExpenses.every((t) => t.kind === "expense"),
+      "expense view must contain no income rows"
+    );
+    const onlyIncome = totalsByCategory(withOrphan, categories, "income");
+    assert.ok(
+      onlyIncome.every((t) => t.kind === "income"),
+      "income view must contain no expense rows"
+    );
   });
 });

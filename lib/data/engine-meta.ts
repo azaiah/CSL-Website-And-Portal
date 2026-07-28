@@ -8,16 +8,18 @@
 
 export const ENGINE_META = {
   /** ISO date of the most recent full sweep. */
-  lastRunISO: "2026-07-21",
+  lastRunISO: "2026-07-28",
   /** Monday of the reporting week. */
-  weekOf: "2026-07-20",
+  weekOf: "2026-07-27",
   /** Cadence shown in the UI. */
   cadence: "Refreshed weekly",
+  /** Which run number this is, for the UI. */
+  runNumber: 2,
   /** Sources actually swept on the last run. */
   sweptSources: [
-    "SAM.gov / federal (VA NCO 6, USAspending, procurement forecasts)",
-    "Virginia eVA / state & local procurement (DGS, VCU, Chesterfield, Henrico, Richmond)",
-    "Virginia Medicaid DMAS / NEMT broker network (ModivCare, Access2Care)",
-    "Richmond health systems, labs, pharmacies & clinics (30+ organizations)",
+    "SAM.gov / federal — searched live in-session (VA NCO 6, USAspending, agency forecasts)",
+    "Virginia eVA — searched live in-session (DSS, DGS, VCU, VDOT, counties, statewide)",
+    "Virginia Medicaid DMAS / NEMT broker network (ModivCare, Access2Care, DMV authority)",
+    "Richmond health systems, labs, pharmacies, practices & clinics (40+ organizations)",
   ],
 };

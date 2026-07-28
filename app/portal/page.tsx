@@ -37,7 +37,7 @@ export default function DashboardPage() {
           label="Open opportunities"
           value={String(opportunityStats.open)}
           icon={Target}
-          hint="Active across all stages"
+          hint={`${opportunityStats.newThisRun} added this week`}
         />
         <StatCard
           label="Qualified leads"
@@ -49,7 +49,11 @@ export default function DashboardPage() {
           label="Outreach drafted"
           value={String(weeklyReport.outreach.drafted)}
           icon={PenLine}
-          hint="Awaiting approval"
+          hint={
+            weeklyReport.outreach.sent === 0
+              ? "None sent yet — approval needed"
+              : `${weeklyReport.outreach.sent} sent`
+          }
         />
         <StatCard
           label="Pipeline value"

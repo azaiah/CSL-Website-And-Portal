@@ -9,10 +9,11 @@ import {
   Calendar,
   Building2,
   Lightbulb,
-  ArrowRight,
+  AlertCircle,
 } from "lucide-react";
 import {
   opportunities as allOpps,
+  LATEST_RUN_ISO,
   type Opportunity,
   type OpportunityStatus,
 } from "@/lib/data/opportunities";
@@ -36,21 +37,29 @@ function fitColor(score: number) {
   return "bg-navy/15 text-navy";
 }
 
+function isNew(o: Opportunity) {
+  return o.addedISO === LATEST_RUN_ISO;
+}
+
 const sources = ["All", ...Array.from(new Set(allOpps.map((o) => o.source)))];
 const statuses = ["All", "Found", "Qualified", "Contacted", "Meeting", "Bid", "Won", "Lost"];
 
 export function OpportunitiesTable() {
   const [source, setSource] = useState("All");
   const [status, setStatus] = useState("All");
+  const [onlyNew, setOnlyNew] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>("fitScore");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [selected, setSelected] = useState<Opportunity | null>(null);
+
+  const newCount = useMemo(() => allOpps.filter(isNew).length, []);
 
   const rows = useMemo(() => {
     let r = allOpps.filter(
       (o) =>
         (source === "All" || o.source === source) &&
-        (status === "All" || o.status === status)
+        (status === "All" || o.status === status) &&
+        (!onlyNew || isNew(o))
     );
     r = [...r].sort((a, b) => {
       let cmp = 0;
@@ -59,7 +68,7 @@ export function OpportunitiesTable() {
       return sortDir === "asc" ? cmp : -cmp;
     });
     return r;
-  }, [source, status, sortKey, sortDir]);
+  }, [source, status, onlyNew, sortKey, sortDir]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -97,6 +106,31 @@ export function OpportunitiesTable() {
             ))}
           </select>
         </label>
+
+        {/* Quick filter for whatever the latest sweep added, so Darren can see
+            what changed without re-reading the whole board. */}
+        <button
+          type="button"
+          onClick={() => setOnlyNew((v) => !v)}
+          aria-pressed={onlyNew}
+          className={cn(
+            "rounded-xl border px-3 py-2 text-sm font-medium transition-colors",
+            onlyNew
+              ? "border-gold bg-gold text-navy-deep"
+              : "border-navy/15 bg-white text-navy hover:bg-surface"
+          )}
+        >
+          New this week
+          <span
+            className={cn(
+              "ml-2 rounded-full px-1.5 py-0.5 text-xs font-bold",
+              onlyNew ? "bg-navy-deep text-gold" : "bg-navy/10 text-navy"
+            )}
+          >
+            {newCount}
+          </span>
+        </button>
+
         <p className="ml-auto text-sm text-ink/50">
           {rows.length} {rows.length === 1 ? "opportunity" : "opportunities"}
         </p>
@@ -133,13 +167,27 @@ export function OpportunitiesTable() {
                   {/* The table already scrolls sideways inside its own box, so
                       wrap these instead of truncating — the full opportunity
                       name and agency stay readable. */}
-                  <p className="break-words font-medium text-navy-deep">{o.title}</p>
+                  <p className="break-words font-medium text-navy-deep">
+                    {isNew(o) && (
+                      <span className="mr-2 inline-flex rounded-full bg-gold px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-navy-deep">
+                        New
+                      </span>
+                    )}
+                    {o.title}
+                  </p>
                   <p className="break-words text-xs text-ink/50">{o.agency}</p>
                 </td>
                 <td className="px-4 py-3 text-ink/70">{o.source}</td>
                 <td className="px-4 py-3 font-mono text-xs text-ink/70">{o.naics}</td>
                 <td className="px-4 py-3 text-ink/70">{o.location}</td>
-                <td className="px-4 py-3 text-ink/70">{formatDate(o.dueDate)}</td>
+                <td className="px-4 py-3 text-ink/70">
+                  {formatDate(o.dueDate)}
+                  {o.hardDeadline && (
+                    <span className="ml-1.5 inline-flex items-center rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-600">
+                      Hard
+                    </span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   <span className={cn("inline-flex h-7 w-9 items-center justify-center rounded-md text-xs font-bold", fitColor(o.fitScore))}>
                     {o.fitScore}
@@ -179,9 +227,16 @@ export function OpportunitiesTable() {
             >
               <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-navy/10 bg-white p-6">
                 <div>
-                  <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", statusColors[selected.status])}>
-                    {selected.status}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", statusColors[selected.status])}>
+                      {selected.status}
+                    </span>
+                    {isNew(selected) && (
+                      <span className="inline-flex rounded-full bg-gold px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-navy-deep">
+                        New this week
+                      </span>
+                    )}
+                  </div>
                   <h2 className="mt-2 text-lg font-semibold text-navy-deep">
                     {selected.title}
                   </h2>
@@ -199,9 +254,23 @@ export function OpportunitiesTable() {
                 <div className="grid grid-cols-2 gap-3">
                   <Meta icon={Building2} label="Agency" value={selected.agency} />
                   <Meta icon={MapPin} label="Location" value={selected.location} />
-                  <Meta icon={Calendar} label="Due date" value={formatDate(selected.dueDate)} />
+                  <Meta
+                    icon={Calendar}
+                    label={selected.hardDeadline ? "Published deadline" : "Action by"}
+                    value={formatDate(selected.dueDate)}
+                  />
                   <Meta icon={ArrowUpDown} label="Est. value" value={formatCurrency(selected.estValue)} />
                 </div>
+
+                {selected.hardDeadline && (
+                  <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" aria-hidden />
+                    <p className="text-xs text-red-700">
+                      This is a real published date from the issuing body — not
+                      an internal target. Missing it forfeits the opportunity.
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-3 rounded-xl bg-surface p-4">
                   <span className={cn("flex h-11 w-11 items-center justify-center rounded-lg text-sm font-bold", fitColor(selected.fitScore))}>
@@ -229,8 +298,12 @@ export function OpportunitiesTable() {
                 </div>
 
                 <p className="text-xs text-ink/40">
-                  Live opportunity · ID {selected.id}. Found by the Opportunity
-                  Finder and scored by the Lead Qualifier.
+                  Live opportunity · ID {selected.id}
+                  {selected.addedISO
+                    ? ` · first found ${formatDate(selected.addedISO)}`
+                    : ""}
+                  . Found by the Opportunity Finder and scored by the Lead
+                  Qualifier.
                 </p>
               </div>
             </motion.aside>

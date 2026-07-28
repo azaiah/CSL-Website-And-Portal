@@ -5,6 +5,7 @@ import {
   CalendarClock,
   ArrowRightCircle,
   Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
 import { weeklyReport } from "@/lib/data/weekly-report";
@@ -116,6 +117,27 @@ export default function WeeklyReportPage() {
           </ul>
         </Card>
       </div>
+
+      {/* Corrections — what this run changed about last run's findings. Shown
+          because a research engine that silently overwrites its own mistakes is
+          not trustworthy; the client should see what moved and why. */}
+      {r.corrections && r.corrections.length > 0 && (
+        <Card title="Corrections to last week's findings" icon={AlertTriangle}>
+          <ul className="space-y-3">
+            {r.corrections.map((c) => (
+              <li
+                key={c.item}
+                className="rounded-xl border border-gold/30 bg-gold/5 p-3"
+              >
+                <p className="text-sm font-semibold text-[#8a6c1f]">{c.item}</p>
+                <p className="mt-1 text-xs leading-relaxed text-ink/70">
+                  {c.detail}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       {/* Recommended moves */}
       <Card title="Recommended next moves" icon={ArrowRightCircle}>

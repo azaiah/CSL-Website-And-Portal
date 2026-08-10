@@ -446,6 +446,138 @@ directly rather than resubmitting the form.`,
     notes:
       "No direct supplier-diversity contact or self-service portal was published as of the 2026-07-28 sweep — the site directs to a general contact form. Submit the form AND call, because the SWaM-vs-NMSDC answer is worth more than the registration itself.",
   },
+  // ───────────────────── Run 3 — 2026-08-10 ─────────────────────
+  // Only THREE drafts were written this run, deliberately. Ten drafts from
+  // runs 1 and 2 are still sitting unsent, so writing fourteen more — one per
+  // new opportunity — would have inflated the "drafted" number while making
+  // the real constraint worse. These three are the highest-leverage calls on
+  // the board: the best-fit commercial lead found in three runs, the lane CSL
+  // can serve today with no new equipment, and the buyer who controls a
+  // recurring statewide contract.
+  {
+    id: "OUT-2026-011",
+    opportunityId: "OPP-2026-030",
+    channel: "call",
+    subject:
+      "Call script — Virginia Physicians Core Lab, specimen movement from the ten satellite sites",
+    body: `CALL SCRIPT — VPI Core Lab, (804) 836-1136
+Ask for: the laboratory manager. Do NOT start at the practice main line.
+
+OPENING
+"Good morning — my name is Darren Lewis, I'm with Capital Solutions & Logistics here in Richmond. We're a medical courier company; specimen transport and pharmacy delivery is all we do. I'm calling the lab directly rather than the front office because my question is really an operations question. Do you have two minutes?"
+
+THE ONE QUESTION THAT MATTERS
+"I saw that the Core Lab in Glen Allen runs the testing for all of the Virginia Physicians divisions, and that there are ten sites drawing into it. How do the specimens actually get from those ten offices to Cox Road today?"
+
+Then stop talking and listen. The three answers you may hear:
+
+1. "Our medical assistants or the office staff drive them over."
+   -> This is the opening. Respond: "That's really common, and it's usually the thing that quietly costs the most — you're paying clinical staff to drive, the specimens aren't under a documented chain of custody, and if somebody calls out the run doesn't happen. What we'd do is take that off your staff entirely: a fixed twice-a-day loop, midday and end of day, every specimen scanned at pickup and at drop with an electronic proof of delivery you can pull up if anyone ever audits a result."
+
+2. "We use a courier already."
+   -> "Understood. Are they covering all ten sites, or just some of them?" Split coverage is very common. Offer to price the sites the incumbent doesn't cover, and offer STAT backup for the ones they do.
+
+3. "The reference lab's courier picks up."
+   -> "That covers your send-outs. What I'm asking about is the other direction — the specimens coming INTO your own lab from your own offices. Does their courier handle that leg too?" Usually it does not.
+
+WHAT TO OFFER
+- A scoped trial, not a contract: the four Midlothian sites for one week, priced per stop, no commitment.
+- Twice daily: midday and end of day.
+- HIPAA-trained driver, documented chain of custody, electronic proof of delivery on every specimen.
+- Local, Richmond-based, SWaM Small and Minority-Owned certified.
+
+DO NOT SAY
+- Do not claim MC operating authority or SDVOSB status. Both are still pending.
+- Do not quote a monthly price on the first call. Price per stop after you know the volume and the window.
+
+CLOSE
+"Can I send you a one-page outline of what that loop would look like, and would it make sense to do the four Midlothian sites for a week so you can see the documentation before anyone signs anything?"
+
+Get: name, title, direct number, email.`,
+    status: "draft",
+    draftedISO: "2026-08-10",
+    contactRole: "Laboratory Manager, VPI Core Lab — 4900 Cox Road, Suite 180, Glen Allen, VA 23060",
+    contactPhone: "(804) 836-1136",
+    notes:
+      "No named contact — VPI does not publish lab staff names, and inventing one would be worse than asking for the role. The Core Lab number is verified from vaphysicians.com/laboratory-services. This is the highest-fit lead the engine has produced in three runs: the practice owns its own lab, so the courier requirement is structural rather than discretionary.",
+  },
+  {
+    id: "OUT-2026-012",
+    opportunityId: "OPP-2026-033",
+    channel: "email",
+    subject: "STAT and cycle-fill coverage for your Richmond-area facility routes",
+    body: `Hello,
+
+I'm Darren Lewis, Managing Member of Capital Solutions & Logistics, a medical and pharmaceutical courier based in the Richmond area. We're about twenty minutes south of your Ashland pharmacy.
+
+I'm writing about driver coverage — specifically the runs that don't fit the schedule. Cycle fill is predictable and most long-term care pharmacies have it handled. What tends to break is everything around it: a new admission at 4pm, a changed order, a facility that needs a dose tonight and doesn't have it. Those runs are where an in-house driver schedule either falls over or turns into overtime.
+
+That is the work we'd like to cover for you.
+
+What we bring:
+- HIPAA and OSHA trained drivers, and documented chain of custody on every transfer — including signature capture and electronic proof of delivery to the receiving facility, not just a bag handed to whoever is at the desk.
+- Ambient and cooler-controlled handling appropriate to LTC dispensing.
+- Richmond-metro coverage as our core operating area, so we are not routing your STAT run behind somebody else's parcel route.
+- A local, small, certified business — CSL holds Virginia SWaM Small and Minority-Owned certification.
+
+We are deliberately not pitching you the whole cycle-fill route on a first email. The sensible way to start is that we cover STAT and after-hours runs for thirty days, you see the delivery documentation, and we talk about the recurring route only if that goes well.
+
+Would it be worth fifteen minutes with your pharmacy manager or director of operations to find out whether that fits?
+
+Thank you for your time.
+
+Darren A. Lewis
+Managing Member, Capital Solutions & Logistics
+Info@trustcsl.com | (757) 453-3831`,
+    status: "draft",
+    draftedISO: "2026-08-10",
+    contactRole:
+      "Pharmacy Manager / Director of Operations, Remedi SeniorCare — 10448 Lakeridge Pkwy, Ashland, VA 23005",
+    contactPhone: "(804) 550-4856",
+    notes:
+      "Send this, then call two days later — LTC pharmacy managers live on the phone, not in the inbox. No named contact was published; the role is used instead. This is the best CAPABILITY match on the board: ambient and small-cooler only, so CSL can serve it fully with the van it owns today, no validated cold chain required.",
+  },
+  {
+    id: "OUT-2026-013",
+    opportunityId: "OPP-2026-035",
+    channel: "call",
+    subject:
+      "Call script — VDOT buyer Kimberly Palmer, IFB161013 Courier Services cycle and set-aside history",
+    body: `CALL SCRIPT — Kimberly Palmer, VDOT Procurement
+(804) 729-6317 | kimberly.palmer@vdot.virginia.gov
+
+WHY THIS CALL: VDOT's statewide courier IFB (IFB161013 / eVA IFB-122257) closed 7/6/2026 and a Notice of Intent to Award was posted 7/15/2026. CSL missed the window — it opened before we were watching. The point of this call is NOT to protest or to bid. It is to make sure the next cycle is on the calendar a year early, and to find out who is about to hold the contract so we can approach them as a Richmond-area subcontractor.
+
+OPENING
+"Good morning Ms. Palmer, my name is Darren Lewis with Capital Solutions & Logistics — we're a Richmond-based medical courier and a certified Virginia SWaM small business. I'm calling about IFB161013, the statewide courier services solicitation that closed in July. I know it's already at intent to award, so I'm not calling about that bid — I'm calling so we're ready for the next one. Do you have a few minutes?"
+
+THE FOUR QUESTIONS
+1. "What's the term of the contract that's about to be awarded, and how many renewal options does it carry?" (This tells us exactly when to be ready.)
+2. "The Notice of Intent to Award is posted — could you tell me who the intended awardee is?" (It is public information; only the download is behind a captcha.)
+3. "Has this requirement ever been divided by district rather than bid statewide? We're a single-vehicle operator covering the Richmond District, so a district lot is the version we could actually perform."
+4. "Was a small business set-aside considered this cycle? I ask because the 2014 cycle — IFB 151646-1 — was set aside for small business, and we're SWaM certified."
+
+THEN
+"Last thing — could you confirm which NIGP commodity code this solicitation is issued under, so I can make sure our eVA profile is registered against it and we're auto-notified next time?"
+
+TONE
+Respectful, brief, and explicitly not a complaint. Buyers remember the vendor who called to prepare for next year instead of to argue about last month.
+
+DO NOT
+- Do not claim MC operating authority — it is still pending.
+- Do not suggest the award was improper. It was not; we simply were not watching yet.
+
+AFTER THE CALL
+Once the awardee is named, add them to the board as a subcontract target and approach them the same way as the Richmond VAMC prime: local capacity, already here, already credentialed.`,
+    status: "draft",
+    draftedISO: "2026-08-10",
+    contactName: "Kimberly Palmer",
+    contactRole: "Buyer, Virginia Department of Transportation",
+    contactEmail: "kimberly.palmer@vdot.virginia.gov",
+    contactPhone: "(804) 729-6317",
+    notes:
+      "Contact verified directly from the eVA solicitation record for IFB-122257 on 2026-08-10. The intended awardee could not be identified from any public source — the Notice of Intent to Award PDF on eVA is captcha-gated and was deliberately not bypassed — so asking the buyer is both the fastest and the only clean route.",
+  },
 ];
 
 /** Every draft written for one opportunity, oldest first. */

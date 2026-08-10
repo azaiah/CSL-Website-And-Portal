@@ -75,19 +75,39 @@ export const generatedDocuments: GeneratedDocument[] = [
   {
     id: "vdss-presolicitation-packet",
     title: "VDSS Statewide Courier Services — Pre-Solicitation Packet",
-    subtitle: "eVA Future Procurement OGS-27-005 · estimated issue 2026-08-01",
+    subtitle:
+      "eVA Future Procurement OGS-27-005 · WITHDRAWN — did not issue on 2026-08-01",
     category: "Bid packet",
     status: "action-required",
     summary:
-      "Everything to do BEFORE the solicitation issues on August 1: the eVA readiness checklist, a bid/no-bid framework built around the one question that decides it, and what to do the day it drops. The call script for the buyer lives on the opportunity's outreach record.",
+      "SUPERSEDED IN PART. This packet was written for a solicitation that never issued — the August 1 estimated issue date passed and the Future Procurement notice was withdrawn from eVA. The bid-day instructions are on hold. The eVA readiness checklist is still worth completing, because it applies to every Commonwealth solicitation CSL will ever chase, and the buyer call is still worth making with a different question.",
     nextSteps: [
-      "Work the eVA readiness checklist today — a profile gap discovered after the solicitation posts is a missed bid.",
-      "Call Pedro Andrade before August 1 using the call script on this opportunity.",
-      "Apply the bid/no-bid framework once he answers question 1 about regional lots.",
+      "Read the status update at the top first — the August 1 bid-day plan is on hold, not live.",
+      "Still work the eVA readiness checklist: it applies to any Commonwealth solicitation, and a profile gap found later is a missed bid.",
+      "Call Pedro Andrade at (804) 726-7184 and ask whether the procurement was cancelled, deferred, or absorbed — and ask to be on his notification list.",
     ],
     relatedOpportunityIds: ["OPP-2026-016"],
-    generatedISO: "2026-07-28",
+    generatedISO: "2026-08-10",
     sections: [
+      {
+        heading: "Status update — 2026-08-10",
+        blocks: [
+          {
+            kind: "callout",
+            tone: "critical",
+            title: "This procurement did not issue",
+            text: "Verified live in eVA on August 10, 2026. An exact search for OGS-27-005 returns no results, the Future Procurement notice is absent from all 80 FPRs currently posted, and no courier search in eVA shows an open solicitation. The estimated issue date of August 1 passed and the notice was withdrawn. The opportunity has been rescored from 94 to 79 and its hard-deadline flag removed. Do not prepare a bid against this document.",
+          },
+          {
+            kind: "paragraph",
+            text: "What is still useful here: the eVA readiness checklist below is not specific to VDSS — it is the standing prerequisite for bidding anything on the Commonwealth's system, and completing it now means the next solicitation is a bid rather than a scramble. The bid/no-bid framework is also worth keeping, because the question it turns on — whether the requirement is divided into regional lots a single-vehicle operator can perform — is the same question that decides the VDOT courier cycle tracked as OPP-2026-035.",
+          },
+          {
+            kind: "paragraph",
+            text: "The call to Pedro Andrade is still worth making, with the question changed. He remains an active VDSS buyer on other current postings, so the contact is good. Ask whether the statewide courier requirement was cancelled, deferred, or folded into an existing contract, when it is expected to return, and to be added to his notification list either way.",
+          },
+        ],
+      },
       {
         heading: "Why this packet exists",
         blocks: [
@@ -358,6 +378,212 @@ export const generatedDocuments: GeneratedDocument[] = [
               "The DMV for-hire filing is Form OA-151, not OA-150. OA-150 is the broker application and would have been rejected. This one filing gates ModivCare, Access2Care and Roundtrip all at once.",
               "The Richmond VAMC contract is barely used — one delivery order of $6,411.84 against a $769,850 ceiling — which strengthens the subcontract argument rather than the bidding one.",
               "HB61, which would have expanded SWaM utilisation targets, was vetoed on May 19, 2026. Plan around today's $10,000–$100,000 set-aside thresholds; no expansion is coming.",
+            ],
+          },
+          {
+            kind: "callout",
+            tone: "warning",
+            title: "One bullet above was overtaken — see the W3 brief",
+            text: "The claim that the Richmond VAMC contract is 'barely used — one delivery order of $6,411.84' was corrected on August 10, 2026. USAspending now shows five child awards totalling $245,816.84, roughly 32% of the $769,850 ceiling, with activity as recent as July 10. The vehicle is active. The OA-151 and HB61 bullets both still stand.",
+          },
+        ],
+      },
+    ],
+  },
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    id: "oa151-broker-unlock-sheet",
+    title: "DMV Form OA-151 — The One Filing That Opens Four Broker Doors",
+    subtitle: "NEMT carrier authority · ModivCare · Access2Care · MediDrive · Roundtrip",
+    category: "Registration",
+    status: "action-required",
+    summary:
+      "Every Medicaid transportation record on the board is blocked behind a single Virginia DMV filing. This sheet has the verified requirements, the exact costs, the four doors it opens, and the order to do them in. It is the highest-leverage hour on the entire board.",
+    nextSteps: [
+      "File Form OA-151 online at dmv.virginia.gov — the NEMT Carrier application, NOT OA-150.",
+      "Line up the $350,000 liability coverage and the $25,000 surety bond before filing, not after.",
+      "Once authority issues, enroll with all four brokers in the same week — the paperwork overlaps.",
+    ],
+    relatedOpportunityIds: [
+      "OPP-2026-002",
+      "OPP-2026-008",
+      "OPP-2026-023",
+      "OPP-2026-031",
+    ],
+    generatedISO: "2026-08-10",
+    sections: [
+      {
+        heading: "Why this is the highest-leverage action on the board",
+        blocks: [
+          {
+            kind: "paragraph",
+            text: "Four separate opportunities on the board — worth a combined CSL-estimated $209,000 a year — are all blocked by the same thing, and it is not a sale. It is a form. Virginia Medicaid non-emergency medical transportation is contracted through brokers, and no broker can credential a carrier that does not hold DMV for-hire operating authority. File once, and all four enrollments become possible in the same week.",
+          },
+          {
+            kind: "callout",
+            tone: "warning",
+            title: "It is OA-151, not OA-150",
+            text: "OA-150 is the Broker application. Filing it would have CSL applying to become a transportation broker rather than a carrier — the wrong business, and a rejection after weeks of waiting. The NEMT Carrier application is Form OA 151. This was corrected in run 2 and re-verified against DMV's current published materials on August 10, 2026.",
+          },
+        ],
+      },
+      {
+        heading: "Verified requirements — 1 to 6 passenger tier",
+        blocks: [
+          {
+            kind: "fields",
+            fields: [
+              { label: "Application form", value: "Form OA 151 — NEMT Carrier" },
+              { label: "Also required", value: "OA 435 surety bond, or OA 447 letter of credit; plus OA 210" },
+              { label: "Liability insurance", value: "$350,000 (1–6 passengers)" },
+              { label: "Liability — 7 to 15 passengers", value: "$1,500,000" },
+              { label: "Liability — 16+ passengers", value: "$5,000,000" },
+              { label: "Surety bond or letter of credit", value: "$25,000, maintained 3 years from certificate issuance" },
+              { label: "Filing fee", value: "$50" },
+              { label: "Operating authority registration fee", value: "$3" },
+              { label: "Online filing", value: "Available since 1/1/2026; not mandatory until 2/1/2027" },
+              { label: "Insurance carrier + policy number", value: "", needsInput: true },
+              { label: "Surety company + bond number", value: "", needsInput: true },
+            ],
+          },
+          {
+            kind: "paragraph",
+            text: "The two fields left blank are the only ones the engine cannot supply — they are Darren's insurance and surety details. Everything else above is verified against DMV's current NEMT carrier page as of August 10, 2026.",
+          },
+        ],
+      },
+      {
+        heading: "The four doors this opens",
+        blocks: [
+          {
+            kind: "bullets",
+            items: [
+              "ModivCare — statewide Medicaid fee-for-service broker, plus Humana, Sentara and UnitedHealthcare Mid-Atlantic. Provider Assistance (866) 810-8302. Note: three of five MCOs, not four — Aetna left on 4/1/2026.",
+              "MediDrive — new broker for Aetna Better Health of Virginia since 4/1/2026, (800) 734-0430. Newest network and therefore the easiest to enter, because gaps are still open.",
+              "Access2Care — Anthem HealthKeepers Plus, (877) 892-3988. That number is the Anthem member line; no separate Virginia provider-network line was published as of this run.",
+              "Roundtrip — transport company network with a Richmond office, tracked as OPP-2026-023.",
+            ],
+          },
+          {
+            kind: "callout",
+            tone: "critical",
+            title: "Strike (804) 873-5200 from the file",
+            text: "Run 2 recorded (804) 873-5200 as a broker contact. It appears in no ModivCare or DMAS published contact list and could not be verified from any primary source. Do not call it. Use ModivCare Provider Assistance (866) 810-8302, Facility Assistance (866) 679-6330, or the Mechanicsville administrative line (866) 810-8305.",
+          },
+        ],
+      },
+      {
+        heading: "Order of operations",
+        blocks: [
+          {
+            kind: "numbered",
+            items: [
+              "Get the insurance quote first. $350,000 liability is the gating cost and it determines whether the whole NEMT lane is worth entering — price it before filing anything.",
+              "Secure the $25,000 surety bond or letter of credit. It must be maintained for three years from the date the certificate is issued, so treat it as a three-year commitment, not a one-time fee.",
+              "File Form OA 151 online with the $50 filing fee and $3 registration fee.",
+              "While the filing is pending, request enrollment packets from all four brokers so credentialing starts the day authority issues.",
+              "Enroll with MediDrive first. It is the newest network in Virginia and the most likely to have unfilled Richmond-region capacity.",
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    id: "w3-target-brief",
+    title: "W3 Target Brief — Week of August 10, 2026",
+    subtitle: "14 new opportunities · board at 43 · the constraint has not moved",
+    category: "Briefing",
+    status: "ready",
+    summary:
+      "What the third sweep found, what it corrected, and the one thing that has now blocked this pipeline for three consecutive weeks. Written to be read in five minutes before the week's calls.",
+    nextSteps: [
+      "Read the constraint section first — it is the same as last week and the week before.",
+      "Make the three calls listed under 'This week's three calls' before adding anything new.",
+      "Note the two capability gates: no validated cold chain, no hazmat certification. They decide which lanes to work now.",
+    ],
+    relatedOpportunityIds: [
+      "OPP-2026-030",
+      "OPP-2026-031",
+      "OPP-2026-033",
+      "OPP-2026-035",
+      "OPP-2026-016",
+      "OPP-2026-001",
+    ],
+    generatedISO: "2026-08-10",
+    sections: [
+      {
+        heading: "The constraint, stated once more",
+        blocks: [
+          {
+            kind: "callout",
+            tone: "critical",
+            title: "Three weeks, 43 opportunities, zero outreach sent",
+            text: "The board has gone 15 to 29 to 43. Pipeline value has gone $1.59M to $2.07M to $2.51M. Outreach sent has gone 0 to 0 to 0. Ten drafts written on July 21 and July 28 are still awaiting approval. This is no longer a supply problem or a research problem — the engine is producing more qualified leads than the business is acting on, and every additional week widens that gap. Only three new drafts were written this run instead of fourteen, deliberately, so the number does not keep inflating while nothing ships.",
+          },
+        ],
+      },
+      {
+        heading: "This week's three calls",
+        blocks: [
+          {
+            kind: "numbered",
+            items: [
+              "VPI Core Lab, (804) 836-1136 — ask for the laboratory manager. Eleven sites feed a lab this practice owns. Qualifying question: how do specimens get from the ten satellites to Glen Allen today? If staff are driving them, that is the sale. Full call script is on OPP-2026-030.",
+              "Remedi SeniorCare, (804) 550-4856 — ask for the pharmacy manager. Lead with STAT coverage, not the cycle-fill route. Ambient only, so CSL can serve this today with no new equipment. Email draft is on OPP-2026-033.",
+              "VDOT buyer Kimberly Palmer, (804) 729-6317 — four questions about a statewide courier contract cycle CSL did not know existed. Call script is on OPP-2026-035.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "What the sweep corrected",
+        blocks: [
+          {
+            kind: "bullets",
+            items: [
+              "The VDSS statewide courier procurement — last week's number one item at fit 94 — did not issue. The notice was withdrawn from eVA entirely. Rescored to 79 and reframed as a watch item.",
+              "The Richmond VAMC contract is NOT dormant. Five delivery orders totalling $245,816.84, about 32% of ceiling, with activity through July 10. Rescored up, 84 to 88. Last week's data would have had Darren skip this call.",
+              "Virginia statewide courier IS contracted — VDOT ran IFB161013 in June and posted intent to award on July 15. The recurring cycle, the buyer's name, and a 2014 small-business set-aside precedent are now on the board.",
+              "Owens & Minor accepts Virginia SWaM. Last week's open question is closed; no second certification track is needed. The company was also sold to Platinum Equity on 12/31/2025.",
+              "ModivCare covers three of five MCOs, not four — Aetna moved to MediDrive on 4/1/2026, which is a new door rather than a loss.",
+              "The number (804) 873-5200 was struck from the file as unverifiable.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Two capability gates that decide what to work now",
+        blocks: [
+          {
+            kind: "paragraph",
+            text: "Several attractive-looking lanes were deliberately scored down or scoped narrow this run because CSL cannot serve them today, and bidding work you cannot perform is worse than not bidding.",
+          },
+          {
+            kind: "bullets",
+            items: [
+              "No validated cold chain. Home infusion and specialty pharmacy require 2–8°C with continuous monitoring and documented excursion handling; one van with an unvalidated cooler will not pass a pharmacy quality audit. Price validated shippers and data loggers — the spend is modest and it also unlocks parts of the dialysis and trial-kit lanes.",
+              "No hazmat certification. Clinical trial kits routinely ship on dry ice, which is DOT hazmat UN1845 and requires certified shippers. Bid only the ambient and 2–8°C legs at Clinical Research Partners, and say so unprompted — volunteering the limit is what earns trust with research staff.",
+            ],
+          },
+          {
+            kind: "paragraph",
+            text: "By contrast, the entire long-term-care pharmacy lane — Remedi, Family Care, Bremo LTC — is ambient or small-cooler. It needs nothing CSL does not already have. That is why it is the lane to work first.",
+          },
+        ],
+      },
+      {
+        heading: "Lanes checked and ruled out — so nobody re-researches them",
+        blocks: [
+          {
+            kind: "bullets",
+            items: [
+              "Veterinary specimen courier: effectively closed. Antech's regional lab serving Virginia is in Chantilly, not Richmond, so Richmond specimens ride a line-haul Antech already runs. Both Antech and IDEXX employ their own courier staff, and where IDEXX has no coverage it uses FedEx. Antech, VCA and Banfield are all Mars companies, so those hospitals send work intercompany. One courtesy call to Virginia Veterinary Centers, then drop it.",
+              "Bulk plasma freight: not a cargo-van job. Source plasma ships frozen at −20°C or colder on pallets by reefer LTL. The regional independent no longer exists either — Virginia Blood Services was absorbed by the American Red Cross. The only realistic opening is Red Cross STAT hospital-to-hospital overflow.",
+              "PharMerica and Guardian Pharmacy: neither has a Richmond-metro pharmacy. Do not spend calls there.",
+              "Velocity Clinical Research has no Richmond site (Martinsville only), and Virginia Research Center states on its own site that it is no longer enrolling.",
+              "Federal bidding: three consecutive live SAM.gov sweeps have returned zero open courier or specimen solicitations with a Virginia place of performance. Stay registered and notified; do not plan around it.",
             ],
           },
         ],

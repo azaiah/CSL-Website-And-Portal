@@ -6,6 +6,8 @@
  *
  * Run 1: 2026-07-21 (15 records)
  * Run 2: 2026-07-28 (14 new records; run-1 records re-verified and corrected)
+ * Run 3: 2026-08-10 (14 new records; five earlier records corrected — see
+ *         weekly-report.ts corrections[] for what prior runs got wrong)
  *
  * The 2026-07-28 sweep was run against SAM.gov and eVA directly in a live
  * browser session — not from cached third-party mirrors — so the federal and
@@ -67,6 +69,7 @@ export const IS_SAMPLE_DATA = false;
 export const SWEEPS = [
   { run: 1, label: "W1", iso: "2026-07-21", weekOf: "2026-07-20" },
   { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27" },
+  { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10" },
 ] as const;
 
 export type Sweep = (typeof SWEEPS)[number];
@@ -80,6 +83,273 @@ export function sweepFor(o: Pick<Opportunity, "addedISO">): Sweep | undefined {
 }
 
 export const opportunities: Opportunity[] = [
+  // ───────────────────────── Run 3 — 2026-08-10 ─────────────────────────
+  {
+    id: "OPP-2026-030",
+    title: "Virginia Physicians Inc — 11-Site Spoke-to-Hub Core Lab Route",
+    source: "Commercial",
+    naics: "492110",
+    location: "Glen Allen, Richmond, Midlothian, Mechanicsville, Ashland, Powhatan, VA",
+    dueDate: "2026-08-21",
+    fitScore: 92,
+    status: "Found",
+    estValue: 42000,
+    agency: "Virginia Physicians, Inc.",
+    addedISO: "2026-08-10",
+    description:
+      "Independent physician group serving Central Virginia since 1923, operating eleven clinical locations — all inside CSL's 25-mile radius — that feed ONE owned laboratory: the VPI Core Lab at 4900 Cox Road, Suite 180, Glen Allen 23060, (804) 836-1136. VPI's own site states the Core Lab \"provides automated comprehensive testing for all of the Virginia Physician divisions\" and lists ten draw sites feeding it. Sites: Ashland Medical Center, Cold Harbor Family Medicine, Hanover Family Physicians, Innsbrook Primary Care, Midlothian Family Practice (Powhatan / Village / Waterford / Westchester), Midlothian Medical Care, Reynolds Primary Care, Rheumatology Specialists. Value is a CSL-estimated annual route figure, not a published contract.",
+    whyItFits:
+      "This is the cleanest structural match the engine has surfaced in three runs. A practice that owns its own core lab has guaranteed, scheduled, non-negotiable daily specimen volume — the courier is not a convenience, it is the thing that makes the lab work. The geography is a single loop no wider than the metro, so one van genuinely covers it; there is no 24/7 or statewide requirement to disqualify a small operator; and because the group is independent it makes its own vendor decision without a corporate GPO in the way. Chain-of-custody documentation and e-POD are exactly what an in-house lab needs to defend a specimen-integrity audit.",
+    suggestedAction:
+      "Call the Core Lab directly at (804) 836-1136 and ask for the laboratory manager — not the practice's main line. Ask two questions: how specimens currently move from the ten satellites to Glen Allen, and whether that is done by staff driving their own cars. Practices at this size very often have medical assistants running specimens, which is a compliance exposure and a recruiting problem, not a logistics program. Offer a priced two-run-per-day loop (midday + end of day) with e-POD, starting with the four Midlothian sites as a scoped trial.",
+  },
+  {
+    id: "OPP-2026-031",
+    title: "MediDrive — Aetna Better Health of Virginia NEMT Vendor Onboarding (new broker since 4/1/2026)",
+    source: "DMAS / Broker",
+    naics: "485991",
+    location: "Statewide Virginia — Richmond region routes",
+    dueDate: "2026-09-04",
+    fitScore: 86,
+    status: "Found",
+    estValue: 45000,
+    agency: "MediDrive (NEMT broker for Aetna Better Health of Virginia)",
+    addedISO: "2026-08-10",
+    description:
+      "NEW DOOR, found this run. Aetna Better Health of Virginia moved its non-emergency medical transportation benefit from ModivCare to MediDrive effective 4/1/2026, per Aetna's own transportation-vendor transition FAQ. MediDrive member line (800) 734-0430. A broker that has just taken over a Cardinal Care MCO is actively building out its Virginia transportation provider network — which is the single best moment to enroll, because network gaps are still open and the broker needs coverage. This changes the prior read of the market: ModivCare no longer covers four of five MCOs, it now covers fee-for-service plus Humana, Sentara and UnitedHealthcare.",
+    whyItFits:
+      "Broker enrollment converts CSL's van into billable trips without a sales cycle — there is no bid, only credentialing. A newly-transitioned broker is materially easier to enter than an incumbent with a settled network. Aetna Better Health is a Cardinal Care managed care plan with statewide membership, so Richmond-region ambulatory trips are steady volume.",
+    suggestedAction:
+      "This is gated by the SAME DMV filing as ModivCare and Access2Care — Form OA-151 — so file that first; it unlocks four broker records at once. Then contact MediDrive's Virginia provider-network team about transportation-provider enrollment. Ask specifically whether they are still open for Richmond-region ambulatory (non-wheelchair) capacity and what the credentialing lead time is.",
+  },
+  {
+    id: "OPP-2026-032",
+    title: "Patient First — 9-Center Send-Out Specimen & Inter-Center Route",
+    source: "Commercial",
+    naics: "492110",
+    location: "Glen Allen HQ; 9 centers across Richmond, Midlothian, Mechanicsville, Chester, Colonial Heights, VA",
+    dueDate: "2026-08-28",
+    fitScore: 84,
+    status: "Found",
+    estValue: 38000,
+    agency: "Patient First",
+    addedISO: "2026-08-10",
+    description:
+      "Privately owned urgent-care operator, administrative offices at 5000 Cox Road, Glen Allen 23060, (804) 968-5700. Nine centers in the Richmond region (Short Pump, Midlothian, Parham, Carytown, Mechanicsville, Colonial Heights, Genito, Chester, Woodman) out of 79 across VA/MD/PA/NJ. Every center runs on-site lab testing, X-ray and prescription dispensing. HONEST CAVEAT: nothing on Patient First's website describes courier operations, a reference-lab relationship, or in-house drivers — whether they already run captive couriers is an OPEN QUESTION, not a known gap, and should be the first thing asked on the call. Second caveat: centers operate 8am–8pm, 365 days, so a full-coverage requirement could exceed one van. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "Nine sites in a tight metro cluster, each generating send-out specimens daily from on-site labs, plus inter-center supply and records movement out of a Glen Allen headquarters that is five minutes from CSL's own operating area. Urgent care volume is high and consistent rather than seasonal.",
+    suggestedAction:
+      "Call (804) 968-5700 and ask for the regional operations or laboratory director. Open with the discovery question — 'how do send-out specimens currently leave your Richmond centers?' — rather than a pitch. If they already have a captive courier, pivot immediately to weekday-only overflow and STAT coverage rather than trying to displace the incumbent.",
+  },
+  {
+    id: "OPP-2026-033",
+    title: "Remedi SeniorCare (Ashland) — LTC Cycle-Fill & STAT Facility Routes",
+    source: "Pharmacy",
+    naics: "492110",
+    location: "10448 Lakeridge Pkwy, Ashland, VA 23005 — routes across Richmond metro SNF/ALF",
+    dueDate: "2026-08-21",
+    fitScore: 85,
+    status: "Found",
+    estValue: 36000,
+    agency: "Remedi SeniorCare of Virginia LLC",
+    addedISO: "2026-08-10",
+    description:
+      "Closed-door long-term-care pharmacy hub at 10448 Lakeridge Parkway, Ashland 23005, (804) 550-4856 / (877) 927-8716, serving skilled nursing and assisted living facilities across Virginia from an Ashland base — roughly 20 minutes north of CSL. LTC pharmacy runs a daily cycle-fill route to every facility it serves plus unscheduled STAT runs for new admissions and changed orders, and outsourcing that driving is industry-normal rather than exceptional. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "This is the best CAPABILITY match on the board, not just the best revenue match. LTC pharmacy delivery is ambient or small-cooler — no validated cold chain, no freezer, no dry ice — so CSL can serve it fully with the van it owns today. It is also exactly the work CSL already describes as its core line, and DEA chain-of-custody discipline for controlled substances is a differentiator against a general parcel courier. Two other national LTC pharmacies were checked and ruled out this run: PharMerica and Guardian Pharmacy have NO Richmond-metro location.",
+    suggestedAction:
+      "Call (804) 550-4856 and ask for the pharmacy manager or director of operations. Lead with STAT coverage rather than the cycle-fill route — STAT is where an in-house driver schedule breaks down, it is the easiest wedge, and it proves reliability before asking for the recurring route. Also work the same lane at Family Care Pharmacy, 2576 Gayton Centre Dr, (804) 740-3300, which serves assisted living and nursing facilities across the Richmond area from three sites.",
+  },
+  {
+    id: "OPP-2026-034",
+    title: "Virginia Women's Center — 4-Site Cytology & Prenatal Specimen Route",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond (West End, Short Pump), Midlothian, Mechanicsville, VA",
+    dueDate: "2026-08-28",
+    fitScore: 83,
+    status: "Found",
+    estValue: 26000,
+    agency: "Virginia Women's Center",
+    addedISO: "2026-08-10",
+    description:
+      "OB/GYN group with four clinical sites inside CSL's radius — West End (6600 W Broad St Ste 100), Short Pump (12129 Graham Meadows Dr), Midlothian (13801 St. Francis Blvd Ste 100), Mechanicsville (8364 Bell Creek Rd) — plus a Central Business Office at 7130 Glen Forest Dr. A fifth site in Kilmarnock is outside the radius and is excluded from this estimate. Single practice line for all locations: (804) 288-4084. West End and Mechanicsville also run mammography and bone density. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "OB/GYN has the highest specimen-per-visit density of any outpatient specialty — cytology and pap, prenatal panels, cultures, NIPT kits — and almost all of it is scheduled rather than walk-in, which is what makes a fixed daily loop priceable. Four sites in a compact metro footprint plus a separate business office adds a chart and imaging-media leg to the same run at no extra driving.",
+    suggestedAction:
+      "Call (804) 288-4084 and ask for the practice administrator. Ask which reference or cytology lab they send to and whether that lab's courier covers all four sites or only the West End. Split coverage between a lab's own courier and staff driving is the common failure point and the opening to price a single unified loop.",
+  },
+  {
+    id: "OPP-2026-035",
+    title: "VDOT Statewide Courier Services (IFB161013) — Next-Cycle Positioning & Subcontract",
+    source: "eVA",
+    naics: "492110",
+    location: "Statewide Virginia — CSL target is the Richmond District lane",
+    dueDate: "2026-09-11",
+    fitScore: 80,
+    status: "Found",
+    estValue: 55000,
+    agency: "Virginia Department of Transportation",
+    addedISO: "2026-08-10",
+    description:
+      "MAJOR CORRECTION TO STANDING INTEL, found this run. The previous read was that Virginia's statewide delivery contracts are parcel/express only and that same-day local courier remains uncontracted. That is wrong. VDOT ran IFB161013 (eVA IFB-122257) \"Courier Services\" — statewide, issued 6/11/2026, closed 7/6/2026 at 9:00 AM, with a Notice of Intent to Award posted 7/15/2026. Buyer: Kimberly Palmer, kimberly.palmer@vdot.virginia.gov, (804) 729-6317. The solicitation window opened and closed BEFORE this engine's first sweep on 7/21, so it was never missable — but the recurring cycle it reveals is the real asset. eVA history shows VDOT re-procures this repeatedly (IFB 151646-1 in 2014, IFB 2703-3 in 2019, IFB 4960-2 in 2021, IFB161013 in 2026) and the 2014 cycle was expressly SET ASIDE FOR SMALL BUSINESS. The intended awardee could not be identified: the award document on eVA is CAPTCHA-gated and no other public source names it. Value is a CSL estimate of a realistic Richmond District share.",
+    whyItFits:
+      "A recurring, predictable statewide requirement with a documented history of small-business set-aside is the single most valuable thing a SWaM-certified firm can know about in advance. CSL cannot serve the whole Commonwealth with one van, so the two real plays are a Richmond District lane if the next cycle is divided, or a subcontract under whichever prime is about to be awarded. Knowing the buyer's name and the cycle timing now, rather than discovering the IFB three weeks before it closes, is what converts this from a miss into a plan.",
+    suggestedAction:
+      "Call Kimberly Palmer at (804) 729-6317 THIS WEEK. Ask four things: the term of the contract about to be awarded and its renewal options, who the intended awardee is (it is public — the NOIA is posted, it is only the download that is gated), whether the requirement has ever been divided by district, and whether small-business set-aside was considered this cycle. Then confirm CSL's eVA vendor profile carries the courier NIGP code so the next cycle auto-notifies. Separately, once the awardee is named, approach them as a Richmond-area subcontractor.",
+  },
+  {
+    id: "OPP-2026-036",
+    title: "Commonwealth Primary Care — 7-Office Specimen Route + Glenside Campus Loop",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, Glen Allen, Midlothian, VA",
+    dueDate: "2026-09-04",
+    fitScore: 82,
+    status: "Found",
+    estValue: 24000,
+    agency: "Commonwealth Primary Care",
+    addedISO: "2026-08-10",
+    description:
+      "Primary care group with seven Richmond-metro offices, three of which sit in the same building at 1800 Glenside Drive (Suites 110, 101, and Commonwealth Extended Care in Suite 103), plus Ridgefield (2200 Pump Rd), West Creek (1630 Wilkes Ridge Pkwy), Wyndham (5360 Twin Hickory Rd, Glen Allen) and Midlothian (2367 Colony Crossing Pl). Main line (804) 288-1800. Ownership — independent versus health-system affiliated — could NOT be verified from a primary source this run and should be confirmed before leading with an 'independent works with independent' angle. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "The smallest geographic footprint of any multi-site group found this run — three of the seven offices are in one building, which means three stops at one door. Primary care generates steady daily draws that go out to a reference lab, and the compact loop makes the per-stop economics work even at modest volume.",
+    suggestedAction:
+      "Call (804) 288-1800 and ask for the practice manager. First confirm ownership. Then propose a single afternoon loop priced per stop, using the fact that the Glenside campus is effectively one stop as the reason the price is lower than a per-site quote from a national courier.",
+  },
+  {
+    id: "OPP-2026-037",
+    title: "Independent & JV Dialysis Clinics — Monthly Lab Draw Circuit (ARA / Nansen / Livingston / Ferron)",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, Henrico, Chesterfield, Midlothian, Mechanicsville, Chester, VA",
+    dueDate: "2026-09-11",
+    fitScore: 78,
+    status: "Found",
+    estValue: 30000,
+    agency: "Innovative Renal Care / American Renal Associates and independent Richmond dialysis operators",
+    addedISO: "2026-08-10",
+    description:
+      "Roughly 24 outpatient dialysis clinics operate in the core Richmond metro, in three tight clusters: the West End / Broad Street corridor (about six stops within six miles), the East End / Laburnum corridor (about six stops), and Southside (about five stops). The targets here are deliberately NOT DaVita and Fresenius, which route logistics through national contracts. They are the ARA / Innovative Renal Care clinics — Forest Park (1603 Santa Rosa Rd Ste 100, (804) 288-2751), Westhampton (5320 Patterson Ave, (804) 285-3394), South Laburnum (4817 S Laburnum Ave, (804) 222-7718), Mechanicsville (8400 N Run Medical Dr Ste 100, (804) 569-6083) — plus independently-named operators including Glenside Dialysis / Nansen (7001 W Broad St, (804) 755-2368), Forest Hill Avenue / Livingston (4900 Forest Hill Ave, (804) 230-3594), Hopkins Road / Ferron (5750 Hopkins Rd, (804) 275-8631) and East End Dialysis Center (2201 E Main St Ste 100, (804) 643-3055). Value is a CSL-estimated annual figure across a multi-clinic circuit.",
+    whyItFits:
+      "Dialysis runs a monthly lab draw on every patient on a fixed schedule — the most predictable specimen calendar in outpatient medicine — and the three geographic clusters mean a single van can chain five or six clinics in one short run. Independent and joint-venture operators actually make local vendor decisions, which the national chains do not. Refrigeration requirement is moderate and satisfiable: mostly ambient or 2–8°C whole-blood tubes needing a validated cooler and a temperature log, not a freezer.",
+    suggestedAction:
+      "Do not call all twenty-four. Start with the four ARA clinics as one conversation — a chain of four under one regional manager is a single sale — then work the independently-named clinics individually. Price the West End cluster first as a proof route; it has the densest stop count per mile.",
+  },
+  {
+    id: "OPP-2026-038",
+    title: "Virginia Cardiovascular Specialists — 7-Site INR Draw & Monitor Device Circuit",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, Henrico, Midlothian, Mechanicsville, Prince George, VA",
+    dueDate: "2026-09-11",
+    fitScore: 75,
+    status: "Found",
+    estValue: 22000,
+    agency: "Virginia Cardiovascular Specialists",
+    addedISO: "2026-08-10",
+    description:
+      "Cardiology group with nine locations, seven inside CSL's radius: West End (7611 Forest Ave Ste 100/100A, (804) 288-4827), the VCS Heart & Vascular ambulatory surgery center (8007 Discovery Dr Unit B, (804) 288-4827), Stony Point (8700 Stony Point Pkwy Ste 120, (804) 323-5011), West Creek (1630 Wilkes Ridge Pkwy Ste 303, (804) 708-0445), Mechanicsville (7515 Right Flank Rd, (804) 559-0405), Midlothian (6120 Harbourside Centre Loop, (804) 915-1400) and Prince George (4700 Puddledock Rd Ste 400, (804) 458-1740, at the edge of the radius). Quinton and Tappahannock are outside the radius and excluded. Their locations page does not list dedicated draw stations, so specimen volume should be confirmed on the call rather than assumed. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "Three separate lanes on one loop: anticoagulation and lipid draws to a lab, Holter and event-monitor devices recovered from patients and redeployed between offices, and supply plus surgical-pathology movement for the Discovery Drive surgery center. The device-shuttle lane is unusual and sticky — once a courier is holding the monitor inventory rotation, switching costs are real.",
+    suggestedAction:
+      "Call the West End main line (804) 288-4827 and ask for the practice administrator. Lead with the cardiac monitor rotation rather than specimens — it is the pain point a general courier never offers to solve, and it differentiates immediately.",
+  },
+  {
+    id: "OPP-2026-039",
+    title: "OrthoVirginia Richmond — 12-Site Instrument Tray, Imaging Media & DME Circuit",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, Henrico, Midlothian, Mechanicsville, Prince George, VA",
+    dueDate: "2026-09-18",
+    fitScore: 74,
+    status: "Found",
+    estValue: 28000,
+    agency: "OrthoVirginia",
+    addedISO: "2026-08-10",
+    description:
+      "Physician-owned and independent — OrthoVirginia describes itself as \"an independent practice\" with 150+ orthopedic specialists and is one of the largest orthopedic practices in the country, with 37 locations statewide and TWELVE in the Richmond metro, including two surgery centers (7858 Shrader Rd with CT, and 15300 East West Rd, Midlothian, with MRI), an MRI site at 7650 E Parham Rd, four Ortho On Call urgent locations, and a physical therapy site. HONEST FRAMING: this is NOT a specimen play — orthopedics has low daily lab volume, and pitching it as a lab route would waste the meeting. Corporate HQ address and main line are not published on their site and are marked unverified rather than guessed. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "The lanes here are surgical instrument tray and loaner-set shuttles between the two ambulatory surgery centers, imaging media and records between the three MRI/CT sites and the clinics, DME and brace stock replenishment across twelve sites, and surgical pathology out of the two surgery centers. Loaner-set logistics in particular is time-critical and poorly served — a tray that misses a case cancels the case — and it is priced accordingly.",
+    suggestedAction:
+      "Route in through a surgery center, not the practice: call 7858 Shrader Rd at (804) 270-1305 and ask for the ASC materials manager or surgical services coordinator. Pitch scheduled inter-office logistics and loaner-tray shuttling. Do not open with specimen transport.",
+  },
+  {
+    id: "OPP-2026-040",
+    title: "Clinical Research Partners — 3-Site Trial Kit & Inter-Office Route (ambient legs only)",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, North Chesterfield, Petersburg, VA",
+    dueDate: "2026-09-18",
+    fitScore: 76,
+    status: "Found",
+    estValue: 15000,
+    agency: "Clinical Research Partners, LLC",
+    addedISO: "2026-08-10",
+    description:
+      "Clinical trial site network with three offices: 7110 Forest Ave Ste 201, Richmond 23226, (804) 477-3045; 1212 Koger Center Blvd, North Chesterfield 23235, (804) 715-2169; and 269 Medical Park Blvd, Petersburg 23805, (804) 921-9592. CAPABILITY GATE, stated plainly: trial kits routinely require −20°C and −80°C dry-ice shipping, dry ice is a DOT hazmat (UN1845) requiring hazmat training and shipper certification, and ultra-cold is not achievable with one van. CSL should bid ONLY the ambient and 2–8°C legs plus the site-to-airport courier leg, and should decline dry-ice work until certified. Two other candidates were ruled out this run: Velocity Clinical Research has no Richmond site (Martinsville only), and Virginia Research Center states on its own site that it is no longer enrolling. Value reflects the ambient scope only, not the full trial-logistics spend.",
+    whyItFits:
+      "The inter-site leg between three offices spread from Richmond to Petersburg is work a national specialty courier will not bid and a research coordinator is currently driving themselves. Trial logistics is also the most documentation-hungry corner of medical transport, which is where CSL's chain-of-custody and e-POD story is worth an actual premium rather than a discount.",
+    suggestedAction:
+      "Call (804) 477-3045 and ask for the site director or lead coordinator. Be explicit and unprompted about the dry-ice limitation — volunteering a capability boundary is what earns trust with research staff, and it keeps CSL out of a shipment it would fail. Bid the Richmond–Chesterfield–Petersburg inter-office shuttle and ambient kit runs only.",
+  },
+  {
+    id: "OPP-2026-041",
+    title: "Virginia Family Dentistry — 17-Office Dental Lab Case Loop",
+    source: "Commercial",
+    naics: "492110",
+    location: "Richmond, Midlothian, Mechanicsville, Chester, Ashland, Powhatan, Prince George, VA",
+    dueDate: "2026-09-25",
+    fitScore: 72,
+    status: "Found",
+    estValue: 20000,
+    agency: "Virginia Family Dentistry",
+    addedISO: "2026-08-10",
+    description:
+      "Locally owned and doctor-led multi-specialty dental group with seventeen offices across greater Richmond and 400+ staff. Verified sites include 1801 Huguenot Rd Midlothian ((804) 419-1041), 6000 Brashier Blvd Mechanicsville ((804) 730-3457), 12390 Three Chopt Rd Richmond ((804) 351-5432), 14001 Charter Park Dr Midlothian ((804) 417-0245), 9484 Charter Gate Dr Ashland ((804) 412-0599), 2601 Swiftrun Rd Chester ((804) 414-2550), 6441 Ironbridge Rd ((804) 743-8189), 6510 Harbour View Ct Midlothian ((804) 739-6494), 2625 Anderson Hwy Powhatan ((804) 403-6036) and 4710 Puddledock Rd Prince George ((804) 526-4886). Corporate administrative line unverified. Value is a CSL-estimated annual route figure.",
+    whyItFits:
+      "Seventeen offices all sending impressions and scans out to dental labs and receiving crowns and appliances back is the same route economics as a specimen loop with none of the HIPAA-lab overhead, and it complements the existing dental-lab record on the board (Colonial and Great Impressions) by approaching the same loop from the practice end instead of the lab end. Almost nobody calls on dental groups with a logistics offer, so the competitive field is close to empty.",
+    suggestedAction:
+      "Contact the group's central administration and ask who coordinates lab cases across the seventeen offices. Propose a single daily circuit that consolidates case pickup and return, priced per office per day, and pitch turnaround-time reduction — a case that moves same-day instead of next-day shortens the patient's temporary crown period, which is a clinical argument, not a cost argument.",
+  },
+  {
+    id: "OPP-2026-042",
+    title: "Local Independent Home Infusion — Temperature-Controlled Patient Deliveries (capability gate)",
+    source: "Pharmacy",
+    naics: "492110",
+    location: "Richmond, Henrico, Glen Allen, VA",
+    dueDate: "2026-10-02",
+    fitScore: 70,
+    status: "Found",
+    estValue: 18000,
+    agency: "Home Infusion Solutions LLC / Home Infusion Richmond LLC / Infusion PRN LLC",
+    addedISO: "2026-08-10",
+    description:
+      "Three locally-owned home infusion providers, which are far likelier to outsource driving than the national chains: Home Infusion Solutions, 8701 Park Central Dr Ste 600, Richmond 23227, (804) 767-3600; Home Infusion Richmond, 9323 Midlothian Tpke Ste S, Richmond 23235, (804) 554-1500; and Infusion PRN, 4953 Cox Rd, Glen Allen 23060, (804) 888-8630. The national comparators are Option Care Health / HomeChoice Partners (pharmacy at 8841 Landmark Rd Ste 100, Henrico; infusion suite at 7301 Forest Ave Ste 100; both (804) 752-5979) and Palmetto Infusion at 1610 E Parham Rd. Soleo Health was checked and has NO Richmond branch. CAPABILITY GATE: this lane requires validated 2–8°C cold chain with continuous temperature monitoring and documented excursion handling; some products ship frozen. One van with an unvalidated cooler will NOT pass a pharmacy quality audit. Value is a CSL-estimated annual figure.",
+    whyItFits:
+      "Home infusion delivery is scheduled, recurring, patient-address work inside a tight metro radius — structurally ideal for one van — and the local independents have no captive fleet. It is listed at a deliberately moderate score because the equipment gate is real: this is a lane to open AFTER buying validated payload shippers and data loggers, not before.",
+    suggestedAction:
+      "Treat this as a capability decision before a sales call. Price validated 2–8°C shippers and temperature data loggers first; the spend is modest and it unlocks this lane plus parts of the dialysis and trial-kit lanes. Then call Home Infusion Solutions at (804) 767-3600 and ask what their current delivery arrangement is and what temperature documentation they require from a carrier.",
+  },
+  {
+    id: "OPP-2026-043",
+    title: "HealthTrust / HCA Virginia — Supplier Registration for 4 Richmond Hospitals (long horizon)",
+    source: "Hospital System",
+    naics: "492110",
+    location: "Richmond, VA — Chippenham, Johnston-Willis, Henrico Doctors', Parham Doctors'",
+    dueDate: "2026-10-02",
+    fitScore: 65,
+    status: "Found",
+    estValue: 40000,
+    agency: "HCA Virginia / HealthTrust Performance Group",
+    addedISO: "2026-08-10",
+    description:
+      "HCA operates four hospitals inside CSL's radius: Chippenham (7101 Jahnke Rd, 804-483-0000), Johnston-Willis (1401 Johnston Willis Dr, (804) 483-5000), Henrico Doctors' (1602 Skipwith Rd, (804) 289-4500) and Parham Doctors' (7700 E Parham Rd, (804) 747-5600). HCA sources through its GPO, HealthTrust Performance Group, via the Prospective Supplier Profile at supplier.healthtrustpg.com/supplier-form; HealthTrust is at 1100 Dr. Martin L. King Jr. Blvd Ste 1100, Nashville TN 37203, 615.344.3000, hpgsvc@healthtrustpg.com. HealthTrust runs a Community Supplier Development Program and states it \"acknowledges a variety of certifications\" — but does NOT name Virginia SWaM specifically, so SWaM recognition here is UNVERIFIED and must not be assumed. Value is a CSL-estimated annual figure.",
+    whyItFits:
+      "Scored deliberately low and placed last on purpose. Hospital courier contracts typically demand 24/7/365 coverage, backup vehicles, and vendor credentialing with badging, immunizations and insurance floors that a single-van operator cannot satisfy today — and CSL's MC authority is still pending. This is a register-now, win-later item that costs an hour of form-filling, not a pipeline item to plan around.",
+    suggestedAction:
+      "Complete the HealthTrust Prospective Supplier Profile this month. Then send one email to hpgsvc@healthtrustpg.com asking precisely whether a Virginia SWaM certification issued by VA SBSD is recognized under the Community Supplier Development Program, and separately ask the CJW supply chain office whether courier services are sourced at the division level rather than through the GPO — division-level sourcing is the only realistic near-term door.",
+  },
   // ───────────────────────── Run 2 — 2026-07-28 ─────────────────────────
   {
     id: "OPP-2026-016",
@@ -87,19 +357,18 @@ export const opportunities: Opportunity[] = [
     source: "eVA",
     naics: "492110",
     location: "Statewide Virginia (agency HQ: Richmond)",
-    dueDate: "2026-08-01",
-    fitScore: 94,
+    dueDate: "2026-09-15",
+    fitScore: 79,
     status: "Found",
     estValue: 120000,
     agency: "Virginia Department of Social Services",
     addedISO: "2026-07-28",
-    hardDeadline: true,
     description:
-      "Posted on eVA as Future Procurement OGS-27-005 (eVA reference FPR 124752): \"Purchase of Statewide Courier Services\" for the Virginia Department of Social Services. Estimated issue date 8/1/2026; estimated price range not published. Buyer of record is Pedro Andrade, pedro.andrade@dss.virginia.gov, (804) 726-7184. Value shown is a CSL estimate of a realistic Richmond/Central-region share, not a published figure. This was verified directly in eVA on 2026-07-28 and is the single most actionable public bid on the board.",
+      "Posted on eVA as Future Procurement OGS-27-005 (eVA reference FPR 124752) with an estimated issue date of 8/1/2026. IT DID NOT ISSUE. Re-verified live in eVA on 2026-08-10: an exact search for \"OGS-27-005\" now returns NO RESULTS, the Future Procurement notice is no longer among the 80 FPRs currently posted, and neither a \"courier\" nor a \"Statewide Courier Services\" search shows any Open status bucket anywhere in eVA. The estimated issue date passed with no solicitation and the notice was withdrawn from the board. Buyer Pedro Andrade remains an active VDSS buyer — he is listed on a separate current VDSS future procurement (FPR 110192) — so the contact is still good: pedro.andrade@dss.virginia.gov, (804) 726-7184. Context that makes this still worth holding: eVA history shows VDSS re-procures statewide courier on a long cycle (IFB OGS-16-050-1 awarded 2016, RFP 1965-4 no-award 2022, RFP 2672-1 awarded 2022) and the 2011 cycle, IFB OGS-11-060-2, was expressly SET ASIDE FOR SMALL BUSINESSES. Value remains a CSL estimate of a Richmond/Central-region share, not a published figure.",
     whyItFits:
-      "A Future Procurement notice is the best possible timing for a small firm — the requirement is public but the solicitation has not dropped, so there is a window to introduce CSL to the buyer, ask how the regions are structured, and shape the questions before bids are due. VDSS is headquartered in Richmond and runs 120 local departments of social services, so document and records courier work is recurring and inside CSL's radius. CSL's new SWaM Small + Minority-Owned certification is a scored advantage on Commonwealth solicitations. A single van cannot cover the whole state — the realistic plays are a regional lot (if the IFB is divided) or a subcontract/teaming position under a statewide prime.",
+      "The reason to keep this on the board is the buyer relationship and the set-aside history, not an imminent bid. VDSS runs roughly 120 local departments of social services with a Richmond headquarters, so the recurring document and records courier requirement is real even when no solicitation is posted. A prior cycle was set aside for small business, which is exactly where CSL's SWaM Small + Minority-Owned certification scores. What changed this week is only the timing: there is no live procurement to prepare a bid against, so treating this as the top of the board would have been wrong.",
     suggestedAction:
-      "Call or email Pedro Andrade THIS WEEK, before the 8/1 issue date: confirm whether the solicitation will be split into regional lots, whether SWaM set-aside or evaluation preference applies, and ask to be added to the notification list. Confirm CSL's eVA vendor profile carries NIGP 962-86 so the solicitation auto-notifies. Then watch eVA daily from 8/1.",
+      "Call Pedro Andrade at (804) 726-7184 and ask the one question that matters now: was the statewide courier procurement cancelled, deferred, or absorbed into an existing contract, and when is it expected to return. Ask to be added to his notification list either way. Confirm CSL's eVA vendor profile carries the courier NIGP code so any re-post auto-notifies. Do not build the week around this record — score lowered 94 to 79 to reflect that it is now a watch item, not a bid.",
   },
   {
     id: "OPP-2026-017",
@@ -165,17 +434,17 @@ export const opportunities: Opportunity[] = [
     naics: "492110",
     location: "Mechanicsville, VA (9120 Lockwood Blvd)",
     dueDate: "2026-08-28",
-    fitScore: 79,
+    fitScore: 84,
     status: "Found",
     estValue: 80000,
     agency: "Owens & Minor",
     addedISO: "2026-07-28",
     description:
-      "A Fortune 500 medical-surgical distributor headquartered 20 minutes from CSL's base, with a published three-step supplier diversity process: registration, qualification, then approval through a competitive RFQ. Owens & Minor has been expanding into last-mile healthcare logistics, which is directly adjacent to CSL's service line. Value is a CSL estimate of potential and is speculative — this is a registration play, not a live bid.",
+      "ANSWERED THIS RUN — last week's open question is closed, and the answer is yes. Owens & Minor's supplier diversity page requires third-party certification and names as acceptable the National Minority Supplier Development Council, the Office of Small Business Certification, US DOT, \"or state agency responsible for this function.\" A Virginia SWaM certification issued by VA SBSD therefore QUALIFIES — NMSDC is not exclusively required. O&M explicitly does not accept self-certification when tracking diversity spend, so CSL's actual certificate does the work. Registration runs through the form on that page: Registration, then Qualification, then Approval. SEPARATE CORRECTION: O&M is no longer a Richmond-headquartered public company. The distribution business was sold to Platinum Equity on 12/31/2025 and remains Mechanicsville-based, while the former public parent renamed itself Accendra Health, Inc. Approach the Mechanicsville distribution business, not the renamed parent. Value is CSL-estimated annual potential.",
     whyItFits:
       "The largest healthcare logistics buyer physically inside CSL's radius, with a formal diversity-supplier front door rather than a cold sales cycle. IMPORTANT CAVEAT: their published criteria reference third-party certification (NMSDC / SBA). Virginia SWaM is a state certification and may not satisfy that on its own — confirm before assuming eligibility.",
     suggestedAction:
-      "Submit the supplier diversity intake form, and in the same week call to ask one specific question: does Owens & Minor accept Virginia SWaM Small + Minority-Owned certification, or is NMSDC/SBA 8(a) required? If NMSDC is required, that answer reshapes CSL's certification roadmap and is worth knowing now.",
+      "Register through the Owens & Minor supplier diversity page now and attach the SWaM Designation Certificate — it is an accepted certification, which was the open question blocking this record. Note the ownership change when making contact so the approach lands with the Mechanicsville distribution business rather than Accendra Health. Score raised 79 to 84 now that the certification path is confirmed rather than assumed.",
   },
   {
     id: "OPP-2026-021",
@@ -357,36 +626,37 @@ export const opportunities: Opportunity[] = [
     naics: "492210",
     location: "Richmond, VA 23249",
     dueDate: "2026-08-21",
-    fitScore: 84,
+    fitScore: 88,
     status: "Qualified",
     estValue: 769850,
     agency: "VA Network Contracting Office 6 (VISN 6)",
     addedISO: "2026-07-21",
     description:
-      "CORRECTED 2026-07-28. The Richmond VAMC courier requirement was awarded 2025-07-21 as a 5-year single-award SDVOSB set-aside IDIQ — ceiling $769,850, period of performance through 2030-07-20 — to All American Express Solutions LLC of Indianapolis. Two corrections to last week's record: the award's NAICS is 492210 (Local Messengers and Local Delivery), not 492110; and the contract is NOT being heavily used — USAspending shows a single delivery order (36C24625N0988) at $6,411.84 against the $769,850 ceiling, so last week's 'delivery orders are actively being issued' was too optimistic. Value shown remains the published ceiling, not expected revenue.",
+      "Single-award SDVOSB set-aside IDIQ for courier services at the Richmond VA Medical Center, held by All American Express Solutions LLC (Indianapolis, UEI TYNPRZ48FMJ7), $769,850 ceiling, 7/21/2025 through 7/20/2030, NAICS 492210, awarded off solicitation 36C24625Q0784 against 18 offers. CORRECTED THIS RUN: last week's record said only ONE delivery order had ever been issued, totalling $6,411.84, and called the vehicle nearly dormant. USAspending now shows FIVE child awards totalling $245,816.84 obligated — roughly 32% of ceiling — with IDV transaction activity as recent as 7/10/2026. The vehicle is being used steadily, not sitting idle. CSL still cannot bid it directly: it is a single-award SDVOSB set-aside locked through 2030 and CSL's SDVOSB certification is still pending. This is a subcontract and teaming target.",
     whyItFits:
-      "Read honestly, this is a relationship play, not a bid. CSL cannot compete for it: it is a single-award SDVOSB set-aside locked through 2030, and CSL's SDVOSB certification is still in progress. What makes it worth keeping is that the prime is an out-of-state company with very low measured utilization at a facility 20 minutes from CSL's base — that is the profile of a prime who would rather subcontract local coverage than staff Richmond themselves.",
+      "A prime that is actually drawing on its ceiling needs local capacity, and one drawing $245K across five orders in twelve months is running real volume from an Indianapolis base twenty minutes further from the hospital than CSL is. That is the entire argument: standing up local coverage from out of state is expensive, and CSL is already here, already HIPAA-trained, already running Richmond medical routes. The correction matters in CSL's favour — an active vehicle is worth approaching, a dormant one is not, and last week's read would have had Darren skip this call.",
     suggestedAction:
       "Approach All American Express Solutions as a local subcontractor, leading with the low-utilization observation as a reason they may want overflow and STAT coverage. Separately, keep SAM.gov saved searches on office 36C246 + PSC R602 — NCO 6 is demonstrably active (it posted a courier award on 2026-07-20) and its response windows run 3–9 days.",
   },
   {
     id: "OPP-2026-002",
-    title: "Virginia Medicaid NEMT — ModivCare Network Enrollment (FFS + 4 of 5 MCOs)",
+    title:
+      "Virginia Medicaid NEMT — ModivCare Network Enrollment (FFS + 3 of 5 MCOs)",
     source: "DMAS / Broker",
     naics: "485991",
     location: "Central Virginia",
     dueDate: "2026-08-14",
-    fitScore: 88,
+    fitScore: 86,
     status: "Qualified",
     estValue: 96000,
     agency: "Virginia DMAS / ModivCare",
     addedISO: "2026-07-21",
     description:
-      "RE-VERIFIED 2026-07-28. ModivCare remains the statewide fee-for-service NEMT broker for Cardinal Care and the NEMT subcontractor for 4 of the 5 managed-care plans (Aetna, Sentara, Humana, UnitedHealthcare). Enrollment is rolling — no RFP needed. Network Development: (866) 810-8305 x2645. Two updates this week: the correct DMV filing is Form OA-151 (NEMT Carrier authority) — last week's record said OA-150, which is the Broker application and is the wrong form; and since 2026-01-01 Virginia DMV accepts these applications online. Requirements for CSL's 1–6 passenger tier: $350,000 liability minimum, $25,000 surety bond or letter of credit held 3 years, $50 filing fee. Note also that DMAS revised its NEMT Driver/Attendant/Vehicle Requirements on 2026-05-26 — get the current version before credentialing. Value is CSL-estimated first-year ambulatory trip revenue for one van.",
+      "ModivCare remains the statewide fee-for-service NEMT broker operating on behalf of DMAS. CORRECTED THIS RUN on two points. First, the MCO coverage: ModivCare no longer covers four of five managed care plans. Aetna Better Health of Virginia moved its transportation benefit from ModivCare to MediDrive effective 4/1/2026, so ModivCare now covers fee-for-service plus Humana Healthy Horizons (877) 718-4215, Sentara (877) 892-3986 and UnitedHealthcare Mid-Atlantic (833) 215-3884 — three of five. Anthem HealthKeepers Plus continues to use Access2Care (877) 892-3988. Aetna is now MediDrive (800) 734-0430, tracked separately as OPP-2026-031. Second, the phone number: (804) 873-5200 could not be found in any ModivCare or DMAS published contact list and should be STRUCK from the file. Use ModivCare Provider Assistance (866) 810-8302; Facility Assistance is (866) 679-6330 and the Mechanicsville administrative line is (866) 810-8305. Molina's 6/30/2025 exit to Humana is confirmed. Value is CSL-estimated annual trip revenue.",
     whyItFits:
       "One credentialing pass unlocks five payer channels, NAICS 485991 is already on CSL's code list, and the Transit handles ambulatory trips without a lift. The DMV for-hire authority is the single gating item — it also unlocks the Anthem/Access2Care and Roundtrip records, so it is the highest-leverage filing on the board.",
     suggestedAction:
-      "File DMV Form OA-151 online this week (not OA-150) with the $25,000 bond and $50 fee, and confirm CSL's insurance meets the $350,000 minimum. In parallel, call ModivCare Network Development at (866) 810-8305 x2645 and request the current credentialing checklist plus the 2026-05-26 driver/vehicle requirements document.",
+      "File DMV Form OA-151 first — it gates this record, Access2Care, Roundtrip and the new MediDrive record simultaneously, which makes it the highest-leverage single action available to CSL. Then call ModivCare Provider Assistance at (866) 810-8302 to start transportation-provider credentialing. Do not use (804) 873-5200; it is unverified and was removed this run.",
   },
   {
     id: "OPP-2026-003",
@@ -439,11 +709,11 @@ export const opportunities: Opportunity[] = [
     agency: "Bremo Pharmacy / Bremo Long Term Care",
     addedISO: "2026-07-21",
     description:
-      "Independent retail + compounding pharmacy with a long-term-care division making scheduled daily medication deliveries to nursing facilities. FLAG RAISED 2026-07-28: the Skipwith Road location now shows as closed on public listings, while the main Staples Mill Road site and the LTC division appear active. This may indicate consolidation, so the opportunity size has been revised down pending confirmation. Value is a reduced CSL-estimated annual route figure.",
+      "CONFIRMED THIS RUN. Bremo Pharmacy's own website lists only three sites, all on Staples Mill Road: retail at 2024 Staples Mill Rd, (804) 288-8361; the Training Center and Business Office at 2002 Staples Mill Rd, (804) 285-8055; and the LTC division at 2002 Staples Mill Rd, (804) 285-7823. No Skipwith Road location appears anywhere on bremorx.com, and the 1602 Skipwith Rd listing shows as CLOSED on third-party directories — so last week's estimate reduction from $55,000 to $45,000 was correct and stands. The LTC division is the real target: Bremo's own LTC page describes monthly synchronized cycle fill to group homes, intermediate care facilities and assisted living, which is a fixed recurring route. Value is CSL-estimated annual revenue across the LTC delivery lane.",
     whyItFits:
       "LTC pharmacies run daily med-pass routes plus STAT doses — recurring revenue that fits one-van operations. HIPAA training and pharmacy-delivery experience apply directly. A consolidating pharmacy may actually be more open to outsourcing delivery than one that is expanding.",
     suggestedAction:
-      "Before pitching, call and confirm which locations are currently operating and whether delivery is still handled in-house. Then pitch the owner or LTC operations manager on a dedicated or overflow route with proof-of-delivery.",
+      "Call the LTC division directly at (804) 285-7823 rather than the retail line — the recurring route lives there. Ask how monthly cycle-fill deliveries and STAT doses currently reach facilities and who drives them. Pair this call with Remedi SeniorCare (OPP-2026-033) and Family Care Pharmacy; all three are the same ambient, no-cold-chain lane CSL can serve today with the van it already owns.",
   },
   {
     id: "OPP-2026-006",

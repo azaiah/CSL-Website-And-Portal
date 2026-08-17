@@ -10,6 +10,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   Target,
+  Stethoscope,
   KanbanSquare,
   Wallet,
   Bot,
@@ -32,6 +33,10 @@ export type PortalNavItem = {
 export const PORTAL_NAV: PortalNavItem[] = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard, fullAccessOnly: false },
   { label: "Opportunities", href: "/portal/opportunities", icon: Target, fullAccessOnly: true },
+  // Sits directly under Opportunities because it is the other half of the same
+  // job — but it is a separate entry, with a separate icon, because a vet lead
+  // is a business to call rather than a solicitation to bid.
+  { label: "Vet Leads", href: "/portal/vet-leads", icon: Stethoscope, fullAccessOnly: true },
   { label: "Pipeline", href: "/portal/pipeline", icon: KanbanSquare, fullAccessOnly: true },
   { label: "Finance", href: "/portal/finance", icon: Wallet, fullAccessOnly: true },
   { label: "AI Team", href: "/portal/ai-team", icon: Bot, fullAccessOnly: true },

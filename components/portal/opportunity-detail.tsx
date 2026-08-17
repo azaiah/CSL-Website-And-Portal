@@ -46,6 +46,7 @@ import {
 import {
   sweepFor,
   LATEST_RUN_ISO,
+  predatesSourceCitations,
   type Opportunity,
   type OpportunityStatus,
 } from "@/lib/data/opportunities";
@@ -65,6 +66,8 @@ import {
   type GeneratedDocument,
 } from "@/lib/data/generated-docs";
 import { PrintableDocument } from "@/components/portal/printable-document";
+import { SourceLinks } from "@/components/portal/source-links";
+import { NotesThread } from "@/components/portal/notes-thread";
 import { healthFor, todayISO } from "@/lib/health";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
@@ -266,6 +269,15 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
         </p>
       </div>
 
+      {/* ── Sources ────────────────────────────────────────────────────── */}
+      {/* Placed immediately after the suggested action on purpose: the action
+          says "call them and say this", and this says "and here is why you are
+          allowed to". Together they are what makes a cold call warm. */}
+      <SourceLinks
+        sources={o.sources}
+        predatesRule={predatesSourceCitations(o)}
+      />
+
       {/* ── Documents ──────────────────────────────────────────────────── */}
       <section>
         <SectionTitle icon={FileText} title="Documents" count={docs.length} />
@@ -450,6 +462,12 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
           </ul>
         )}
       </section>
+
+      {/* ── Notes ──────────────────────────────────────────────────────── */}
+      {/* Everything above this line is written by the engine. This is the one
+          section the humans own, and it is shared: what Darren learns on a call
+          has to survive the week and reach whoever picks the lead up next. */}
+      <NotesThread subjectKind="opportunity" subjectId={o.id} />
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <footer className="border-t border-navy/10 pt-4">

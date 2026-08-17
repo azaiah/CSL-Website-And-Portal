@@ -8,6 +8,9 @@
  * Run 2: 2026-07-28 (14 new records; run-1 records re-verified and corrected)
  * Run 3: 2026-08-10 (14 new records; five earlier records corrected — see
  *         weekly-report.ts corrections[] for what prior runs got wrong)
+ * Run 4: 2026-08-17 (first run that CITES ITS SOURCES — see SourceLink below.
+ *         Zero open public solicitations found; the new supply this week is
+ *         the veterinary lead run in lib/data/vet-leads.ts)
  *
  * The 2026-07-28 sweep was run against SAM.gov and eVA directly in a live
  * browser session — not from cached third-party mirrors — so the federal and
@@ -27,6 +30,7 @@ export type OpportunitySource =
   | "Independent Lab"
   | "Pharmacy"
   | "Courier Network"
+  | "Veterinary"
   | "Commercial";
 
 export type OpportunityStatus =
@@ -37,6 +41,54 @@ export type OpportunityStatus =
   | "Bid"
   | "Won"
   | "Lost";
+
+/**
+ * Where a finding actually came from.
+ *
+ * Added in run 4 and MANDATORY for every record from that run onwards. The
+ * reason is a real conversation: when Darren calls a lab manager and is asked
+ * "how did you find us?", "our AI found you" is not an answer that builds
+ * trust — "your own laboratory services page lists ten draw sites feeding the
+ * Glen Allen core lab" is. It is also the only way anyone can audit whether
+ * this engine is reporting or inventing.
+ *
+ * Rules for populating it:
+ *   - Only URLs the engine actually opened. Never a plausible-looking guess.
+ *   - `retrievedISO` is the date it was opened, so a stale citation is
+ *     obvious rather than silently trusted.
+ *   - A registry search URL is honest when there is no permalink (eVA award
+ *     documents, for example, are behind a CAPTCHA); label it `kind: "search"`
+ *     rather than dressing it up as a direct record.
+ *   - If the engine cannot cite it, it does not go in the record.
+ */
+export type SourceKind =
+  /** A posted solicitation, IFB/RFP, or Future Procurement notice. */
+  | "solicitation"
+  /** An award notice, contract, or spending record. */
+  | "award"
+  /** A government or professional registry entry. */
+  | "registry"
+  /** The organization's own website. */
+  | "organization"
+  /** A rule, form, regulation, or agency guidance document. */
+  | "regulation"
+  /** A directory or referral list maintained by a third party. */
+  | "directory"
+  /** News or trade coverage. */
+  | "news"
+  /** A search URL, used where the underlying record has no stable permalink. */
+  | "search";
+
+export interface SourceLink {
+  /** What the reader is clicking, e.g. "VPI Laboratory Services page". */
+  label: string;
+  url: string;
+  kind: SourceKind;
+  /** ISO date the engine actually opened this URL. */
+  retrievedISO: string;
+  /** What this source establishes — the reason it is cited. */
+  note?: string;
+}
 
 export interface Opportunity {
   id: string;
@@ -56,6 +108,12 @@ export interface Opportunity {
   addedISO?: string;
   /** Set when a hard, published deadline exists (vs. a CSL action-by target). */
   hardDeadline?: boolean;
+  /**
+   * Where this finding came from. Required for every record added in run 4
+   * (2026-08-17) or later; absent on earlier records that predate the citation
+   * rule, which the UI states plainly rather than hiding.
+   */
+  sources?: SourceLink[];
 }
 
 export const IS_SAMPLE_DATA = false;
@@ -70,6 +128,7 @@ export const SWEEPS = [
   { run: 1, label: "W1", iso: "2026-07-21", weekOf: "2026-07-20" },
   { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27" },
   { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10" },
+  { run: 4, label: "W4", iso: "2026-08-17", weekOf: "2026-08-17" },
 ] as const;
 
 export type Sweep = (typeof SWEEPS)[number];
@@ -82,7 +141,80 @@ export function sweepFor(o: Pick<Opportunity, "addedISO">): Sweep | undefined {
   return SWEEPS.find((s) => s.iso === o.addedISO);
 }
 
+/**
+ * The first sweep that cited its sources. Records added before this ran under
+ * the old rule, so the UI can say "found before the engine began citing
+ * sources" instead of implying the citation was lost.
+ */
+export const SOURCES_REQUIRED_FROM_ISO = "2026-08-17";
+
+/** True when a record is old enough that a missing citation is expected. */
+export function predatesSourceCitations(
+  o: Pick<Opportunity, "addedISO">
+): boolean {
+  return !o.addedISO || o.addedISO < SOURCES_REQUIRED_FROM_ISO;
+}
+
 export const opportunities: Opportunity[] = [
+  // ───────────────────────── Run 4 — 2026-08-17 ─────────────────────────
+  // First run under the citation rule: every record from here down carries a
+  // `sources` array of URLs the engine actually opened.
+  {
+    id: "OPP-2026-044",
+    title:
+      "Richmond Veterinary Referral Network — Inter-Hospital, STAT & After-Hours Transfer Lane",
+    source: "Veterinary",
+    naics: "492110",
+    location:
+      "Henrico (Short Pump), Richmond, Midlothian, Manakin-Sabot, Mechanicsville, VA",
+    dueDate: "2026-08-28",
+    fitScore: 87,
+    status: "Found",
+    estValue: 52000,
+    agency:
+      "Richmond-metro veterinary emergency, specialty and multi-site practices",
+    addedISO: "2026-08-17",
+    sources: [
+      {
+        label: "Virginia Veterinary Centers — locations",
+        url: "https://www.virginiaveterinarycenters.com/locations",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "Confirms a three-hospital group: Short Pump, Midlothian and Fredericksburg. Two of the three sit inside CSL's radius and the third defines a standing 50-mile lane.",
+      },
+      {
+        label: "Veterinary Referral & Critical Care (VRCC)",
+        url: "https://vrccvet.com/",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "Privately owned since 1997, referral-only for internal medicine and surgery, with on-site CT, MRI and in-house laboratory testing.",
+      },
+      {
+        label: "Richmond Animal League — emergency and urgent care clinic list",
+        url: "https://www.ral.org/posts/emergency-and-urgent-care-clinics",
+        kind: "directory",
+        retrievedISO: "2026-08-17",
+        note:
+          "The referral list Richmond pet owners are handed. It is how the metro's emergency network maps out — and it is partly STALE, which is itself useful: two of its addresses no longer match the practices' own sites.",
+      },
+      {
+        label: "IDEXX Reference Laboratories — lab courier management",
+        url: "https://www.idexx.com/en/veterinary/reference-laboratories/lab-courier-management/",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "The disqualifier, cited deliberately. IDEXX runs its own courier network with online pickup scheduling, and Antech does the same. Routine reference-lab send-outs are already bundled into the practice's lab contract — CSL will not win that, and any pitch that assumes otherwise will be corrected on the call.",
+      },
+    ],
+    description:
+      "A NEW NICHE, opened at Darren's direction, and the reason it is a single opportunity record rather than fifteen is that the whole metro referral network behaves as one system. Fifteen individually verified practices are on the new Vet Leads page; this record is the programme they belong to. The structure: four 24/7 emergency-and-specialty hubs (Virginia Veterinary Centers Short Pump, VVC Midlothian, Veterinary Referral & Critical Care in Manakin-Sabot, Partner Veterinary in Henrico, plus BluePearl on West Broad) receive referrals, transfers and after-hours cases from dozens of general practices that close at 6pm. HONEST CAVEAT, AND IT IS THE IMPORTANT ONE: routine specimen pickup to a reference lab is NOT the opening. IDEXX and Antech both run their own courier fleets and bundle collection into the lab contract, so a pitch built on daily send-outs will be shot down on the first call. The lanes that are genuinely uncovered are inter-hospital movement inside multi-site groups, STAT blood-product and cross-match runs between hubs, after-hours patient-record and imaging-media transfer from GP practices to the ER that received their patient, controlled-substance movement between sites, and cremation and aftercare transport. Value is a CSL-estimated annual figure across the top five accounts, not a published contract.",
+    whyItFits:
+      "Veterinary medicine is the one healthcare vertical where a one-van operator is the right size rather than an obvious shortfall — these are single buildings making their own vendor decisions, not health systems running a GPO. CSL's actual differentiators map cleanly: DEA-grade chain-of-custody discipline is exactly what moving controlled substances between practice sites requires, e-POD answers the specimen-integrity question an accreditation inspector asks, and there is no HIPAA burden on animal patients at all, which removes the compliance drag that slows every human-healthcare conversation. It is also uncontested — the metro's referral network has no dedicated courier, because until now nobody has offered one.",
+    suggestedAction:
+      "Start with Veterinary Referral & Critical Care at (804) 784-8722 and ask for the hospital administrator or practice owner. Privately owned since 1997 means the person who can say yes is in the building, which is not true at BluePearl or at any corporate group. Open with the discovery question, not the pitch: 'when you take a transfer from a general practice after hours, how do the records, imaging and any samples get to you?' Then work Virginia Veterinary Centers at (804) 353-9000 — one conversation covers Short Pump and Midlothian and puts the Fredericksburg lane on the table. Do NOT lead with routine lab pickup at any of them.",
+  },
   // ───────────────────────── Run 3 — 2026-08-10 ─────────────────────────
   {
     id: "OPP-2026-030",
@@ -96,6 +228,17 @@ export const opportunities: Opportunity[] = [
     estValue: 42000,
     agency: "Virginia Physicians, Inc.",
     addedISO: "2026-08-10",
+    sources: [
+      {
+        label: "VPI Laboratory Services — the Glen Allen core lab page",
+        url:
+          "https://vaphysicians.com/laboratory-services/",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "Virginia Physicians' own page describing the Core Lab at 4900 Cox Road and the draw sites that feed it. This is the page the whole lead rests on.",
+      },
+    ],
     description:
       "Independent physician group serving Central Virginia since 1923, operating eleven clinical locations — all inside CSL's 25-mile radius — that feed ONE owned laboratory: the VPI Core Lab at 4900 Cox Road, Suite 180, Glen Allen 23060, (804) 836-1136. VPI's own site states the Core Lab \"provides automated comprehensive testing for all of the Virginia Physician divisions\" and lists ten draw sites feeding it. Sites: Ashland Medical Center, Cold Harbor Family Medicine, Hanover Family Physicians, Innsbrook Primary Care, Midlothian Family Practice (Powhatan / Village / Waterford / Westchester), Midlothian Medical Care, Reynolds Primary Care, Rheumatology Specialists. Value is a CSL-estimated annual route figure, not a published contract.",
     whyItFits:
@@ -191,6 +334,17 @@ export const opportunities: Opportunity[] = [
     estValue: 55000,
     agency: "Virginia Department of Transportation",
     addedISO: "2026-08-10",
+    sources: [
+      {
+        label: "eVA public opportunity search — IFB161013 / IFB-122257",
+        url:
+          "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
+        kind: "search",
+        retrievedISO: "2026-08-17",
+        note:
+          "Opened live on 8/17/2026. Status is now AWARDED with an Award Date of 8/11/2026; a Notice of Award and a public Bid Tab were both posted 8/11/2026. The awardee's NAME is still not readable — the NOA and Bid Tab downloads are CAPTCHA-gated, and the on-page Award tab shows only the date. Darren can clear that CAPTCHA himself in under a minute. Buyer Kimberly Palmer, kimberly.palmer@vdot.virginia.gov, (804) 729-6317. Search the term IFB161013 from this page.",
+      },
+    ],
     description:
       "MAJOR CORRECTION TO STANDING INTEL, found this run. The previous read was that Virginia's statewide delivery contracts are parcel/express only and that same-day local courier remains uncontracted. That is wrong. VDOT ran IFB161013 (eVA IFB-122257) \"Courier Services\" — statewide, issued 6/11/2026, closed 7/6/2026 at 9:00 AM, with a Notice of Intent to Award posted 7/15/2026. Buyer: Kimberly Palmer, kimberly.palmer@vdot.virginia.gov, (804) 729-6317. The solicitation window opened and closed BEFORE this engine's first sweep on 7/21, so it was never missable — but the recurring cycle it reveals is the real asset. eVA history shows VDOT re-procures this repeatedly (IFB 151646-1 in 2014, IFB 2703-3 in 2019, IFB 4960-2 in 2021, IFB161013 in 2026) and the 2014 cycle was expressly SET ASIDE FOR SMALL BUSINESS. The intended awardee could not be identified: the award document on eVA is CAPTCHA-gated and no other public source names it. Value is a CSL estimate of a realistic Richmond District share.",
     whyItFits:
@@ -363,6 +517,17 @@ export const opportunities: Opportunity[] = [
     estValue: 120000,
     agency: "Virginia Department of Social Services",
     addedISO: "2026-07-28",
+    sources: [
+      {
+        label: "eVA public opportunity search — courier, all statuses",
+        url:
+          "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
+        kind: "search",
+        retrievedISO: "2026-08-17",
+        note:
+          "Re-checked live on 8/17/2026. A courier search returns 294 records and the STATUS facet shows NO 'Open' bucket at all — awarded, closed, cancelled and no-award only. OGS-27-005 remains absent from the board three weeks after its estimated 8/1 issue date. This is now the third consecutive run with no live Commonwealth courier solicitation.",
+      },
+    ],
     description:
       "Posted on eVA as Future Procurement OGS-27-005 (eVA reference FPR 124752) with an estimated issue date of 8/1/2026. IT DID NOT ISSUE. Re-verified live in eVA on 2026-08-10: an exact search for \"OGS-27-005\" now returns NO RESULTS, the Future Procurement notice is no longer among the 80 FPRs currently posted, and neither a \"courier\" nor a \"Statewide Courier Services\" search shows any Open status bucket anywhere in eVA. The estimated issue date passed with no solicitation and the notice was withdrawn from the board. Buyer Pedro Andrade remains an active VDSS buyer — he is listed on a separate current VDSS future procurement (FPR 110192) — so the contact is still good: pedro.andrade@dss.virginia.gov, (804) 726-7184. Context that makes this still worth holding: eVA history shows VDSS re-procures statewide courier on a long cycle (IFB OGS-16-050-1 awarded 2016, RFP 1965-4 no-award 2022, RFP 2672-1 awarded 2022) and the 2011 cycle, IFB OGS-11-060-2, was expressly SET ASIDE FOR SMALL BUSINESSES. Value remains a CSL estimate of a Richmond/Central-region share, not a published figure.",
     whyItFits:
@@ -631,6 +796,17 @@ export const opportunities: Opportunity[] = [
     estValue: 769850,
     agency: "VA Network Contracting Office 6 (VISN 6)",
     addedISO: "2026-07-21",
+    sources: [
+      {
+        label: "SAM.gov — active courier notices, searched live",
+        url:
+          "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
+        kind: "search",
+        retrievedISO: "2026-08-17",
+        note:
+          "Re-run on 8/17/2026: 31 active courier notices nationwide, none with a Virginia place of performance. The same search surfaced award notice 36C25026Q0784 (Lab Courier Services, NCO 10, published 8/12/2026) to ALL AMERICAN EXPRESS SOLUTIONS LLC, UEI TYNPRZ48FMJ7 — the same prime that holds the Richmond VAMC IDIQ. The prime is actively winning more VA lab courier work, which strengthens the subcontract approach rather than weakening it.",
+      },
+    ],
     description:
       "Single-award SDVOSB set-aside IDIQ for courier services at the Richmond VA Medical Center, held by All American Express Solutions LLC (Indianapolis, UEI TYNPRZ48FMJ7), $769,850 ceiling, 7/21/2025 through 7/20/2030, NAICS 492210, awarded off solicitation 36C24625Q0784 against 18 offers. CORRECTED THIS RUN: last week's record said only ONE delivery order had ever been issued, totalling $6,411.84, and called the vehicle nearly dormant. USAspending now shows FIVE child awards totalling $245,816.84 obligated — roughly 32% of ceiling — with IDV transaction activity as recent as 7/10/2026. The vehicle is being used steadily, not sitting idle. CSL still cannot bid it directly: it is a single-award SDVOSB set-aside locked through 2030 and CSL's SDVOSB certification is still pending. This is a subcontract and teaming target.",
     whyItFits:
@@ -670,6 +846,17 @@ export const opportunities: Opportunity[] = [
     estValue: 60000,
     agency: "GENETWORx (Logistic and Distribution LLC)",
     addedISO: "2026-07-21",
+    sources: [
+      {
+        label: "GENETWORx contact page",
+        url:
+          "https://genetworx.com/contact/",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "The lab's own contact page — used to confirm the Glen Allen location and main line before the draft was written.",
+      },
+    ],
     description:
       "CLIA reference lab at 4060 Innslake Drive, Glen Allen — pharmacogenomics and pathogen panels — with daily inbound specimen logistics from regional providers. Phone (800) 858-5909. No change found on the 2026-07-28 re-check; no 2026 expansion news surfaced. Value is CSL-estimated annual route revenue. NOTE: the 2026-07-31 target from last week's run has effectively lapsed because outreach was not sent — date moved forward.",
     whyItFits:
@@ -822,6 +1009,17 @@ export const opportunities: Opportunity[] = [
     estValue: 85000,
     agency: "Virginia DGS / DCLS",
     addedISO: "2026-07-21",
+    sources: [
+      {
+        label: "Virginia DGS — Division of Consolidated Laboratory Services",
+        url:
+          "https://dgs.virginia.gov/division-of-consolidated-laboratory-services",
+        kind: "organization",
+        retrievedISO: "2026-08-17",
+        note:
+          "DCLS's own page. Confirms the public-health, environmental, food-safety and newborn-screening testing lines. It does NOT mention courier services or how specimens arrive, so the delivery model is still an open question to ask on the call rather than an established gap.",
+      },
+    ],
     description:
       "The state public-health lab runs a statewide sample-kit collection-and-shipping operation from downtown Richmond and receives specimens from every VDH health district. Confirmed on the live eVA sweep of 2026-07-28: still no open DCLS courier solicitation. DGS buys via eVA. Value is CSL-estimated annual potential.",
     whyItFits:

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
 import { OpportunityButton } from "@/components/portal/opportunity-trigger";
+import { SourceLinks } from "@/components/portal/source-links";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { formatDate } from "@/lib/utils";
 
@@ -144,6 +145,15 @@ export default function WeeklyReportPage() {
             ))}
           </ul>
         </Card>
+      )}
+
+      {/* What was actually swept this week, with the URLs. A run that reports
+          "we found nothing" is only worth anything if the search that found
+          nothing can be re-run by the person reading it. */}
+      {r.sourcesSwept && r.sourcesSwept.length > 0 && (
+        <section className="card">
+          <SourceLinks sources={r.sourcesSwept} />
+        </section>
       )}
 
       {/* Recommended moves */}

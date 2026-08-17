@@ -2,11 +2,13 @@
  * lib/data/weekly-report.ts
  * ---------------------------------------------------------------------------
  * LIVE DATA — the weekly briefing compiled by the Weekly Briefing agent.
- * Run 3: 2026-08-10. Updated on every weekly run.
+ * Run 4: 2026-08-17. Updated on every weekly run.
  * ---------------------------------------------------------------------------
  */
 
 import { outreachStats } from "./outreach";
+import type { SourceLink } from "./opportunities";
+import { vetLeadStats } from "./vet-leads";
 
 export interface WeeklyMetric {
   label: string;
@@ -35,6 +37,13 @@ export interface WeeklyReport {
   deadlines: { title: string; dueDate: string }[];
   recommendedMoves: string[];
   corrections?: { item: string; detail: string }[];
+  /**
+   * Run-level citations — the systems actually swept this week, with the URLs
+   * that were opened. Per-record sources live on each Opportunity; this is the
+   * evidence for the run as a whole, including the searches that found NOTHING.
+   * A null result is only worth reporting if it can be checked.
+   */
+  sourcesSwept?: SourceLink[];
 }
 
 /**
@@ -43,153 +52,217 @@ export interface WeeklyReport {
  * literals that had to be edited in lockstep by hand.
  */
 const outreach = outreachStats();
+const vet = vetLeadStats();
 
 export const weeklyReport: WeeklyReport = {
-  weekOf: "2026-08-10",
+  weekOf: "2026-08-17",
   summary:
-    "Third run of the engine, completed August 10, 2026. The headline is a correction, not a find: the Virginia DSS statewide courier procurement — last week's number one item at a fit score of 94 — DID NOT ISSUE. Its estimated issue date of August 1 passed, an exact search for OGS-27-005 in eVA now returns no results, the Future Procurement notice has been withdrawn from the board entirely, and no courier search anywhere in eVA shows an open solicitation. It has been rescored 94 to 79 and reframed as a watch item. Two live sweeps of SAM.gov likewise returned zero open courier or specimen-transport solicitations with a Virginia place of performance, which is now the same answer three runs running. The honest read is that public bidding is not where CSL's next dollar comes from, and this run was built accordingly: fourteen new opportunities, twelve of them commercial, chosen for what one van and no new equipment can actually serve. The best of them, Virginia Physicians Inc, is the strongest structural fit the engine has produced — eleven metro sites feeding a laboratory the practice owns itself. Five earlier records were corrected, including one that materially favours CSL: the Richmond VAMC contract is not dormant after all. Outreach remains the bottleneck and it is now the only thing standing between this board and revenue — ten drafts have gone unsent for two full weeks, so only three new drafts were written this run rather than fourteen.",
+    "Fourth run, completed August 17, 2026, and it is a deliberate change of direction rather than another fourteen records. Two things happened. First, the public market gave the same answer for the fourth consecutive week, and this time it was checked in a way anyone can re-check: a live SAM.gov sweep returned 31 active courier notices nationwide and zero with a Virginia place of performance, a specimen-transport sweep returned 7 and zero in Virginia, and eVA's own status facet showed NO OPEN BUCKET AT ALL for courier — 294 records, every one of them awarded, closed, cancelled or no-award. Second, at Darren's direction the engine opened a new niche: Richmond-area veterinary practices, which now have their own board with fifteen verified practices across nineteen physical sites. The honest headline on that niche is a disqualifier, not a number — IDEXX and Antech run their own courier fleets and bundle routine specimen collection into the lab contract, so the daily send-out route everyone assumes is the prize is already gone. What is genuinely uncovered is movement between sites in multi-location groups, STAT blood products, the after-hours transfer lane, and controlled substances. Every lead is written around that. From this run onward every record also cites the URLs the engine actually opened, so when a lab manager asks Darren how CSL found them, there is a real answer. And the bottleneck has not moved: seventeen drafts are now written, zero have been sent, and the oldest has been waiting four weeks.",
   metrics: [
-    { label: "New opportunities found", value: "14", delta: "Board now at 43" },
-    { label: "Top-scored leads (80+ fit)", value: "21", delta: "Up from 14" },
+    {
+      // Derived, not typed in: one new opportunity plus every lead on the new
+      // veterinary board. Same rule as the outreach figure below — a count in
+      // this report must never be a literal someone has to remember to edit.
+      label: "New records found",
+      value: String(1 + vet.total),
+      delta: `1 opportunity + ${vet.total} vet leads`,
+    },
+    { label: "Top-scored leads (80+ fit)", value: "22", delta: "Up from 21" },
     {
       label: "Outreach drafted",
       value: String(outreach.drafted),
       delta:
         outreach.sent === 0
-          ? "Still 0 sent — 2 weeks"
+          ? "Still 0 sent — 4 weeks"
           : `${outreach.sent} sent`,
     },
-    { label: "Pipeline value", value: "$2.51M", delta: "Up from $2.07M" },
+    { label: "Pipeline value", value: "$2.56M", delta: "Up from $2.51M" },
   ],
   newOpportunities: [
     {
-      title: "Virginia Physicians Inc — 11 sites feeding their own Glen Allen core lab",
-      source: "Commercial",
-      fitScore: 92,
-      opportunityId: "OPP-2026-030",
+      title:
+        "Richmond Veterinary Referral Network — inter-hospital, STAT & after-hours transfer lane",
+      source: "Veterinary",
+      fitScore: 87,
+      opportunityId: "OPP-2026-044",
     },
     {
-      title: "MediDrive — new NEMT broker for Aetna Better Health VA since 4/1/2026",
-      source: "DMAS / Broker",
-      fitScore: 86,
-      opportunityId: "OPP-2026-031",
+      title:
+        "Virginia Veterinary Centers — 3-hospital group, 2 sites inside the radius (see Vet Leads)",
+      source: "Veterinary",
+      fitScore: 93,
     },
     {
-      title: "Remedi SeniorCare (Ashland) — LTC cycle-fill & STAT routes",
-      source: "Pharmacy",
-      fitScore: 85,
-      opportunityId: "OPP-2026-033",
+      title:
+        "Veterinary Referral & Critical Care — privately owned since 1997, referral-only specialties",
+      source: "Veterinary",
+      fitScore: 91,
     },
     {
-      title: "Patient First — 9-center send-out specimen & inter-center route",
-      source: "Commercial",
-      fitScore: 84,
-      opportunityId: "OPP-2026-032",
+      title:
+        "Partner Veterinary — 2-state group, critical care only in Richmond",
+      source: "Veterinary",
+      fitScore: 88,
     },
     {
-      title: "VDOT Statewide Courier Services — next-cycle positioning",
-      source: "eVA",
-      fitScore: 80,
-      opportunityId: "OPP-2026-035",
+      title: "UrgentVet — three metro clinics forming a ready-made route",
+      source: "Veterinary",
+      fitScore: 82,
     },
   ],
   topLeads: [
     {
+      title: "Veterinary Referral & Critical Care — Manakin-Sabot",
+      fitScore: 91,
+      note:
+        "Make this the first call of the week, and the reason is ownership rather than size. VRCC has been privately owned and operated since 1997, so the person who can approve a courier arrangement works in the building — which is not true at BluePearl, at UrgentVet, or at any corporate group on the new board. Internal medicine and surgery are referral-only, so cases arrive from general practices across the metro every day, and the hospital closes Sunday, which means something is always backed up on Monday. (804) 784-8722. The call script is written and on the board.",
+    },
+    {
       title: "Virginia Physicians Inc — 11-Site Spoke-to-Hub Core Lab Route",
       fitScore: 92,
       opportunityId: "OPP-2026-030",
-      note: "The best-fit lead in three runs, and the reason is structural rather than promotional: VPI owns its own laboratory at 4900 Cox Road in Glen Allen, and ten of its eleven sites draw into it. A practice that runs its own core lab cannot treat specimen transport as optional. Every site is inside the radius, there is no 24/7 requirement, and being independent they choose their own vendor. Call the lab at (804) 836-1136 and ask for the laboratory manager — not the practice line. The call script is written and waiting.",
+      note:
+        "Still the strongest lead on the main board and still not called, one week after being named the best structural fit in three runs. Nothing has changed except that a week has passed. VPI owns its own laboratory at 4900 Cox Road and ten sites draw into it. The lab's direct line is (804) 836-1136 — ask for the laboratory manager, not the practice line. This record now carries its source: VPI's own laboratory services page.",
+    },
+    {
+      title: "Virginia Veterinary Centers — Short Pump & Midlothian",
+      fitScore: 93,
+      note:
+        "The anchor account for the new niche and the highest-scoring lead the engine has produced in any run. Three hospitals in one group means an inter-site lane exists before a single outside client is signed; radiation oncology means scheduled repeat-visit patients travelling in from other practices. One conversation covers both metro hospitals — do not call them separately. (804) 353-9000.",
     },
     {
       title: "GENETWORx — Daily Specimen Routes",
       fitScore: 90,
       opportunityId: "OPP-2026-003",
-      note: "Still the strongest lab lead, still not contacted, now fourteen days since the draft was written. CLIA lab fifteen minutes away in Glen Allen, (800) 858-5909. Nothing about this lead has changed except that two weeks have passed.",
+      note:
+        "Four weeks since this draft was written and it has still not been sent. A CLIA lab fifteen minutes away in Glen Allen, (800) 858-5909. There is no new intelligence to report because nobody has made contact — that is the entire status.",
     },
     {
       title: "Richmond VAMC Courier — Subcontract Target (IDIQ 36C24625D0070)",
       fitScore: 88,
       opportunityId: "OPP-2026-001",
-      note: "Rescored UP, 84 to 88, on corrected facts. Last week's record called this vehicle nearly dormant on the basis of a single $6,411.84 delivery order. USAspending now shows five child awards totalling $245,816.84 — about 32% of the $769,850 ceiling — with activity as recent as July 10. The prime is running real Richmond volume from an Indianapolis base. That makes the subcontract call worth making, where last week's data said skip it.",
+      note:
+        "New evidence, and it points the right way. This run's SAM.gov sweep surfaced award notice 36C25026Q0784 — Lab Courier Services, published 8/12/2026, awarded to ALL AMERICAN EXPRESS SOLUTIONS LLC, the same Indianapolis prime that holds the Richmond VAMC IDIQ. They are actively winning more VA lab courier work. A prime expanding its VA footprint from out of state has a real reason to want local capacity, which is exactly the conversation CSL wants to have.",
     },
     {
-      title: "MediDrive — Aetna Better Health of Virginia NEMT Onboarding",
-      fitScore: 86,
-      opportunityId: "OPP-2026-031",
-      note: "A genuinely new door. Aetna moved its transportation benefit off ModivCare to MediDrive on 4/1/2026, and a broker that has just taken over an MCO is still filling network gaps — the easiest moment to enroll there will ever be. Member line (800) 734-0430. Gated by the same DMV Form OA-151 as ModivCare and Access2Care.",
-    },
-    {
-      title: "Remedi SeniorCare — LTC Cycle-Fill & STAT Facility Routes",
-      fitScore: 85,
-      opportunityId: "OPP-2026-033",
-      note: "The best capability match on the board, which is a different thing from the best revenue. LTC pharmacy delivery is ambient or small-cooler — no validated cold chain, no freezer, no dry ice — so CSL can serve this fully with the van it already owns. Ashland hub, (804) 550-4856. Lead with STAT coverage, not the cycle-fill route. PharMerica and Guardian Pharmacy were both checked and ruled out: neither has a Richmond-metro pharmacy.",
-    },
-    {
-      title: "Owens & Minor — Supplier Diversity Registration",
-      fitScore: 84,
-      opportunityId: "OPP-2026-020",
-      note: "Last week's open question is answered and the answer is yes. O&M accepts certification from a 'state agency responsible for this function,' so Virginia SWaM qualifies — NMSDC is not required. Register and attach the certificate. Note the ownership change: the distribution business was sold to Platinum Equity on 12/31/2025 and stays in Mechanicsville; the old public parent is now Accendra Health. Approach the distributor, not the parent.",
+      title: "Partner Veterinary Emergency & Specialty — Henrico",
+      fitScore: 88,
+      note:
+        "A two-hospital group where only the Richmond site carries critical care. That asymmetry is the pitch: anything Frederick cannot handle has a reason to move. Small enough to decide quickly. (804) 206-9122 — and note the address correction below before anyone drives there.",
     },
   ],
   outreach,
   deadlines: [
-    { title: "Send the thirteen outreach drafts — ten are two weeks old", dueDate: "2026-08-14" },
-    { title: "Medzoomer courier signup — OVERDUE since run 1 (3 weeks)", dueDate: "2026-08-12" },
-    { title: "File DMV Form OA-151 online — gates 4 broker records", dueDate: "2026-08-21" },
-    { title: "Call VPI Core Lab (804) 836-1136 — highest-fit lead on the board", dueDate: "2026-08-21" },
-    { title: "Call VDOT buyer Kimberly Palmer re: courier cycle + awardee", dueDate: "2026-08-21" },
-    { title: "Register with HealthTrust + ask whether SWaM is recognized", dueDate: "2026-09-04" },
-    { title: "Price validated 2-8°C shippers + data loggers (unlocks 3 lanes)", dueDate: "2026-09-04" },
+    {
+      title:
+        "SEND THE SEVENTEEN DRAFTS — the oldest are four weeks old and nothing else on this list matters until they go",
+      dueDate: "2026-08-21",
+    },
+    {
+      title: "Call VRCC (804) 784-8722 — first call of the vet run, script ready",
+      dueDate: "2026-08-21",
+    },
+    {
+      title: "Call VPI Core Lab (804) 836-1136 — carried over, still uncalled",
+      dueDate: "2026-08-21",
+    },
+    {
+      title:
+        "Download the VDOT NOA + Bid Tab from eVA (captcha — 60 seconds) and name the awardee",
+      dueDate: "2026-08-24",
+    },
+    { title: "Medzoomer courier signup — OVERDUE since run 1 (4 weeks)", dueDate: "2026-08-19" },
+    { title: "File DMV Form OA-151 online — gates 4 broker records", dueDate: "2026-08-28" },
+    {
+      title: "Call Virginia Veterinary Centers (804) 353-9000 — covers both metro hospitals",
+      dueDate: "2026-08-28",
+    },
   ],
   corrections: [
     {
-      item: "Virginia DSS Statewide Courier Services (OGS-27-005 / FPR 124752) — DID NOT ISSUE",
+      item: "VDOT IFB161013 — AWARDED on 8/11/2026. The awardee is still not named, and this run says exactly why.",
       detail:
-        "This was last week's number one item at a fit score of 94, with a hard deadline of August 1 and a recommendation to contact the buyer before the solicitation dropped. It never dropped. Verified live in eVA on 2026-08-10: an exact search for OGS-27-005 returns NO RESULTS, the notice is absent from all 80 Future Procurements currently posted, and neither a 'courier' nor a 'Statewide Courier Services' search shows any Open status bucket. The estimated issue date passed and the notice was withdrawn. Fit lowered 94 to 79, the hard-deadline flag removed, and the record reframed from a bid to a watch item. Buyer Pedro Andrade is still an active VDSS buyer on other postings, so the contact remains good — the question to ask him is now whether it was cancelled, deferred, or absorbed.",
+        "Last week's record said a Notice of Intent to Award had been posted on 7/15/2026 and that the intended awardee could not be identified. Re-checked live in eVA on 8/17/2026: the status is now AWARDED, the Award tab shows an Award Date of 8/11/2026, and BOTH a Notice of Award and a public Bid Tab were posted that day. The awardee's name is still not readable from the portal — the NOA and Bid Tab downloads are captcha-gated, and the engine did not bypass that. This is a two-minute job for a human: open the eVA opportunity search, look up IFB161013, clear the captcha and open the Bid Tab, which will also show every bidder and their price. That last part is worth more than the name — it prices the market. Buyer Kimberly Palmer, (804) 729-6317, is still the better call.",
     },
     {
-      item: "Richmond VAMC IDIQ 36C24625D0070 — corrected in CSL's favour",
+      item: "The Richmond VAMC prime just won another VA lab courier contract",
       detail:
-        "Last week this record was lowered from 92 to 84 on the finding that only one delivery order of $6,411.84 had ever been issued against a $769,850 ceiling. That was already stale. USAspending now shows FIVE child awards totalling $245,816.84 obligated, roughly 32% of ceiling, with IDV transaction activity as recent as 7/10/2026. The vehicle is being used steadily. Fit raised back to 88. The set-aside constraint is unchanged — single-award SDVOSB through 2030, so CSL still cannot bid it directly and this stays a subcontract and teaming target.",
+        "New this run, from the live SAM.gov sweep. Award notice 36C25026Q0784, 'Lab Courier Services', Network Contract Office 10, published 8/12/2026, awarded to ALL AMERICAN EXPRESS SOLUTIONS LLC (UEI TYNPRZ48FMJ7) — the same company that holds Richmond VAMC IDIQ 36C24625D0070. Two runs ago this record was written down on the theory the vehicle was dormant; last run that was corrected on the obligation data; this run adds that the prime is actively expanding its VA lab courier book from an Indianapolis base. The subcontract approach is the strongest it has looked.",
     },
     {
-      item: "Virginia statewide courier IS contracted — VDOT ran one in June",
+      item: "Virginia DSS OGS-27-005 — still gone, three weeks past its estimated issue date",
       detail:
-        "Standing intel said Virginia's statewide delivery contracts are parcel and express only and that same-day local courier remains uncontracted. That is wrong. VDOT issued IFB161013 (eVA IFB-122257) 'Courier Services' statewide on 6/11/2026; it closed 7/6/2026 and a Notice of Intent to Award was posted 7/15/2026. The window opened and closed before this engine's first sweep, so nothing was missed — but the recurring cycle is now on the board as OPP-2026-035, with buyer Kimberly Palmer, (804) 729-6317. eVA history shows VDOT re-procures this repeatedly (2014, 2019, 2021, 2026) and the 2014 cycle was expressly SET ASIDE FOR SMALL BUSINESS. The intended awardee could not be identified: the award document is captcha-gated and was deliberately not bypassed, and no other public source names it. Ask the buyer.",
+        "Re-checked live in eVA on 8/17/2026. A courier search returns 294 records and the STATUS facet contains NO 'Open' bucket whatsoever — awarded, closed, bids-opened, intent-posted, no-award, cancelled and contact-buyer only. A veterinary search returns 398 records with the same result: no Open bucket. OGS-27-005 has not reappeared. The record stays a watch item at 79. This is now the fourth consecutive run finding zero live Commonwealth courier solicitations, and it should be treated as the market's answer rather than a run of bad luck.",
     },
     {
-      item: "ModivCare covers three of five MCOs, not four — and one phone number was wrong",
+      item: "THE VETERINARY NICHE: the obvious pitch is already taken, and it is better to know now",
       detail:
-        "Aetna Better Health of Virginia moved its NEMT benefit from ModivCare to MediDrive effective 4/1/2026. ModivCare now covers fee-for-service plus Humana, Sentara and UnitedHealthcare. Aetna is tracked separately as a new opportunity. Separately, the number (804) 873-5200 recorded in run 2 appears in no ModivCare or DMAS published contact list and has been STRUCK from the file — use ModivCare Provider Assistance (866) 810-8302. The Access2Care number (877) 892-3988 is confirmed current, but it is the Anthem member line, not a ModivCare number, and run 2 filed it under the wrong organization.",
+        "Before anyone calls a veterinary practice about daily specimen pickup: IDEXX and Antech both operate their own courier fleets and fold collection into the practice's reference-lab contract — IDEXX publishes online courier scheduling for exactly this. A pitch built on routine send-outs will be corrected on the first call and will cost credibility for the rest of the conversation. The lanes that are genuinely uncovered are movement between sites in multi-location groups, STAT blood products between emergency hubs, after-hours transfer of records and imaging following a patient to whichever ER received them, controlled-substance movement between sites, and cremation and aftercare transport. Every one of the fifteen vet leads is written around those, and each carries the opening question to use instead of a pitch.",
     },
     {
-      item: "Owens & Minor — SWaM IS accepted, and the company changed hands",
+      item: "Two addresses on the metro's most-shared referral list are wrong",
       detail:
-        "Run 2 flagged this as an open question worth one phone call. It is answered: O&M's supplier diversity page accepts certification from NMSDC, the Office of Small Business Certification, US DOT, 'or state agency responsible for this function' — so a Virginia SWaM certificate qualifies and no second certification track is needed. Self-certification is not accepted, so the actual certificate matters. Also corrected: O&M is no longer a Richmond-headquartered public company. The distribution business was sold to Platinum Equity on 12/31/2025 and remains Mechanicsville-based; the former public parent renamed itself Accendra Health, Inc. Fit raised 79 to 84.",
+        "The Richmond Animal League publishes the emergency and urgent-care list that Richmond veterinary clients get handed, and it is partly stale. It gives Partner Veterinary as 6506 W Broad St; Partner's own site says 1616 Three Chopt Road, Henrico. It gives Virginia Veterinary Centers' Midlothian hospital as 2460 Colony Crossing Place and a Richmond hospital at 3312 W Cary Street; VVC's own site lists Midlothian at 12077 Hull Street Road in a facility that opened in July 2024, and lists no Cary Street hospital at all — the metro sites are Short Pump and Midlothian. Where the two disagreed, the practice's own site won and the conflict is recorded on the lead card. Anyone working from the RAL list alone would have lost a morning.",
     },
     {
-      item: "DMV Form OA-151 — confirmed, with two additions",
+      item: "'Dogwood Veterinary Emergency & Specialty Center' is BluePearl",
       detail:
-        "Every figure from run 2 checks out against DMV's current published materials: OA-151 is the NEMT Carrier application (OA-150 is the Broker application), $350,000 liability for the 1–6 passenger tier, a $25,000 surety bond or letter of credit held three years, and a $50 filing fee. Two things run 2 missed: there is also a $3 operating authority registration fee, and while online filing became available 1/1/2026 it does not become mandatory until 2/1/2027.",
+        "Worth stating because Dogwood still has an active social presence and shows up in local searches. Dogwood and 'The Oncology Service — Dogwood' operated at 5918 W Broad Street — the same address as BluePearl Pet Hospital Richmond — and are now listed as closed. Do not pursue Dogwood as a separate account. Also noted on the BluePearl lead: their emergency service runs Sunday 7am to Wednesday 7pm, is closed Thursday, and runs Friday 7am to 7pm. That is a real gap in metro emergency coverage, and the cases it displaces go to the other hubs.",
     },
     {
-      item: "Bremo Pharmacy — Skipwith Road closure confirmed, and the better number found",
+      item: "Every record from this run cites its sources — and the older ones honestly do not",
       detail:
-        "Run 2 reduced this record from $55,000 to $45,000 on a third-party listing showing the Skipwith Road site closed. Confirmed: Bremo's own website lists only three sites, all on Staples Mill Road. The estimate stands. The useful addition is that the LTC division has its own direct line, (804) 285-7823, and its own published cycle-fill model — that is the number to call, not the retail line.",
-    },
-    {
-      item: "No hard published deadline exists on the board this week",
-      detail:
-        "Worth stating plainly rather than leaving to inference. With the VDSS hard-deadline flag removed, zero of the 43 records now carry a published bid deadline — every date on the board is a CSL internal target. That is not a data gap; it is the actual state of the market for this business right now, and it is why the recommended moves below are all calls and filings rather than bid preparation.",
+        "New capability, added at Darren's request so that 'how did you find us?' has a real answer. Each record now carries the URLs the engine actually opened, with the date it opened them and what each one establishes, shown under 'Where this came from' on the opportunity and on every vet lead. Six earlier high-value records were back-filled where the sources could be re-verified this week. The remaining records from runs 1 to 3 predate the rule and show that plainly rather than having plausible-looking URLs invented for them after the fact — a fabricated citation would be worse than an absent one.",
     },
   ],
   recommendedMoves: [
-    "Send the drafts. This is the same first recommendation as last week and the week before, and it is now the only thing separating a 43-record board from revenue. Ten drafts have sat unsent for two weeks; three more were added this run and no more will be added next run until some go out. Opportunity supply is not the constraint and has not been for three weeks — approval is.",
-    "Call the VPI Core Lab at (804) 836-1136 and ask for the laboratory manager. This is the highest-fit lead the engine has found in three runs, the call script is written, and the qualifying question takes ninety seconds: how do specimens get from the ten satellite offices to Glen Allen today. If the answer is 'our staff drive them,' that is the whole sale.",
-    "File DMV Form OA-151 online. Unchanged from last week and still the highest-leverage single filing available: it gates ModivCare, Access2Care, Roundtrip and now the new MediDrive record all at once. Budget $350,000 liability coverage, a $25,000 bond held three years, a $50 fee and a $3 registration fee.",
-    "Call VDOT buyer Kimberly Palmer at (804) 729-6317. Four questions, ten minutes: the term of the contract about to be awarded, who the intended awardee is, whether the requirement has ever been split by district, and whether small-business set-aside was considered. This converts a contract cycle CSL didn't know existed into a dated plan and a subcontract target.",
-    "Work the ambient lane first, deliberately. Remedi SeniorCare, Family Care Pharmacy and Bremo LTC are all cycle-fill and STAT pharmacy delivery — no validated cold chain, no freezer, no hazmat. CSL can serve all three today with the van it owns. Chasing home infusion or trial-kit work before buying validated 2–8°C shippers and data loggers would mean failing a quality audit rather than winning a client.",
-    "Close out Medzoomer. It has now been open for three weeks, it is a form rather than a sale, and it is the oldest unresolved action on the board.",
-    "Stop treating public bidding as the primary channel. Three consecutive live sweeps of SAM.gov and eVA have produced zero open courier or specimen solicitations CSL can bid in Virginia. Public procurement is worth staying registered and notified for — the VDOT and VDSS cycles will come back — but the twelve commercial records added this run are where the next contract realistically comes from.",
+    "Send the drafts. Fourth week, same first recommendation, and it is no longer a nag — it is the finding. Seventeen drafts exist, zero have been sent, and the oldest has been waiting four weeks. The board has 44 opportunities and 15 veterinary leads on it. Opportunity supply has never been the constraint; approval is, and every week that gap stays open is a week of engine output going nowhere.",
+    "Call VRCC at (804) 784-8722 and ask for the hospital administrator or the owner. First call of the vet run. Private ownership since 1997 means the decision-maker is in the building. Open with the question that is printed on the card — how do referrals from general practices physically reach you — and do not mention lab pickup.",
+    "Call Virginia Veterinary Centers at (804) 353-9000. One conversation covers Short Pump and Midlothian and puts the Fredericksburg lane on the table. This is the highest-scoring lead in four runs.",
+    "Call the VPI Core Lab at (804) 836-1136. Unchanged from last week, because nothing about it changed except that another week passed. Ask for the laboratory manager and ask how specimens get from the ten satellites to Glen Allen.",
+    "Spend two minutes on the VDOT captcha. Open eVA's public opportunity search, look up IFB161013, and download the Bid Tab. It names the awardee and every bidder's price — that is a market price for statewide courier work in Virginia, and CSL currently has none.",
+    "File DMV Form OA-151. Fourth week on this list. It still gates ModivCare, Access2Care, Roundtrip and MediDrive simultaneously, and it is still the single highest-leverage filing available. $350,000 liability, a $25,000 bond held three years, a $50 fee and a $3 registration fee.",
+    "Do not buy anything for the vet niche yet. The whole veterinary board can be served with the van CSL already owns — inter-site transfers, records, imaging media and controlled substances are ambient and need no cold chain. Prove the lane with a two-week trial at one hospital before spending on anything.",
+  ],
+  sourcesSwept: [
+    {
+      label: "SAM.gov — active courier notices (live search, 8/17/2026)",
+      url: "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
+      kind: "search",
+      retrievedISO: "2026-08-17",
+      note:
+        "31 active notices nationwide, none with a Virginia place of performance. Also surfaced the 8/12/2026 award of 36C25026Q0784 to ALL AMERICAN EXPRESS SOLUTIONS LLC.",
+    },
+    {
+      label: "SAM.gov — active specimen transport notices (live search, 8/17/2026)",
+      url: "https://sam.gov/search/?index=opp&page=1&pageSize=100&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=specimen%20transport&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=specimen%20transport",
+      kind: "search",
+      retrievedISO: "2026-08-17",
+      note: "7 active notices nationwide, none in Virginia.",
+    },
+    {
+      label: "eVA — public opportunity search (courier and veterinary, 8/17/2026)",
+      url: "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
+      kind: "search",
+      retrievedISO: "2026-08-17",
+      note:
+        "Courier: 294 records, no Open status bucket. Veterinary: 398 records, no Open status bucket. IFB161013 re-opened and confirmed AWARDED with an award date of 8/11/2026.",
+    },
+    {
+      label: "Richmond Animal League — emergency & urgent care clinic list",
+      url: "https://www.ral.org/posts/emergency-and-urgent-care-clinics",
+      kind: "directory",
+      retrievedISO: "2026-08-17",
+      note:
+        "The starting map for the veterinary sweep. Every entry was re-checked against the practice's own site; two addresses were found to be stale.",
+    },
+    {
+      label: "IDEXX Reference Laboratories — lab courier management",
+      url: "https://www.idexx.com/en/veterinary/reference-laboratories/lab-courier-management/",
+      kind: "organization",
+      retrievedISO: "2026-08-17",
+      note:
+        "The evidence for the vet niche's central caveat: the reference labs run their own courier networks with online pickup scheduling.",
+    },
   ],
 };

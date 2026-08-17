@@ -48,6 +48,13 @@ export interface OutreachRecord {
   contactPhone?: string;
   /** Source document this draft was written into, e.g. the bundled drafts docx. */
   documentId?: string;
+  /**
+   * FK to VetLead.id when the draft targets a veterinary practice. Vet leads
+   * live on their own board, but every draft still hangs off an opportunity so
+   * the funnel counts stay whole — the vet drafts all point at OPP-2026-044,
+   * the programme record, and carry this to say which practice they are for.
+   */
+  vetLeadId?: string;
   notes?: string;
 }
 
@@ -578,12 +585,193 @@ Once the awardee is named, add them to the board as a subcontract target and app
     notes:
       "Contact verified directly from the eVA solicitation record for IFB-122257 on 2026-08-10. The intended awardee could not be identified from any public source — the Notice of Intent to Award PDF on eVA is captcha-gated and was deliberately not bypassed — so asking the buyer is both the fastest and the only clean route.",
   },
+  /* ───────────────────── Run 4 — 2026-08-17 · veterinary ────────────────
+     Four drafts for the new niche. Note the channel: three of the four are
+     CALL scripts, not emails. Veterinary practices answer their phones — a
+     hospital that runs a 24-hour emergency service has to — and an email to
+     info@ at a busy ER is read by whoever is least busy. The one email here
+     goes to the group where a written record helps.                        */
+  {
+    id: "OUT-2026-014",
+    opportunityId: "OPP-2026-044",
+    vetLeadId: "VET-2026-003",
+    channel: "call",
+    subject:
+      "Call script — Veterinary Referral & Critical Care, Manakin-Sabot (804) 784-8722",
+    body: `ASK FOR: the hospital administrator or the practice owner. Not the front desk, and not "whoever handles vendors" — this hospital has been privately owned since 1997, so the decision-maker is on site. If they ask why, say you have a question about how referrals reach them, which is true.
+
+OPEN WITH THE QUESTION, NOT THE PITCH:
+
+"Morning — my name's Darren Lewis, I run Capital Solutions & Logistics here in Richmond. I've got one question and I'll be quick. Your internal medicine and surgery are referral-only, so when a general practice sends you a case, how do their records, films and any samples actually get here? Is somebody driving them over?"
+
+THEN LISTEN. Do not pitch over the answer. What you are listening for:
+  - "The owner brings them" → the referring practice is offloading the problem onto the client, and things arrive late or not at all.
+  - "One of our techs runs out" → clinical staff are driving. That is the sale.
+  - "We fax / email it" → fine for records, but ask what happens with imaging media, samples and anything physical.
+
+SECOND QUESTION, ALWAYS ASK IT:
+
+"And you're closed Sundays — what happens to anything that needs to move over the weekend? Does it just wait for Monday?"
+
+WHAT CSL IS OFFERING (only once they have described a gap):
+
+"We're a Richmond medical courier — we run specimen and pharmacy routes across the metro every weekday. What I think is worth pricing for you isn't your reference lab work, because I know IDEXX and Antech already collect that. It's the pieces nobody covers: transfers in from referring practices, anything that has to move on a Sunday, and controlled substances, where we document chain of custody on every leg and you get electronic proof of delivery with a signature and a timestamp."
+
+CREDENTIALS, IF ASKED — AND ONLY WHAT IS TRUE:
+  - Virginia SWaM certified: Small Business and Minority-Owned Business.
+  - Commercial auto liability plus cargo coverage underwritten through Lloyd's of London.
+  - Documented chain of custody and electronic proof of delivery on every run.
+  - Standard routes Monday to Friday, 7:00am to 7:00pm, with STAT and on-demand available 24/7.
+  - Do NOT claim MC operating authority or SDVOSB status. Neither is in place.
+
+CLOSE:
+
+"Can I put together a price on a two-week trial for the one lane that's giving you the most trouble? No commitment — if it doesn't help, we stop."
+
+IF THEY SAY THEY HAVE NO NEED: ask who else in the building might, ask whether they would want a number for after-hours STAT work, and get a name. A "no" that produces a name is not a wasted call.`,
+    status: "draft",
+    draftedISO: "2026-08-17",
+    contactRole:
+      "Hospital administrator or practice owner, Veterinary Referral & Critical Care (privately owned since 1997)",
+    contactPhone: "(804) 784-8722",
+    notes:
+      "No named contact yet — VRCC does not publish its administrator's name, and a fabricated one would be worse than none. Get the name on this call and it goes in the record for next time. This is the recommended FIRST call of the vet run: private ownership means the person who can approve a courier arrangement is reachable, which is not true at BluePearl or UrgentVet.",
+  },
+  {
+    id: "OUT-2026-015",
+    opportunityId: "OPP-2026-044",
+    vetLeadId: "VET-2026-001",
+    channel: "email",
+    subject:
+      "Richmond courier support between your Short Pump and Midlothian hospitals",
+    body: `Hello,
+
+I'm Darren Lewis, Managing Member of Capital Solutions & Logistics, a medical courier company based here in the Richmond area. We run specimen and pharmacy routes across the metro every weekday.
+
+I'm writing because Virginia Veterinary Centers runs three hospitals — Short Pump, Midlothian and Fredericksburg — and in our experience the movement BETWEEN sites in a group like yours is the part that never quite has an owner. It ends up being a technician in their own car, or it waits until somebody happens to be driving that way.
+
+To be direct about what I am not proposing: I know your reference lab work is already collected under your lab contract, and I'm not trying to displace that. What we would price for you is the work that falls outside it —
+
+  • Movement between Short Pump, Midlothian and Fredericksburg on a scheduled run
+  • STAT and after-hours transport, including blood products between hospitals
+  • Records, imaging media and samples following a referred patient in from a general practice
+  • Controlled substances between sites, with documented chain of custody on every leg
+
+Every run gives you electronic proof of delivery — signature, timestamp, and a custody record you can hand to an inspector.
+
+A few details that may matter:
+
+  • Virginia SWaM certified — Small Business and Minority-Owned Business
+  • Commercial auto liability plus cargo coverage underwritten through Lloyd's of London
+  • Standard routes Monday–Friday, 7:00am–7:00pm; STAT and on-demand available 24/7
+  • Based in the Richmond metro — Short Pump and Midlothian are both inside our daily service area
+
+If it would be useful, I would rather start small than pitch big: give us the one lane that causes the most trouble and let us price a two-week trial on it.
+
+Who is the right person to talk to about this — hospital administrator, or does the group handle it centrally?
+
+Thank you for your time.
+
+Darren Lewis
+Managing Member & Director of Operations
+Capital Solutions & Logistics
+(757) 453-3831 | Info@trustcsl.com | trustcsl.com`,
+    status: "draft",
+    draftedISO: "2026-08-17",
+    contactRole:
+      "Hospital administrator, Virginia Veterinary Centers (covers Short Pump and Midlothian)",
+    contactPhone: "(804) 353-9000",
+    notes:
+      "ONE approach for the whole group — do not send this separately to Short Pump and Midlothian. If no email address can be found on the site, call (804) 353-9000, ask for the hospital administrator, and read the second and third paragraphs aloud; they work as a script.",
+  },
+  {
+    id: "OUT-2026-016",
+    opportunityId: "OPP-2026-044",
+    vetLeadId: "VET-2026-004",
+    channel: "email",
+    subject: "Courier support for Partner Veterinary — Richmond to Frederick",
+    body: `Hello,
+
+I'm Darren Lewis, Managing Member of Capital Solutions & Logistics, a Richmond-based medical courier company.
+
+I noticed that of your two hospitals, the Richmond location is the one carrying critical care. That asymmetry is usually where a logistics problem lives: anything the Frederick site cannot handle has a reason to move, and anything a specialist here needs has a reason to come back.
+
+I am not writing about routine lab pickup — I know that is bundled with your reference lab. What we would price is:
+
+  • Scheduled or on-call movement between your Richmond and Frederick hospitals
+  • STAT runs and blood products between Richmond emergency hospitals
+  • Records, imaging media and samples following a referred or transferred patient
+  • Controlled substances between sites, with documented chain of custody
+
+Every run comes with electronic proof of delivery — signature, timestamp and a custody record.
+
+About us: Virginia SWaM certified (Small Business and Minority-Owned Business), commercial auto liability plus cargo coverage underwritten through Lloyd's of London, standard routes Monday–Friday 7:00am–7:00pm with STAT and on-demand available 24/7. We are based in the Richmond metro, so your Three Chopt Road hospital is inside our daily service area.
+
+If there is one lane that is currently a headache, I would rather price that than send a capability statement nobody reads. Happy to do a two-week trial on it.
+
+Who should I be speaking with?
+
+Darren Lewis
+Managing Member & Director of Operations
+Capital Solutions & Logistics
+(757) 453-3831 | Info@trustcsl.com | trustcsl.com`,
+    status: "draft",
+    draftedISO: "2026-08-17",
+    contactRole:
+      "Hospital administrator or practice manager, Partner Veterinary Emergency & Specialty Center",
+    contactPhone: "(804) 206-9122",
+    notes:
+      "Address check before sending: the Richmond Animal League referral list gives Partner as 6506 W Broad St, but Partner's own site says 1616 Three Chopt Road, Henrico. This draft uses Three Chopt. Confirm on the call.",
+  },
+  {
+    id: "OUT-2026-017",
+    opportunityId: "OPP-2026-044",
+    vetLeadId: "VET-2026-012",
+    channel: "call",
+    subject:
+      "Call script — Wellesley Animal Hospital, the after-hours handoff (804) 364-7030",
+    body: `WHY THIS CALL: Wellesley closes at 6:00pm weekdays and noon on Saturday, and their own website says they refer after-hours cases to THREE different 24-hour emergency hospitals. That means their patients' history and imaging have to reach three different destinations, at the worst possible time, and nobody owns that. This is the clearest example of the after-hours transfer lane in the metro — which is why it is worth calling a single-site general practice at all.
+
+ASK FOR: the practice manager.
+
+OPEN:
+
+"Hi — Darren Lewis, Capital Solutions & Logistics, we're a medical courier here in Richmond. Quick question about your after-hours process: your site says you refer emergencies out to three different 24-hour hospitals. When that happens, how does the patient's history and any imaging get to whichever one the owner picked?"
+
+LISTEN FOR:
+  - "We email it" → then ask about imaging media, and about anything physical.
+  - "The owner takes it" → that is a client-experience problem as much as a logistics one, and worth naming gently.
+  - "We call them" → ask what happens when nobody picks up at 9pm.
+
+THE OFFER:
+
+"What we do for practices in your position is cover the handoff — we can run records, imaging media or samples from you to whichever emergency hospital took the case, and back again the next morning, with a signature and timestamp on both ends. It's usually cheaper than it sounds, because we're already running that side of town."
+
+BE HONEST ABOUT SCALE: Wellesley is a single-site general practice, so this is a small account on its own. Say so if it comes up — "this probably isn't a daily route for you, and I'd rather price it honestly than oversell it." The value here is partly the relationship: a general practice that trusts CSL refers CSL to the emergency hospital it works with, and those are the accounts that matter.
+
+DO NOT: pitch daily lab pickup. Their reference lab already collects.
+
+CLOSE: "Can I send you a number to keep by the phone for the nights it matters?"`,
+    status: "draft",
+    draftedISO: "2026-08-17",
+    contactRole: "Practice manager, Wellesley Animal Hospital",
+    contactPhone: "(804) 364-7030",
+    notes:
+      "Lowest revenue of the four W4 drafts and it is written to say so out loud. Kept in the run because it is the cleanest illustration of the after-hours lane, and because general practices are how a courier gets referred into the emergency hospitals that are worth real money.",
+  },
 ];
 
 /** Every draft written for one opportunity, oldest first. */
 export function outreachForOpportunity(opportunityId: string): OutreachRecord[] {
   return outreach
     .filter((o) => o.opportunityId === opportunityId)
+    .sort((a, b) => a.draftedISO.localeCompare(b.draftedISO));
+}
+
+/** Every draft written for one veterinary lead, oldest first. */
+export function outreachForVetLead(vetLeadId: string): OutreachRecord[] {
+  return outreach
+    .filter((o) => o.vetLeadId === vetLeadId)
     .sort((a, b) => a.draftedISO.localeCompare(b.draftedISO));
 }
 

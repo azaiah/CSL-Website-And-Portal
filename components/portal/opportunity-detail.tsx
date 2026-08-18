@@ -48,16 +48,13 @@ import {
   LATEST_RUN_ISO,
   predatesSourceCitations,
   type Opportunity,
-  type OpportunityStatus,
 } from "@/lib/data/opportunities";
 import {
   documentsForOpportunity,
-  DOCUMENT_STATUS_LABEL,
   type PortalDocument,
 } from "@/lib/data/documents";
 import {
   outreachForOpportunity,
-  OUTREACH_STATUS_LABEL,
   type OutreachRecord,
   type OutreachStatus,
 } from "@/lib/data/outreach";
@@ -68,19 +65,26 @@ import {
 import { PrintableDocument } from "@/components/portal/printable-document";
 import { SourceLinks } from "@/components/portal/source-links";
 import { NotesThread } from "@/components/portal/notes-thread";
+import { StatusControl } from "@/components/portal/status-control";
+import { useStatuses } from "@/lib/status-context";
+import {
+  OPPORTUNITY_STATUS_OPTIONS,
+  opportunityStatusStyle,
+  DOCUMENT_STATUS_OPTIONS,
+  documentStatusStyle,
+  OUTREACH_STATUS_OPTIONS,
+  outreachStatusStyle,
+} from "@/lib/status-options";
 import { healthFor, todayISO } from "@/lib/health";
 import { formatCurrency, formatDate, cn } from "@/lib/utils";
 
-/** Shared so the table rows and this view can never style a status differently. */
-export const OPPORTUNITY_STATUS_STYLE: Record<OpportunityStatus, string> = {
-  Found: "bg-navy/10 text-navy",
-  Qualified: "bg-success/10 text-success",
-  Contacted: "bg-gold/15 text-[#8a6c1f]",
-  Meeting: "bg-blue-100 text-blue-700",
-  Bid: "bg-purple-100 text-purple-700",
-  Won: "bg-success/15 text-success",
-  Lost: "bg-red-100 text-red-600",
-};
+/**
+ * Re-exported for the opportunities table, which has imported it from here
+ * since before the status vocabulary was centralised. The values now live in
+ * lib/status-options so the editable dropdowns and the read-only chips cannot
+ * drift apart.
+ */
+export { OPPORTUNITY_STATUS_STYLE } from "@/lib/status-options";
 
 export function fitColor(score: number) {
   if (score >= 85) return "bg-success text-white";
@@ -106,21 +110,6 @@ export function printOutreachHref(id: string) {
   return `/portal/print/outreach/${id}?auto=1`;
 }
 
-const outreachStatusStyle: Record<OutreachStatus, string> = {
-  draft: "bg-navy/10 text-navy",
-  approved: "bg-gold/15 text-[#8a6c1f]",
-  sent: "bg-blue-100 text-blue-700",
-  replied: "bg-success/10 text-success",
-  "no-response": "bg-ink/10 text-ink/60",
-  closed: "bg-ink/10 text-ink/60",
-};
-
-const documentStatusStyle: Record<PortalDocument["status"], string> = {
-  ready: "bg-success/10 text-success border-success/40",
-  "action-required": "bg-gold/10 text-[#8a6c1f] border-gold/40",
-  "awaiting-approval": "bg-navy/10 text-navy border-navy/30",
-};
-
 /** Only PDFs render in a frame; anything else gets an honest fallback. */
 function isPreviewable(file: string) {
   return file.toLowerCase().endsWith(".pdf");
@@ -142,8 +131,14 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
   const [viewingGenerated, setViewingGenerated] =
     useState<GeneratedDocument | null>(null);
 
+  // The status a human set, falling back to the engine's. Everything on this
+  // page that depends on state reads THIS, not o.status — otherwise marking an
+  // opportunity Won would leave its deadline chip still nagging.
+  const { opportunityStatusOf } = useStatuses();
+  const status = opportunityStatusOf(o);
+
   const sweep = sweepFor(o);
-  const closed = o.status === "Won" || o.status === "Lost";
+  const closed = status === "Won" || status === "Lost";
   const health = healthFor(o.dueDate, today, closed);
   const docs = documentsForOpportunity(o.id);
   const generated = generatedDocsForOpportunity(o.id);
@@ -167,14 +162,17 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <header>
         <div className="flex flex-wrap items-center gap-2">
-          <span
-            className={cn(
-              "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold",
-              OPPORTUNITY_STATUS_STYLE[o.status]
-            )}
-          >
-            {o.status}
-          </span>
+          {/* Editable: this is the same fact as the card's column on the
+              pipeline board, so changing it here moves the card there. */}
+          <StatusControl
+            kind="opportunity"
+            id={o.id}
+            engineStatus={o.status}
+            options={OPPORTUNITY_STATUS_OPTIONS}
+            styleFor={opportunityStatusStyle}
+            size="sm"
+            label="Opportunity status"
+          />
 
           {sweep && (
             <span
@@ -299,14 +297,16 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
                   {d.title}
                 </h4>
 
-                <span
-                  className={cn(
-                    "mt-2 inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                    documentStatusStyle[d.status]
-                  )}
-                >
-                  {DOCUMENT_STATUS_LABEL[d.status]}
-                </span>
+                <StatusControl
+                  className="mt-2"
+                  kind="document"
+                  id={d.id}
+                  engineStatus={d.status}
+                  options={DOCUMENT_STATUS_OPTIONS}
+                  styleFor={documentStatusStyle}
+                  size="sm"
+                  label={`Status for ${d.title}`}
+                />
 
                 <p className="mt-2 break-words text-xs leading-relaxed text-ink/70">
                   {d.summary}
@@ -392,14 +392,16 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
                   </p>
                 )}
 
-                <span
-                  className={cn(
-                    "mt-2 inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                    documentStatusStyle[d.status]
-                  )}
-                >
-                  {DOCUMENT_STATUS_LABEL[d.status]}
-                </span>
+                <StatusControl
+                  className="mt-2"
+                  kind="generated-doc"
+                  id={d.id}
+                  engineStatus={d.status}
+                  options={DOCUMENT_STATUS_OPTIONS}
+                  styleFor={documentStatusStyle}
+                  size="sm"
+                  label={`Status for ${d.title}`}
+                />
 
                 <p className="mt-2 break-words text-xs leading-relaxed text-ink/70">
                   {d.summary}
@@ -606,27 +608,40 @@ function GeneratedDocumentViewer({
 /* ──────────────────────────────── Outreach card ─────────────────────────── */
 
 function OutreachCard({ record: r }: { record: OutreachRecord }) {
+  // Resolved, not raw: once Darren approves or sends a draft, the warning
+  // below has to stop saying it is waiting on him.
+  const { statusOf } = useStatuses();
+  const status = statusOf<OutreachStatus>("outreach", r.id, r.status);
+
   return (
     <li className="rounded-xl border border-navy/10 bg-white p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="inline-flex rounded-full bg-navy/5 px-2 py-0.5 text-xs font-semibold capitalize text-navy">
           {r.channel}
         </span>
-        <span
-          className={cn(
-            "inline-flex rounded-full px-2 py-0.5 text-xs font-semibold",
-            outreachStatusStyle[r.status]
-          )}
-        >
-          {OUTREACH_STATUS_LABEL[r.status]}
-        </span>
+        <StatusControl
+          kind="outreach"
+          id={r.id}
+          engineStatus={r.status}
+          options={OUTREACH_STATUS_OPTIONS}
+          styleFor={outreachStatusStyle}
+          size="sm"
+          label={`Status for ${r.subject}`}
+        />
         <span className="text-xs text-ink/40">{r.id}</span>
       </div>
 
-      {r.status === "draft" && (
+      {status === "draft" && (
         <p className="mt-2.5 flex items-start gap-2 rounded-lg border border-gold/30 bg-gold/10 p-2.5 text-xs font-medium text-[#8a6c1f]">
           <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden />
-          Awaiting Darren&apos;s approval — not sent.
+          Awaiting approval — not sent. Change the status above once it goes out.
+        </p>
+      )}
+
+      {status === "approved" && (
+        <p className="mt-2.5 flex items-start gap-2 rounded-lg border border-gold/40 bg-gold/10 p-2.5 text-xs font-medium text-[#8a6c1f]">
+          <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden />
+          Approved and ready to send — not sent yet.
         </p>
       )}
 

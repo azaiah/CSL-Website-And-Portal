@@ -3,31 +3,30 @@
 /**
  * lib/supabase/pipeline-state.ts
  * ---------------------------------------------------------------------------
- * Persistence for the pipeline board.
+ * Persistence for an opportunity's status.
  *
- * The board used to hold stage in React state only, so every refresh silently
- * reverted the work someone had just done — cards "moved back to their original
- * place", which is the bug this file exists to kill.
+ * This one table backs BOTH the kanban board and the status control on the
+ * opportunity detail page, because those are the same fact wearing two faces:
+ * "this deal is at Contacted" and "this card sits in the Contacted column" can
+ * never be allowed to disagree.
  *
- * The model is deliberately narrow. lib/data/pipeline.ts still derives the
- * cards from the engine's opportunities; this table stores ONLY the override:
- * one row per opportunity saying which stage a human put it in. That means a
- * weekly sweep can rewrite titles, values and fit scores without touching where
- * anyone dragged a card, and an opportunity that has never been moved has no
- * row at all rather than a duplicated copy of engine data.
+ * Note the type: it stores an `OpportunityStatus` (seven values, Won and Lost
+ * distinct), not a `PipelineStage` (six columns, Won/Lost merged). The board
+ * merges the two for display; the record keeps them apart, so marking an
+ * opportunity Won does not quietly erase which of Won or Lost it was.
  *
- * The board is SHARED. Stage is a fact about the deal — if Darren moves a lead
- * to Contacted, it has been contacted for everybody — so there is no per-user
- * column here by design.
+ * lib/data/pipeline.ts still derives every card from the engine's own data.
+ * Postgres stores only the human override — one row per moved card, and no row
+ * at all for anything nobody has touched.
  * ---------------------------------------------------------------------------
  */
 
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
-import type { PipelineStage } from "@/lib/data/pipeline";
+import type { OpportunityStatus } from "@/lib/data/opportunities";
 
 export interface PipelineOverride {
   opportunityId: string;
-  stage: PipelineStage;
+  status: OpportunityStatus;
   movedByName: string | null;
   movedAtISO: string;
 }
@@ -38,29 +37,40 @@ export type PipelineResult<T> =
 
 interface PipelineRow {
   opportunity_id: string;
-  stage: PipelineStage;
+  stage: string;
   moved_by_name: string | null;
   moved_at: string;
 }
 
 const COLUMNS = "opportunity_id, stage, moved_by_name, moved_at";
 
+const VALID: OpportunityStatus[] = [
+  "Found", "Qualified", "Contacted", "Meeting", "Bid", "Won", "Lost",
+];
+
+/**
+ * Rows written before migration 003 may hold the merged "Won/Lost" value.
+ * Read it as "Won" rather than dropping the row — the board renders both in
+ * one column anyway, so nothing moves on screen, and the value becomes
+ * unambiguous the next time someone sets it.
+ */
+function toStatus(raw: string): OpportunityStatus {
+  if (raw === "Won/Lost") return "Won";
+  return (VALID as string[]).includes(raw)
+    ? (raw as OpportunityStatus)
+    : "Found";
+}
+
 function toOverride(r: PipelineRow): PipelineOverride {
   return {
     opportunityId: r.opportunity_id,
-    stage: r.stage,
+    status: toStatus(r.stage),
     movedByName: r.moved_by_name,
     movedAtISO: r.moved_at,
   };
 }
 
-/**
- * Every saved stage, keyed by opportunity id.
- *
- * Returns an empty map — not an error — when Supabase is unconfigured or the
- * migration has not been run. The board then shows the engine's own stages,
- * which is the correct fallback: stale positions are better than a broken page.
- */
+/** Every saved status, keyed by opportunity id. */
 export async function fetchPipelineState(): Promise<
   PipelineResult<Map<string, PipelineOverride>>
 > {
@@ -84,19 +94,22 @@ export async function fetchPipelineState(): Promise<
 }
 
 /**
- * Save one card's stage.
+ * Save one opportunity's status.
  *
- * Upsert on the primary key, so moving the same card five times leaves one row
- * holding the latest answer rather than five rows racing each other.
+ * Upsert on the primary key, so setting the same record five times leaves one
+ * row holding the latest answer rather than five rows racing each other.
  */
 export async function savePipelineStage(input: {
   opportunityId: string;
-  stage: PipelineStage;
+  status: OpportunityStatus;
   movedBy: string | null;
   movedByName: string | null;
 }): Promise<PipelineResult<PipelineOverride>> {
   if (!isSupabaseConfigured()) {
-    return { ok: false, error: "Pipeline changes are not being saved — Supabase is not configured." };
+    return {
+      ok: false,
+      error: "Changes are not being saved — the portal database is not connected.",
+    };
   }
 
   const supabase = createClient();
@@ -105,7 +118,7 @@ export async function savePipelineStage(input: {
     .upsert(
       {
         opportunity_id: input.opportunityId,
-        stage: input.stage,
+        stage: input.status,
         moved_by: input.movedBy,
         moved_by_name: input.movedByName,
         moved_at: new Date().toISOString(),
@@ -123,24 +136,46 @@ export async function savePipelineStage(input: {
           "Pipeline table not found — run migration 002 in the Supabase SQL editor.",
       };
     }
-    return {
-      ok: false,
-      error: error?.message || "That move could not be saved.",
-    };
+    // 23514 is the CHECK constraint. Won/Lost as separate values arrived in
+    // migration 003, so this is the specific thing to point at.
+    if (error?.code === "23514") {
+      return {
+        ok: false,
+        error:
+          "That status needs migration 003 — run it in the Supabase SQL editor.",
+      };
+    }
+    return { ok: false, error: error?.message || "That change could not be saved." };
   }
 
   return { ok: true, data: toOverride(data as PipelineRow) };
 }
 
+/** Drop the override so the opportunity falls back to the engine's own status. */
+export async function clearPipelineStage(
+  opportunityId: string
+): Promise<PipelineResult<true>> {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, error: "The portal database is not connected." };
+  }
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("pipeline_state")
+    .delete()
+    .eq("opportunity_id", opportunityId);
+  if (error) {
+    return { ok: false, error: error.message || "That change could not be undone." };
+  }
+  return { ok: true, data: true };
+}
+
 /**
- * Live updates from other users' boards.
- *
- * Returns an unsubscribe function. If realtime is not enabled on the project
- * the callback simply never fires and the board behaves as it does now —
- * correct after a refresh — so this is safe to call unconditionally.
+ * Live updates from other users' boards. Returns an unsubscribe function.
+ * If realtime is not enabled the callback simply never fires and the board
+ * behaves as it does now — correct after a refresh.
  */
 export function subscribeToPipelineState(
-  onChange: (override: PipelineOverride) => void
+  onChange: (id: string, next: PipelineOverride | null) => void
 ): () => void {
   if (!isSupabaseConfigured()) return () => {};
 
@@ -151,8 +186,15 @@ export function subscribeToPipelineState(
       "postgres_changes",
       { event: "*", schema: "public", table: "pipeline_state" },
       (payload) => {
+        if (payload.eventType === "DELETE") {
+          const old = payload.old as Partial<PipelineRow> | null;
+          if (old?.opportunity_id) onChange(old.opportunity_id, null);
+          return;
+        }
         const row = payload.new as PipelineRow | null;
-        if (row?.opportunity_id && row.stage) onChange(toOverride(row));
+        if (row?.opportunity_id && row.stage) {
+          onChange(row.opportunity_id, toOverride(row));
+        }
       }
     )
     .subscribe();

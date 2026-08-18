@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PortalProvider } from "@/lib/portal-context";
+import { StatusProvider } from "@/lib/status-context";
 import { PortalShell } from "@/components/portal/shell";
+import { StatusBanner } from "@/components/portal/status-control";
 
 export const metadata: Metadata = {
   title: "Client Portal — CSL Lead-Gen Engine",
@@ -16,7 +18,17 @@ export default function PortalLayout({
 }) {
   return (
     <PortalProvider>
-      <PortalShell>{children}</PortalShell>
+      {/* Every editable status in the portal reads from this one provider, so
+          the dashboard, the pipeline and the detail views cannot disagree
+          about what state a record is in. */}
+      <StatusProvider>
+        <PortalShell>
+          {/* Session-level: says once, at the top, when a change could not be
+              saved — rather than repeating it beside every chip. */}
+          <StatusBanner />
+          {children}
+        </PortalShell>
+      </StatusProvider>
     </PortalProvider>
   );
 }

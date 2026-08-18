@@ -142,8 +142,9 @@ export function needsAttention(
   card: { stage: string; dueDate: string; isLatestSweep: boolean },
   today: string | null
 ): boolean {
-  // Won/Lost is settled; it should never nag.
-  if (card.stage === "Won/Lost") return false;
+  // A settled deal should never nag. Won and Lost are separate stages now
+  // (they used to be one merged column), so this checks both.
+  if (card.stage === "Won" || card.stage === "Lost") return false;
   const health = healthFor(card.dueDate, today);
   return (
     (health !== null && ATTENTION_KEYS.includes(health.key)) ||

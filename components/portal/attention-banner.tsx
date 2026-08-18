@@ -15,13 +15,19 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
-import { pipelineCards } from "@/lib/data/pipeline";
+import { toPipelineCard, isClosedStage } from "@/lib/data/pipeline";
 import { healthFor, todayISO, isUntouched, needsAttention } from "@/lib/health";
+import { useStatuses } from "@/lib/status-context";
 import { cn } from "@/lib/utils";
 
 export function AttentionBanner() {
   const [today, setToday] = useState<string | null>(null);
   useEffect(() => setToday(todayISO()), []);
+
+  // Reads the same overridden board the pipeline renders. Counting the
+  // engine's raw statuses here would mean marking a deal Won never cleared it
+  // from the dashboard's attention count.
+  const { resolvedOpportunities } = useStatuses();
 
   const stats = useMemo(() => {
     let overdue = 0;
@@ -35,8 +41,9 @@ export function AttentionBanner() {
     // that is both overdue and untouched appears in two of them.
     let flagged = 0;
 
-    for (const c of pipelineCards) {
-      if (c.stage === "Won/Lost") continue;
+    for (const o of resolvedOpportunities) {
+      const c = toPipelineCard(o);
+      if (isClosedStage(c.stage)) continue;
       if (needsAttention(c, today)) flagged++;
       const h = healthFor(c.dueDate, today);
       if (h?.key === "expired") overdue++;
@@ -45,7 +52,7 @@ export function AttentionBanner() {
     }
 
     return { overdue, thisWeek, untouched, flagged };
-  }, [today]);
+  }, [today, resolvedOpportunities]);
 
   // Nothing to say until the date is known on the client.
   if (!today) return null;

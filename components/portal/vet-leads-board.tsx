@@ -21,7 +21,7 @@
  * ---------------------------------------------------------------------------
  */
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Phone,
   MapPin,
@@ -47,6 +47,13 @@ import {
 } from "@/lib/data/vet-leads";
 import { SourceLinks } from "@/components/portal/source-links";
 import { NotesThread } from "@/components/portal/notes-thread";
+import { StatusControl } from "@/components/portal/status-control";
+import { useStatuses, type VetLeadStatus } from "@/lib/status-context";
+import {
+  VET_LEAD_STATUS_OPTIONS,
+  vetLeadStatusStyle,
+  VET_LEAD_DEFAULT_STATUS,
+} from "@/lib/status-options";
 import { cn } from "@/lib/utils";
 
 const PRIORITY_STYLE: Record<VetLeadPriority, string> = {
@@ -70,20 +77,44 @@ const CATEGORY_STYLE: Record<VetLeadCategory, string> = {
 
 type PriorityFilter = "All" | VetLeadPriority;
 type CategoryFilter = "All" | VetLeadCategory;
+type ProgressFilter = "All" | "open" | VetLeadStatus;
 
 export function VetLeadsBoard() {
+  const { statusOf } = useStatuses();
+
   const [priority, setPriority] = useState<PriorityFilter>("All");
   const [category, setCategory] = useState<CategoryFilter>("All");
+  const [progress, setProgress] = useState<ProgressFilter>("All");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
 
   const stats = useMemo(() => vetLeadStats(), []);
+
+  /** How far along the call is for one lead, override applied. */
+  const progressOf = useCallback(
+    (id: string) =>
+      statusOf<VetLeadStatus>("vet-lead", id, VET_LEAD_DEFAULT_STATUS),
+    [statusOf]
+  );
+
+  /** How many are still genuinely untouched — the number that matters. */
+  const notCalled = useMemo(
+    () => vetLeads.filter((l) => progressOf(l.id) === "not-started").length,
+    [progressOf]
+  );
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return vetLeads
       .filter((l) => priority === "All" || l.priority === priority)
       .filter((l) => category === "All" || l.category === category)
+      .filter((l) => {
+        if (progress === "All") return true;
+        const p = progressOf(l.id);
+        // "Still open" is the working view: everything not finished either way.
+        if (progress === "open") return p !== "won" && p !== "not-a-fit";
+        return p === progress;
+      })
       .filter((l) => {
         if (!q) return true;
         return (
@@ -100,7 +131,7 @@ export function VetLeadsBoard() {
           VET_PRIORITY_ORDER.indexOf(b.priority);
         return p !== 0 ? p : b.fitScore - a.fitScore;
       });
-  }, [priority, category, query]);
+  }, [priority, category, progress, query, progressOf]);
 
   return (
     <div className="space-y-5">
@@ -147,9 +178,9 @@ export function VetLeadsBoard() {
           accent
         />
         <Stat
-          label="Sources cited"
-          value={String(stats.sourcesCited)}
-          hint="Every address traced"
+          label="Not called yet"
+          value={String(notCalled)}
+          hint={`of ${stats.total} · ${stats.sourcesCited} sources cited`}
         />
       </div>
 
@@ -200,6 +231,25 @@ export function VetLeadsBoard() {
               {VET_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {c} ({vetLeads.filter((l) => l.category === c).length})
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="text-sm">
+            <span className="mb-1.5 block font-medium text-navy-deep">
+              Call progress
+            </span>
+            <select
+              value={progress}
+              onChange={(e) => setProgress(e.target.value as ProgressFilter)}
+              className="rounded-xl border border-navy/15 bg-white px-3 py-2 text-sm"
+            >
+              <option value="All">Any progress</option>
+              <option value="open">Still open</option>
+              {VET_LEAD_STATUS_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
                 </option>
               ))}
             </select>
@@ -356,6 +406,21 @@ function VetLeadCard({
               Website
             </a>
           )}
+
+          {/* Where this call is up to. Sits with the call buttons because that
+              is when it gets changed — right after hanging up. */}
+          <span className="ml-auto inline-flex items-center gap-2">
+            <span className="text-xs font-medium text-ink/50">Progress</span>
+            <StatusControl
+              kind="vet-lead"
+              id={l.id}
+              engineStatus={VET_LEAD_DEFAULT_STATUS}
+              options={VET_LEAD_STATUS_OPTIONS}
+              styleFor={vetLeadStatusStyle}
+              size="sm"
+              label={`Call progress for ${l.name}`}
+            />
+          </span>
         </div>
 
         {/* The caution goes above the pitch on purpose. */}

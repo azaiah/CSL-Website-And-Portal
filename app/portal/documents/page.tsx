@@ -1,26 +1,15 @@
-import {
-  FolderDown,
-  Download,
-  FileText,
-  ClipboardCheck,
-  ListChecks,
-} from "lucide-react";
+"use client";
+
+import { FolderDown, Download, FileText, ListChecks } from "lucide-react";
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
 import { OpportunityChips } from "@/components/portal/opportunity-trigger";
-import {
-  documents,
-  actionPlan,
-  DOCUMENT_STATUS_LABEL,
-  type PortalDocument,
-} from "@/lib/data/documents";
+import { documents, actionPlan } from "@/lib/data/documents";
 import { generatedDocuments } from "@/lib/data/generated-docs";
-import { cn } from "@/lib/utils";
-
-const statusStyles: Record<PortalDocument["status"], string> = {
-  ready: "bg-success/10 text-success border-success/40",
-  "action-required": "bg-gold/10 text-[#8a6c1f] border-gold/40",
-  "awaiting-approval": "bg-navy/10 text-navy border-navy/30",
-};
+import { StatusControl } from "@/components/portal/status-control";
+import {
+  DOCUMENT_STATUS_OPTIONS,
+  documentStatusStyle,
+} from "@/lib/status-options";
 
 export default function DocumentsPage() {
   return (
@@ -82,15 +71,15 @@ export default function DocumentsPage() {
               </div>
             </div>
 
-            <span
-              className={cn(
-                "mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
-                statusStyles[doc.status]
-              )}
-            >
-              <ClipboardCheck className="h-3.5 w-3.5" aria-hidden />
-              {DOCUMENT_STATUS_LABEL[doc.status]}
-            </span>
+            <StatusControl
+              className="mt-3"
+              kind="generated-doc"
+              id={doc.id}
+              engineStatus={doc.status}
+              options={DOCUMENT_STATUS_OPTIONS}
+              styleFor={documentStatusStyle}
+              label={`Status for ${doc.title}`}
+            />
 
             <p className="mt-3 break-words text-sm leading-relaxed text-ink/70">
               {doc.summary}
@@ -160,15 +149,15 @@ export default function DocumentsPage() {
               </div>
             </div>
 
-            <span
-              className={cn(
-                "mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
-                statusStyles[doc.status]
-              )}
-            >
-              <ClipboardCheck className="h-3.5 w-3.5" aria-hidden />
-              {DOCUMENT_STATUS_LABEL[doc.status]}
-            </span>
+            <StatusControl
+              className="mt-3"
+              kind="document"
+              id={doc.id}
+              engineStatus={doc.status}
+              options={DOCUMENT_STATUS_OPTIONS}
+              styleFor={documentStatusStyle}
+              label={`Status for ${doc.title}`}
+            />
 
             <p className="mt-3 text-sm leading-relaxed text-ink/70">{doc.summary}</p>
 

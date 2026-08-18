@@ -10,15 +10,12 @@ import {
 import { PortalPageHeader, SampleDataRibbon } from "@/components/portal/portal-ui";
 import { OpportunityButton } from "@/components/portal/opportunity-trigger";
 import { SourceLinks } from "@/components/portal/source-links";
+import { OutreachSummary } from "@/components/portal/dashboard-stats";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { formatDate } from "@/lib/utils";
 
 export default function WeeklyReportPage() {
   const r = weeklyReport;
-  const responseRate =
-    r.outreach.sent > 0
-      ? Math.round((r.outreach.responses / r.outreach.sent) * 100)
-      : 0;
 
   return (
     <div className="space-y-6">
@@ -94,16 +91,12 @@ export default function WeeklyReportPage() {
           </ul>
         </Card>
 
-        {/* Outreach */}
+        {/* Outreach. Live rather than a snapshot — these are the numbers
+            people act on, so they follow the statuses actually set in the
+            portal instead of what was true when the briefing was written. */}
         <Card title="Outreach & response rates" icon={Send}>
-          <div className="grid grid-cols-3 gap-2 text-center sm:gap-3">
-            <Metric value={r.outreach.drafted} label="Drafted" />
-            <Metric value={r.outreach.sent} label="Sent" />
-            <Metric value={`${responseRate}%`} label="Response rate" />
-          </div>
-          <p className="mt-4 text-xs text-ink/50">
-            {r.outreach.responses} response
-            {r.outreach.responses === 1 ? "" : "s"} from {r.outreach.sent} sent.
+          <OutreachSummary />
+          <p className="mt-2 text-xs text-ink/50">
             All outreach is drafted for human approval before sending.
           </p>
         </Card>
@@ -193,11 +186,3 @@ function Card({
   );
 }
 
-function Metric({ value, label }: { value: string | number; label: string }) {
-  return (
-    <div className="rounded-xl border border-navy/10 bg-surface px-1 py-3">
-      <p className="text-xl font-bold text-navy-deep sm:text-2xl">{value}</p>
-      <p className="text-xs text-ink/50">{label}</p>
-    </div>
-  );
-}

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowUpDown } from "lucide-react";
 import {
-  opportunities as allOpps,
+  opportunities as engineOpps,
   LATEST_RUN_ISO,
   SWEEPS,
   sweepFor,
@@ -11,10 +11,13 @@ import {
 } from "@/lib/data/opportunities";
 import { healthFor, todayISO } from "@/lib/health";
 import { OpportunityModal } from "@/components/portal/opportunity-modal";
+import { fitColor } from "@/components/portal/opportunity-detail";
+import { StatusControl } from "@/components/portal/status-control";
+import { useStatuses } from "@/lib/status-context";
 import {
-  OPPORTUNITY_STATUS_STYLE,
-  fitColor,
-} from "@/components/portal/opportunity-detail";
+  OPPORTUNITY_STATUS_OPTIONS,
+  opportunityStatusStyle,
+} from "@/lib/status-options";
 import { formatDate, cn } from "@/lib/utils";
 
 type SortKey = "fitScore" | "dueDate" | "estValue";
@@ -23,10 +26,15 @@ function isNew(o: Opportunity) {
   return o.addedISO === LATEST_RUN_ISO;
 }
 
-const sources = ["All", ...Array.from(new Set(allOpps.map((o) => o.source)))];
+const sources = ["All", ...Array.from(new Set(engineOpps.map((o) => o.source)))];
 const statuses = ["All", "Found", "Qualified", "Contacted", "Meeting", "Bid", "Won", "Lost"];
 
 export function OpportunitiesTable() {
+  // Rows are filtered and sorted on the OVERRIDDEN statuses, so filtering by
+  // "Contacted" finds what Darren has marked contacted — not what the engine
+  // last guessed.
+  const { resolvedOpportunities } = useStatuses();
+
   const [source, setSource] = useState("All");
   const [status, setStatus] = useState("All");
   const [sweep, setSweep] = useState("All");
@@ -43,7 +51,7 @@ export function OpportunitiesTable() {
   useEffect(() => setToday(todayISO()), []);
 
   const rows = useMemo(() => {
-    let r = allOpps.filter(
+    let r = resolvedOpportunities.filter(
       (o) =>
         (source === "All" || o.source === source) &&
         (status === "All" || o.status === status) &&
@@ -56,7 +64,7 @@ export function OpportunitiesTable() {
       return sortDir === "asc" ? cmp : -cmp;
     });
     return r;
-  }, [source, status, sweep, sortKey, sortDir]);
+  }, [resolvedOpportunities, source, status, sweep, sortKey, sortDir]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -110,7 +118,7 @@ export function OpportunitiesTable() {
               .map((s) => (
                 <option key={s.iso} value={s.iso}>
                   {s.label} — {formatDate(s.iso)} (
-                  {allOpps.filter((o) => o.addedISO === s.iso).length})
+                  {engineOpps.filter((o) => o.addedISO === s.iso).length})
                 </option>
               ))}
           </select>
@@ -212,8 +220,24 @@ export function OpportunitiesTable() {
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold", OPPORTUNITY_STATUS_STYLE[o.status])}>
-                    {o.status}
+                  {/* Editable in place — same fact as the card's column on the
+                      pipeline board, so changing it here moves it there. The
+                      row's own click handler must not fire when the select is
+                      used, hence stopPropagation. */}
+                  <span
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                  >
+                    <StatusControl
+                      kind="opportunity"
+                      id={o.id}
+                      engineStatus={o.status}
+                      options={OPPORTUNITY_STATUS_OPTIONS}
+                      styleFor={opportunityStatusStyle}
+                      size="sm"
+                      label={`Status for ${o.title}`}
+                      showProvenance={false}
+                    />
                   </span>
                 </td>
               </tr>

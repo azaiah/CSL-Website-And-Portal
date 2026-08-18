@@ -1,23 +1,12 @@
 import Link from "next/link";
-import {
-  Target,
-  CheckCircle2,
-  PenLine,
-  DollarSign,
-  ArrowRight,
-  Bot,
-} from "lucide-react";
-import {
-  StatCard,
-  Phase1Banner,
-  ComingOnlineBadge,
-} from "@/components/portal/portal-ui";
+import { ArrowRight, Bot } from "lucide-react";
+import { Phase1Banner, ComingOnlineBadge } from "@/components/portal/portal-ui";
+import { DashboardStats } from "@/components/portal/dashboard-stats";
 import { AttentionBanner } from "@/components/portal/attention-banner";
 import { OpportunityButton } from "@/components/portal/opportunity-trigger";
-import { opportunityStats } from "@/lib/data/opportunities";
 import { weeklyReport } from "@/lib/data/weekly-report";
 import { agents } from "@/lib/agents";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
   return (
@@ -33,37 +22,9 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Open opportunities"
-          value={String(opportunityStats.open)}
-          icon={Target}
-          hint={`${opportunityStats.newThisRun} added this week`}
-        />
-        <StatCard
-          label="Qualified leads"
-          value={String(opportunityStats.qualified)}
-          icon={CheckCircle2}
-          hint="Fit score 80+"
-        />
-        <StatCard
-          label="Outreach drafted"
-          value={String(weeklyReport.outreach.drafted)}
-          icon={PenLine}
-          hint={
-            weeklyReport.outreach.sent === 0
-              ? "None sent yet — approval needed"
-              : `${weeklyReport.outreach.sent} sent`
-          }
-        />
-        <StatCard
-          label="Pipeline value"
-          value={formatCurrency(opportunityStats.pipelineValue)}
-          icon={DollarSign}
-          hint="Est. contract value"
-        />
-      </div>
+      {/* Summary cards. Client-side and override-aware: these have to reflect
+          statuses people have changed, not just what the engine last wrote. */}
+      <DashboardStats />
 
       {/* Same records and thresholds the pipeline board flags — see lib/health. */}
       <AttentionBanner />

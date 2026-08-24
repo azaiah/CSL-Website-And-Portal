@@ -9,9 +9,11 @@
 import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
+  Users,
   Target,
   Stethoscope,
   KanbanSquare,
+  Calculator,
   Wallet,
   Bot,
   Brain,
@@ -32,12 +34,17 @@ export type PortalNavItem = {
 
 export const PORTAL_NAV: PortalNavItem[] = [
   { label: "Dashboard", href: "/portal", icon: LayoutDashboard, fullAccessOnly: false },
+  // The customer is the thing everything else hangs off — a quote references
+  // one, a job references the quote — so it sits directly under the dashboard.
+  { label: "Customers", href: "/portal/customers", icon: Users, fullAccessOnly: true },
   { label: "Opportunities", href: "/portal/opportunities", icon: Target, fullAccessOnly: true },
   // Sits directly under Opportunities because it is the other half of the same
   // job — but it is a separate entry, with a separate icon, because a vet lead
   // is a business to call rather than a solicitation to bid.
   { label: "Vet Leads", href: "/portal/vet-leads", icon: Stethoscope, fullAccessOnly: true },
   { label: "Pipeline", href: "/portal/pipeline", icon: KanbanSquare, fullAccessOnly: true },
+  // Directly before Finance: a quote is where a number first becomes money.
+  { label: "Quotes", href: "/portal/quotes", icon: Calculator, fullAccessOnly: true },
   { label: "Finance", href: "/portal/finance", icon: Wallet, fullAccessOnly: true },
   { label: "AI Team", href: "/portal/ai-team", icon: Bot, fullAccessOnly: true },
   { label: "Company Brain", href: "/portal/company-brain", icon: Brain, fullAccessOnly: false },

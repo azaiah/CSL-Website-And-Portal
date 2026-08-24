@@ -26,6 +26,7 @@ import {
   VET_LEAD_STATUS_LABEL,
   type VetLeadStatus,
 } from "@/lib/status-context";
+import type { QuoteStatus, JobStatus } from "@/lib/quotes/types";
 
 export interface StatusOption<T extends string> {
   value: T;
@@ -118,3 +119,59 @@ export function vetLeadStatusStyle(s: VetLeadStatus): string {
 
 /** Every vet lead starts here until somebody says otherwise. */
 export const VET_LEAD_DEFAULT_STATUS: VetLeadStatus = "not-started";
+
+/* ─────────────────────────────────── Quotes ─────────────────────────────── */
+
+/**
+ * Quote outcome. Unlike the vocabularies above, quote status is a column on
+ * the quotes table rather than a record_status row — the quote and its outcome
+ * are one fact, so they live in one place. See migration 003's header.
+ *
+ * The values are already human-readable, so label === value throughout.
+ */
+export const QUOTE_STATUSES: QuoteStatus[] = [
+  "Draft", "Sent", "Pending", "Won", "Lost",
+];
+
+export const QUOTE_STATUS_STYLE: Record<QuoteStatus, string> = {
+  Draft: "bg-navy/10 text-navy",
+  Sent: "bg-blue-100 text-blue-700",
+  Pending: "bg-gold/15 text-[#8a6c1f]",
+  Won: "bg-success/15 text-success",
+  Lost: "bg-red-100 text-red-600",
+};
+
+export const QUOTE_STATUS_OPTIONS: StatusOption<QuoteStatus>[] =
+  QUOTE_STATUSES.map((s) => ({ value: s, label: s }));
+
+export function quoteStatusStyle(s: QuoteStatus): string {
+  return QUOTE_STATUS_STYLE[s] ?? QUOTE_STATUS_STYLE.Draft;
+}
+
+/* ──────────────────────────────────── Jobs ──────────────────────────────── */
+
+/**
+ * Delivery status on a job. Superset of the client's lookup tab, which offers
+ * only Picked Up / In Transit / Delivered while his live rows already use
+ * Delayed and On Hold.
+ */
+export const JOB_STATUSES: JobStatus[] = [
+  "Scheduled", "Picked Up", "In Transit", "Delivered", "Delayed", "On Hold", "Cancelled",
+];
+
+export const JOB_STATUS_STYLE: Record<JobStatus, string> = {
+  Scheduled: "bg-navy/10 text-navy",
+  "Picked Up": "bg-blue-100 text-blue-700",
+  "In Transit": "bg-purple-100 text-purple-700",
+  Delivered: "bg-success/15 text-success",
+  Delayed: "bg-gold/15 text-[#8a6c1f]",
+  "On Hold": "bg-slate-100 text-slate-600",
+  Cancelled: "bg-red-100 text-red-600",
+};
+
+export const JOB_STATUS_OPTIONS: StatusOption<JobStatus>[] =
+  JOB_STATUSES.map((s) => ({ value: s, label: s }));
+
+export function jobStatusStyle(s: JobStatus): string {
+  return JOB_STATUS_STYLE[s] ?? JOB_STATUS_STYLE.Scheduled;
+}

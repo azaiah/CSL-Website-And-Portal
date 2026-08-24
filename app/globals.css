@@ -44,6 +44,33 @@
   ::selection {
     background: rgba(193, 154, 62, 0.25);
   }
+
+  /* Brand-tinted scrollbars (Firefox + Chromium / Safari).
+     Gold thumb on a soft navy-tinted track so the chrome matches the site. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(14, 36, 64, 0.08);
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: rgba(14, 36, 64, 0.06);
+  }
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--gold) 0%, #b0882e 100%);
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }
 
 @layer components {

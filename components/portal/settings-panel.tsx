@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Bell, Radar, Plug, UserCog } from "lucide-react";
 import { usePortal, ROLES, type Role } from "@/lib/portal-context";
 import { cn } from "@/lib/utils";
+import { RateSettings } from "@/components/portal/quotes/rate-settings";
 
 const notificationDefaults = [
   { id: "new-opps", label: "New opportunities found", desc: "Alert when the Opportunity Finder surfaces a match.", on: true },
@@ -62,6 +63,10 @@ export function SettingsPanel() {
           ))}
         </div>
       </section>
+
+      {/* Quote rates. Its own component because it is the only section here
+          backed by live Supabase rows rather than local UI state. */}
+      <RateSettings />
 
       {/* Notifications */}
       <section className="card">

@@ -27,6 +27,8 @@ import {
 } from "@/lib/data/outreach";
 import { company } from "@/lib/company-brain";
 import { formatDate } from "@/lib/utils";
+import type { Quote } from "@/lib/quotes/types";
+import { formatMoney } from "@/lib/quotes/format";
 
 /* ────────────────────────────── Shared chrome ───────────────────────────── */
 
@@ -389,5 +391,115 @@ export function PrintableOutreach({ record }: { record: OutreachRecord }) {
 
       <PrintFooter />
     </PrintPage>
+  );
+}
+
+/* ─────────────────────────────────── Quote ──────────────────────────────── */
+
+/**
+ * A quote on paper — the thing that actually gets emailed to a customer.
+ *
+ * Every figure comes from the stored row, never from a fresh calculation. A
+ * printed quote states what was offered on a date; recomputing it at print time
+ * would silently reprice it if a rate had changed since.
+ */
+export function PrintableQuote({
+  quote,
+  customerName,
+  customerAddress,
+}: {
+  quote: Quote;
+  customerName: string;
+  customerAddress: string | null;
+}) {
+  return (
+    <PrintPage>
+      <PrintHeader
+        title={`Delivery Quote — ${quote.uid}`}
+        subtitle={`${quote.service_code} · Quoted ${formatDate(quote.quoted_on)}`}
+        generatedISO={quote.quoted_on}
+      />
+
+      <section className="print-section mt-5">
+        <h2 className="break-words border-b border-navy/15 pb-1 text-base font-bold text-navy-deep">
+          Prepared for
+        </h2>
+        <p className="mt-2 break-words text-sm font-semibold text-navy-deep">{customerName}</p>
+        {customerAddress && (
+          <p className="mt-0.5 break-words text-sm text-ink/75">{customerAddress}</p>
+        )}
+      </section>
+
+      <section className="print-section mt-6">
+        <h2 className="break-words border-b border-navy/15 pb-1 text-base font-bold text-navy-deep">
+          Scope of service
+        </h2>
+        <dl className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+          <PrintRow label="Service level" value={quote.service_code} />
+          <PrintRow label="Stops" value={String(quote.stops)} />
+          <PrintRow label="Route mileage" value={`${quote.route_miles} mi`} />
+          <PrintRow label="Extra mileage" value={`${quote.extra_miles} mi`} />
+          <PrintRow label="Wait time" value={`${quote.wait_minutes} min`} />
+          <PrintRow label="Temperature controlled" value={quote.cold_chain ? "Yes" : "No"} />
+          <PrintRow label="Off-hours" value={quote.off_hours ? "Yes" : "No"} />
+        </dl>
+      </section>
+
+      <section className="print-section mt-6">
+        <h2 className="break-words border-b border-navy/15 pb-1 text-base font-bold text-navy-deep">
+          Detailed cost breakdown
+        </h2>
+        <table className="mt-2 w-full text-sm">
+          <thead>
+            <tr className="border-b border-navy/15 text-left text-xs uppercase tracking-wide text-ink/60">
+              <th scope="col" className="py-1.5 font-semibold">Component</th>
+              <th scope="col" className="py-1.5 font-semibold">Basis</th>
+              <th scope="col" className="py-1.5 text-right font-semibold">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {quote.line_items.map((li) => (
+              <tr key={li.key} className="border-b border-navy/5">
+                <td className="break-words py-1.5 pr-3 font-medium text-navy-deep">{li.label}</td>
+                <td className="break-words py-1.5 pr-3 text-xs text-ink/65">{li.basis}</td>
+                <td className="py-1.5 text-right tabular-nums">{formatMoney(li.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-navy">
+              <td colSpan={2} className="py-2 font-bold text-navy-deep">
+                Total
+              </td>
+              <td className="py-2 text-right text-base font-bold tabular-nums text-navy-deep">
+                {formatMoney(quote.total)}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      {quote.notes && (
+        <section className="print-section mt-6">
+          <h2 className="break-words border-b border-navy/15 pb-1 text-base font-bold text-navy-deep">
+            Notes
+          </h2>
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-ink/85">
+            {quote.notes}
+          </p>
+        </section>
+      )}
+
+      <PrintFooter />
+    </PrintPage>
+  );
+}
+
+function PrintRow({ label, value }: { label: string; value: string }) {
+  return (
+    <>
+      <dt className="text-ink/60">{label}</dt>
+      <dd className="break-words font-medium text-navy-deep">{value}</dd>
+    </>
   );
 }

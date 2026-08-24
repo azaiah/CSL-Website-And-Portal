@@ -10,6 +10,7 @@ import type {
   FinanceKind,
 } from "@/lib/finance/types";
 import type { Opportunity } from "@/lib/data/opportunities";
+import type { Customer, Job } from "@/lib/quotes/types";
 import { parseAmount } from "@/lib/finance/calc";
 
 const NEW_CATEGORY = "__new__";
@@ -21,6 +22,9 @@ interface EntryFormProps {
   categories: FinanceCategory[];
   fieldDefs: FieldDef[];
   opportunities: Opportunity[];
+  /** Optional so the form still works before jobs exist. */
+  jobs?: Job[];
+  customers?: Customer[];
   onSubmit: (
     entry: Omit<FinanceEntry, "id" | "created_at" | "updated_at" | "created_by">
   ) => Promise<boolean>;
@@ -36,6 +40,8 @@ export function EntryForm({
   categories,
   fieldDefs,
   opportunities,
+  jobs = [],
+  customers = [],
   onSubmit,
   onCreateCategory,
 }: EntryFormProps) {
@@ -52,6 +58,10 @@ export function EntryForm({
       description: entry?.description ?? "",
       amount: entry?.amount ?? 0,
       opportunity_id: entry?.opportunity_id ?? null,
+      job_id: entry?.job_id ?? null,
+      customer_id: entry?.customer_id ?? null,
+      quote_id: entry?.quote_id ?? null,
+      is_overhead: entry?.is_overhead ?? false,
       custom_fields: entry?.custom_fields ?? {},
       notes: entry?.notes ?? null,
     }),
@@ -327,6 +337,91 @@ export function EntryForm({
               ))}
             </select>
           </label>
+
+          {/* Job / customer attribution, added by migration 004 */}
+          <div className="space-y-4 rounded-xl border border-navy/10 bg-surface p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+              Attribution
+            </p>
+
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-medium text-navy-deep">Job</span>
+              <select
+                value={form.job_id ?? ""}
+                onChange={(e) => {
+                  const jobId = e.target.value || null;
+                  const job = jobs.find((j) => j.id === jobId);
+                  setForm((f) => ({
+                    ...f,
+                    job_id: jobId,
+                    // Denormalise the customer so per-customer rollups skip a join.
+                    customer_id: job ? job.customer_id : f.customer_id,
+                    quote_id: job ? job.quote_id : f.quote_id,
+                    // A cost booked against a specific run is attributable to
+                    // it by definition, so it cannot also be overhead. Leaving
+                    // both set would drop the cost from job margin silently.
+                    is_overhead: jobId ? false : f.is_overhead,
+                  }));
+                }}
+                className="w-full rounded-xl border border-navy/15 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">None</option>
+                {jobs.map((j) => (
+                  <option key={j.id} value={j.id}>
+                    {j.uid} — {j.service_code}
+                    {j.pickup_date ? ` · ${j.pickup_date}` : ""}
+                  </option>
+                ))}
+              </select>
+              {jobs.length === 0 && (
+                <span className="mt-1 block text-xs text-ink/50">
+                  No jobs yet — costs can still be logged without one.
+                </span>
+              )}
+            </label>
+
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-medium text-navy-deep">Customer</span>
+              <select
+                value={form.customer_id ?? ""}
+                onChange={(e) => updateField("customer_id", e.target.value || null)}
+                className="w-full rounded-xl border border-navy/15 bg-white px-3 py-2 text-sm"
+              >
+                <option value="">None</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex items-start gap-2.5 text-sm">
+              <input
+                type="checkbox"
+                checked={form.is_overhead}
+                onChange={(e) => {
+                  const on = e.target.checked;
+                  setForm((f) => ({
+                    ...f,
+                    is_overhead: on,
+                    // Mutually exclusive with a job, for the reason above.
+                    job_id: on ? null : f.job_id,
+                  }));
+                }}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-navy/15 text-navy focus:ring-gold"
+              />
+              <span className="min-w-0">
+                <span className="block font-medium text-navy-deep">
+                  Overhead (not attributable to a job)
+                </span>
+                <span className="block break-words text-xs text-ink/55">
+                  Insurance, subscriptions, phone — counts toward net profit, excluded from
+                  per-job margin.
+                </span>
+              </span>
+            </label>
+          </div>
 
           {/* Notes */}
           <label className="block text-sm">

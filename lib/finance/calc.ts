@@ -180,6 +180,141 @@ export function plSummary(entries: FinanceEntry[]): PLSummary {
   return { income, expenses, net, margin };
 }
 
+/**
+ * The bits of a job_financials row these helpers need.
+ *
+ * Declared structurally rather than imported from lib/quotes/types so that
+ * lib/finance keeps no dependency on the quotes module. JobFinancials satisfies
+ * this shape, so it can be passed straight in.
+ */
+export interface JobMarginRow {
+  revenue: number;
+  fuel_cost: number;
+  attributed_cost: number;
+  job_margin: number;
+  job_date: string | null;
+  delivery_status: string;
+}
+
+/**
+ * The status at which the finance_ledger view starts counting a job's revenue.
+ * A scheduled run is not money yet; billing it before it is delivered would
+ * book revenue that could still be cancelled.
+ */
+export const REVENUE_RECOGNISED_AT = "Delivered";
+
+/**
+ * Jobs whose revenue the ledger recognises: delivered, billed, and dated.
+ *
+ * These three conditions mirror the WHERE clause on the job half of
+ * finance_ledger exactly. Any drift here shows up as the Income card
+ * disagreeing with the monthly P&L directly beneath it.
+ */
+export function revenueRecognisedJobs<T extends JobMarginRow>(rows: T[]): T[] {
+  return rows.filter(
+    (r) =>
+      r.delivery_status === REVENUE_RECOGNISED_AT &&
+      r.revenue > 0 &&
+      r.job_date !== null
+  );
+}
+
+export interface JobMarginSummary {
+  /** Billed revenue on the jobs in scope. */
+  revenue: number;
+  /** Generated in Postgres from gallons x price per gallon. */
+  fuelCost: number;
+  /** Job-attributable expense entries. Overhead is excluded in SQL. */
+  attributedCost: number;
+  /** revenue − fuel − attributed. NOT net profit; overhead is not in here. */
+  jobMargin: number;
+  jobCount: number;
+}
+
+/**
+ * Roll up per-job economics.
+ *
+ * Kept separate from plSummary() on purpose, because it answers a different
+ * question. plSummary asks "did the business make money", which has to include
+ * insurance and the phone bill. This asks "did the RUNS make money", which must
+ * not — overhead is real but belongs to the month, not to any one delivery.
+ *
+ * Conflating the two is why the client's spreadsheet cannot tell him whether a
+ * $61.65 run was worth driving.
+ */
+export function jobMarginSummary(rows: JobMarginRow[]): JobMarginSummary {
+  let revenue = 0;
+  let fuelCost = 0;
+  let attributedCost = 0;
+  let jobMargin = 0;
+
+  for (const r of rows) {
+    revenue += r.revenue;
+    fuelCost += r.fuel_cost;
+    attributedCost += r.attributed_cost;
+    jobMargin += r.job_margin;
+  }
+
+  return { revenue, fuelCost, attributedCost, jobMargin, jobCount: rows.length };
+}
+
+/**
+ * Keep only jobs whose job_date falls inside [from, to]. Undated jobs drop.
+ *
+ * Generic so callers keep the full JobFinancials row rather than having it
+ * narrowed to the handful of fields these helpers happen to read.
+ */
+export function filterJobsByDateRange<T extends JobMarginRow>(
+  rows: T[],
+  range: DateRange | null
+): T[] {
+  if (!range) return rows;
+  return rows.filter(
+    (r) => r.job_date !== null && r.job_date >= range.from && r.job_date <= range.to
+  );
+}
+
+export interface LedgerSummary {
+  /** Manual income entries PLUS delivered job revenue. */
+  income: number;
+  /** Every expense entry, overhead included. */
+  expenses: number;
+  /** income − expenses. This one is "everything". */
+  net: number;
+  margin: number;
+}
+
+/**
+ * The whole-business figures, matching what the finance_ledger view produces.
+ *
+ * Job revenue is deliberately NOT copied into finance_entries — migration 004's
+ * header explains that a copy drifts the first time someone edits the job and
+ * forgets the entry. So revenue has to be added back here, or the Income card
+ * on the finance page disagrees with the monthly P&L underneath it.
+ *
+ * plSummary() is left exactly as it was; this is the ledger-aware sibling.
+ *
+ * `jobRows` is filtered through revenueRecognisedJobs() here rather than by the
+ * caller, so a caller cannot accidentally book a scheduled job as income.
+ */
+export function ledgerSummary(
+  entries: FinanceEntry[],
+  jobRows: JobMarginRow[]
+): LedgerSummary {
+  const entryTotals = plSummary(entries);
+  const jobRevenue = revenueRecognisedJobs(jobRows).reduce(
+    (sum, r) => sum + r.revenue,
+    0
+  );
+
+  const income = entryTotals.income + jobRevenue;
+  const expenses = entryTotals.expenses;
+  const net = income - expenses;
+  const margin = income > 0 ? (net / income) * 100 : 0;
+
+  return { income, expenses, net, margin };
+}
+
 /** Format a month label like "Jul 2026" from an ISO yyyy-mm-dd first-of-month. */
 export function formatMonthLabel(monthISO: string): string {
   const d = new Date(monthISO + "T00:00:00");

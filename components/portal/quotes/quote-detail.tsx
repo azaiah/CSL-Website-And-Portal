@@ -222,10 +222,16 @@ export function QuoteDetail({ quoteId }: { quoteId: string }) {
           </a>
 
           {job ? (
-            <span className="inline-flex items-center gap-2 rounded-xl border border-success/40 bg-success/10 px-3 py-2 text-sm font-semibold text-success">
+            /* Links straight through to the run now that /portal/jobs/[id]
+               exists — converting and then having to hunt for the job was the
+               one rough edge left in this flow. */
+            <Link
+              href={`/portal/jobs/${job.id}`}
+              className="inline-flex items-center gap-2 rounded-xl border border-success/40 bg-success/10 px-3 py-2 text-sm font-semibold text-success hover:bg-success/20"
+            >
               <Check className="h-4 w-4" aria-hidden />
               Converted — {job.uid}
-            </span>
+            </Link>
           ) : (
             <button
               onClick={() => void convertToJob()}

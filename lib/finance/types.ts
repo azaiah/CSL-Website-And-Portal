@@ -66,6 +66,22 @@ export interface FinanceEntry {
   description: string;
   amount: number; // numeric(12, 2), always positive; sign comes from kind
   opportunity_id: string | null;
+
+  /* ── Added by migration 004 ───────────────────────────────────────────────
+     These four turn the tracker into the cost side of the job ledger. Logging
+     a cost against a job IS logging it in finance, because it is this table —
+     there is no second copy to drift.
+
+     is_overhead is the one that carries weight: fixed costs (insurance, phone,
+     subscriptions) are real money and count toward net profit, but they are not
+     attributable to any single run, so job_financials excludes them from
+     per-job margin. That distinction is why the client's spreadsheet cannot
+     produce a per-run margin. */
+  job_id: string | null;
+  customer_id: string | null;
+  quote_id: string | null;
+  is_overhead: boolean;
+
   /** Keyed by FieldDef.key. */
   custom_fields: Record<string, unknown>;
   notes: string | null;

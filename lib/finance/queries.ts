@@ -45,6 +45,15 @@ export interface ListEntriesFilters {
   to?: string | null;
   kind?: FinanceKind | null;
   categoryId?: string | null;
+  /** Costs booked against one run. */
+  jobId?: string | null;
+  customerId?: string | null;
+  /**
+   * Pass true for overhead only, false for job-attributable only. Leave
+   * undefined for both — `false` is a real filter value here, so this is
+   * checked against undefined rather than for truthiness.
+   */
+  isOverhead?: boolean | null;
 }
 
 export async function listEntries(
@@ -58,6 +67,12 @@ export async function listEntries(
   if (filters.to) q = q.lte("entry_date", filters.to);
   if (filters.kind) q = q.eq("kind", filters.kind);
   if (filters.categoryId) q = q.eq("category_id", filters.categoryId);
+  if (filters.jobId) q = q.eq("job_id", filters.jobId);
+  if (filters.customerId) q = q.eq("customer_id", filters.customerId);
+  // Explicit null/undefined check: `false` is a meaningful filter value.
+  if (filters.isOverhead !== undefined && filters.isOverhead !== null) {
+    q = q.eq("is_overhead", filters.isOverhead);
+  }
   q = q.order("entry_date", { ascending: false });
 
   const { data, error } = await q;
@@ -73,6 +88,12 @@ type EntryInsert = {
   description: string;
   amount: number;
   opportunity_id?: string | null;
+  /* Added by migration 004 — see lib/finance/types.ts for why is_overhead
+     matters. All optional: the column defaults cover a plain manual entry. */
+  job_id?: string | null;
+  customer_id?: string | null;
+  quote_id?: string | null;
+  is_overhead?: boolean;
   custom_fields?: Record<string, unknown>;
   notes?: string | null;
 };

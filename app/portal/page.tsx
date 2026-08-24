@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Bot } from "lucide-react";
 import { Phase1Banner, ComingOnlineBadge } from "@/components/portal/portal-ui";
 import { DashboardStats } from "@/components/portal/dashboard-stats";
+import { DashboardOpsStats } from "@/components/portal/dashboard-ops-stats";
 import { AttentionBanner } from "@/components/portal/attention-banner";
 import { OpportunityButton } from "@/components/portal/opportunity-trigger";
 import { weeklyReport } from "@/lib/data/weekly-report";
@@ -25,6 +26,11 @@ export default function DashboardPage() {
       {/* Summary cards. Client-side and override-aware: these have to reflect
           statuses people have changed, not just what the engine last wrote. */}
       <DashboardStats />
+
+      {/* Delivery operations and the money they made. Renders nothing until the
+          job tables have rows, so the dashboard stays honest on a fresh install
+          rather than showing a row of zeroes. */}
+      <DashboardOpsStats />
 
       {/* Same records and thresholds the pipeline board flags — see lib/health. */}
       <AttentionBanner />

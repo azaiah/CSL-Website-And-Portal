@@ -14,6 +14,7 @@ import {
   Stethoscope,
   KanbanSquare,
   Calculator,
+  Truck,
   Wallet,
   Bot,
   Brain,
@@ -45,6 +46,10 @@ export const PORTAL_NAV: PortalNavItem[] = [
   { label: "Pipeline", href: "/portal/pipeline", icon: KanbanSquare, fullAccessOnly: true },
   // Directly before Finance: a quote is where a number first becomes money.
   { label: "Quotes", href: "/portal/quotes", icon: Calculator, fullAccessOnly: true },
+  // Directly after Quotes, and directly before Finance, because that is the
+  // order the money moves in: a quote becomes a job, and a job's costs and
+  // billing become the ledger.
+  { label: "Jobs", href: "/portal/jobs", icon: Truck, fullAccessOnly: true },
   { label: "Finance", href: "/portal/finance", icon: Wallet, fullAccessOnly: true },
   { label: "AI Team", href: "/portal/ai-team", icon: Bot, fullAccessOnly: true },
   { label: "Company Brain", href: "/portal/company-brain", icon: Brain, fullAccessOnly: false },

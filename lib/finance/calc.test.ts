@@ -23,8 +23,21 @@ const categories: FinanceCategory[] = [
   { id: "cat-2", name: "Revenue", kind: "income", sort_order: 1, is_archived: false, created_at: "", updated_at: "" },
 ];
 
+/**
+ * The job-attribution columns migration 004 added. Spread into each fixture so
+ * a plain manual entry stays a one-line concern in these tests — none of the
+ * functions under test read them.
+ */
+const LEDGER_DEFAULTS = {
+  job_id: null,
+  customer_id: null,
+  quote_id: null,
+  is_overhead: false,
+};
+
 const entries: FinanceEntry[] = [
   {
+    ...LEDGER_DEFAULTS,
     id: "1",
     entry_date: "2026-07-01",
     kind: "income",
@@ -39,6 +52,7 @@ const entries: FinanceEntry[] = [
     created_by: null,
   },
   {
+    ...LEDGER_DEFAULTS,
     id: "2",
     entry_date: "2026-07-05",
     kind: "income",
@@ -53,6 +67,7 @@ const entries: FinanceEntry[] = [
     created_by: null,
   },
   {
+    ...LEDGER_DEFAULTS,
     id: "3",
     entry_date: "2026-07-10",
     kind: "expense",
@@ -123,6 +138,7 @@ describe("monthOverMonth", () => {
  */
 describe("totalsByCategory with orphaned entries", () => {
   const orphan: FinanceEntry = {
+    ...LEDGER_DEFAULTS,
     id: "orphan-1",
     entry_date: "2026-07-15",
     kind: "expense",

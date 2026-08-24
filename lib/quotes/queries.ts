@@ -49,16 +49,15 @@ export type QuoteResult<T> = {
 };
 
 /**
- * finance_entries gained job_id / customer_id / quote_id / is_overhead in
- * migration 004. lib/finance/types.ts predates them and is owned elsewhere, so
- * the four new columns are described here rather than by editing that file.
+ * A finance_entries row carrying migration 004's job_id / customer_id /
+ * quote_id / is_overhead columns.
+ *
+ * Those four now live on FinanceEntry itself, so this is a plain alias. It is
+ * kept as a named export because it reads better at the call sites in this
+ * file, and because re-declaring the columns here would give the codebase two
+ * definitions of the same shape that could drift apart.
  */
-export interface JobFinanceEntry extends FinanceEntry {
-  job_id: string | null;
-  customer_id: string | null;
-  quote_id: string | null;
-  is_overhead: boolean;
-}
+export type JobFinanceEntry = FinanceEntry;
 
 function getClient() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;

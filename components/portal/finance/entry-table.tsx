@@ -1,9 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { ArrowUpDown, Trash2, Pencil } from "lucide-react";
-import { formatCurrency, formatDate, cn } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
+/*
+  formatMoney, not formatCurrency. The shared formatCurrency helper rounds to
+  whole dollars, which turned a $3.50 toll into "$4" in the ledger. This table
+  is the record of what was actually spent, so it has to show the cents the
+  user typed. Same reason pl-summary.tsx uses formatMoney.
+*/
+import { formatMoney } from "@/lib/quotes/format";
 import type { FinanceEntry, FinanceCategory, FieldDef } from "@/lib/finance/types";
+import type { Job } from "@/lib/quotes/types";
 
 type SortKey = "date" | "amount";
 
@@ -11,6 +20,8 @@ interface EntryTableProps {
   entries: FinanceEntry[];
   categories: FinanceCategory[];
   fieldDefs: FieldDef[];
+  /** Used to resolve job_id to a UID. Optional so existing callers still work. */
+  jobs?: Job[];
   onEdit: (entry: FinanceEntry) => void;
   onDelete: (id: string) => Promise<boolean>;
 }
@@ -19,6 +30,7 @@ export function EntryTable({
   entries,
   categories,
   fieldDefs,
+  jobs = [],
   onEdit,
   onDelete,
 }: EntryTableProps) {
@@ -30,6 +42,8 @@ export function EntryTable({
     () => new Map(categories.map((c) => [c.id, c])),
     [categories]
   );
+
+  const jobById = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs]);
 
   const activeFields = useMemo(
     () => fieldDefs.filter((f) => !f.is_archived),
@@ -55,7 +69,7 @@ export function EntryTable({
   }
 
   async function handleDelete(entry: FinanceEntry) {
-    if (!window.confirm(`Delete “${entry.description}” for ${formatCurrency(entry.amount)}?`)) return;
+    if (!window.confirm(`Delete “${entry.description}” for ${formatMoney(entry.amount)}?`)) return;
     setDeletingId(entry.id);
     await onDelete(entry.id);
     setDeletingId(null);
@@ -64,7 +78,7 @@ export function EntryTable({
   function renderCustomFieldValue(field: FieldDef, value: unknown): string {
     if (value === null || value === undefined) return "—";
     if (field.field_type === "boolean") return value ? "Yes" : "No";
-    if (field.field_type === "currency") return formatCurrency(Number(value) || 0);
+    if (field.field_type === "currency") return formatMoney(Number(value) || 0);
     if (field.field_type === "number") return String(value);
     if (field.field_type === "date") return formatDate(String(value));
     return String(value);
@@ -92,6 +106,7 @@ export function EntryTable({
               <th className="px-4 py-3 font-semibold">
                 <SortBtn label="Amount" active={sortKey === "amount"} onClick={() => toggleSort("amount")} />
               </th>
+              <th className="px-4 py-3 font-semibold">Job</th>
               {activeFields.map((field) => (
                 <th key={field.id} className="px-4 py-3 font-semibold">
                   {field.label}
@@ -104,7 +119,7 @@ export function EntryTable({
             {rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5 + activeFields.length}
+                  colSpan={7 + activeFields.length}
                   className="px-4 py-8 text-center text-sm text-ink/50"
                 >
                   No entries match the current filters.
@@ -153,7 +168,24 @@ export function EntryTable({
                       )}
                     </td>
                     <td className="px-4 py-3 font-semibold text-navy-deep">
-                      {formatCurrency(entry.amount)}
+                      {formatMoney(entry.amount)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      {entry.job_id ? (
+                        <Link
+                          href={`/portal/jobs/${entry.job_id}`}
+                          // The row itself opens the editor, so this link has to
+                          // stop the click from reaching it.
+                          onClick={(e) => e.stopPropagation()}
+                          className="font-semibold text-navy hover:text-[#8a6c1f] hover:underline"
+                        >
+                          {jobById.get(entry.job_id)?.uid ?? "View job"}
+                        </Link>
+                      ) : entry.is_overhead ? (
+                        <span className="text-xs font-medium text-[#8a6c1f]">Overhead</span>
+                      ) : (
+                        <span className="text-ink/40">—</span>
+                      )}
                     </td>
                     {activeFields.map((field) => (
                       <td key={field.id} className="px-4 py-3 text-ink/70">

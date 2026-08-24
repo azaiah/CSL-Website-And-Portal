@@ -17,7 +17,21 @@ import {
   rangeForPreset,
   labelForPreset,
   filterByDateRange,
+  filterJobsByDateRange,
 } from "@/lib/finance/calc";
+import type {
+  Customer,
+  Job,
+  JobFinancials,
+  ServiceLevelSummary,
+} from "@/lib/quotes/types";
+import {
+  listJobs,
+  listCustomers,
+  getJobFinancials,
+  getServiceLevelSummary,
+} from "@/lib/quotes/queries";
+import { FinanceCharts } from "./finance-charts";
 import {
   listEntries,
   listCategories,
@@ -55,6 +69,13 @@ export function FinanceDashboard() {
   const [categories, setCategories] = useState<FinanceCategory[]>([]);
   const [fieldDefs, setFieldDefs] = useState<FieldDef[]>([]);
   const [monthlyPL, setMonthlyPL] = useState<MonthlyPL[]>([]);
+  /* Jobs and their economics. Needed here because revenue is NOT copied into
+     finance_entries — the finance_ledger view unions it in, so the summary has
+     to do the same or the Income card disagrees with the P&L below it. */
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [jobFinancials, setJobFinancials] = useState<JobFinancials[]>([]);
+  const [serviceLevels, setServiceLevels] = useState<ServiceLevelSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,18 +98,35 @@ export function FinanceDashboard() {
     setLoading(true);
     setError(null);
 
-    const [entriesRes, categoriesRes, fieldsRes, plRes] = await Promise.all([
+    const [
+      entriesRes,
+      categoriesRes,
+      fieldsRes,
+      plRes,
+      jobsRes,
+      customersRes,
+      jobFinRes,
+      serviceRes,
+    ] = await Promise.all([
       listEntries(),
       listCategories(),
       listFieldDefs(),
       getMonthlyPL(),
+      listJobs(),
+      listCustomers(),
+      getJobFinancials(),
+      getServiceLevelSummary(),
     ]);
 
     const firstError =
       entriesRes.error ||
       categoriesRes.error ||
       fieldsRes.error ||
-      plRes.error;
+      plRes.error ||
+      jobsRes.error ||
+      customersRes.error ||
+      jobFinRes.error ||
+      serviceRes.error;
     if (firstError) {
       setError(firstError.message);
       setLoading(false);
@@ -99,7 +137,27 @@ export function FinanceDashboard() {
     setCategories(categoriesRes.data ?? []);
     setFieldDefs(fieldsRes.data ?? []);
     setMonthlyPL(plRes.data ?? []);
+    setJobs(jobsRes.data ?? []);
+    setCustomers(customersRes.data ?? []);
+    setJobFinancials(jobFinRes.data ?? []);
+    setServiceLevels(serviceRes.data ?? []);
     setLoading(false);
+  }, []);
+
+  /*
+    Every view downstream of finance_entries has to be re-read after a mutation,
+    not just one of them.
+
+    job_financials.attributed_cost is a subquery over finance_entries, and
+    finance_monthly_pl aggregates the ledger that contains them. Refreshing only
+    the first left the charts showing the previous month's net profit while the
+    KPI card above them showed the new one — two numbers for the same thing on
+    the same screen, which is exactly the failure this module exists to fix.
+  */
+  const refreshDerived = useCallback(async () => {
+    const [finRes, plRes] = await Promise.all([getJobFinancials(), getMonthlyPL()]);
+    if (!finRes.error) setJobFinancials(finRes.data ?? []);
+    if (!plRes.error) setMonthlyPL(plRes.data ?? []);
   }, []);
 
   useEffect(() => {
@@ -113,6 +171,14 @@ export function FinanceDashboard() {
     if (categoryFilter !== "all") r = r.filter((e) => e.category_id === categoryFilter);
     return r;
   }, [entries, range, kindFilter, categoryFilter]);
+
+  /* Jobs are scoped by the same period as the entries. The kind and category
+     filters deliberately do NOT apply — they describe expense rows, and
+     narrowing jobs by them would make the Job margin card mean nothing. */
+  const filteredJobFinancials = useMemo(
+    () => filterJobsByDateRange(jobFinancials, range),
+    [jobFinancials, range]
+  );
 
   const handleCreateEntry = useCallback(
     async (draft: Omit<FinanceEntry, "id" | "created_at" | "updated_at" | "created_by">) => {
@@ -134,9 +200,10 @@ export function FinanceDashboard() {
         return false;
       }
       setEntries((prev) => prev.map((e) => (e.id === tempId ? data : e)));
+      refreshDerived();
       return true;
     },
-    []
+    [refreshDerived]
   );
 
   const handleUpdateEntry = useCallback(
@@ -160,23 +227,28 @@ export function FinanceDashboard() {
         return false;
       }
       setEntries((prev) => prev.map((e) => (e.id === id ? data : e)));
+      refreshDerived();
       return true;
     },
-    []
+    [refreshDerived]
   );
 
-  const handleDeleteEntry = useCallback(async (id: string) => {
-    let removed: FinanceEntry | null = null;
-    setEntries((prev) => prev.filter((e) => (e.id === id ? ((removed = e), false) : true)));
+  const handleDeleteEntry = useCallback(
+    async (id: string) => {
+      let removed: FinanceEntry | null = null;
+      setEntries((prev) => prev.filter((e) => (e.id === id ? ((removed = e), false) : true)));
 
-    const { error } = await deleteEntry(id);
-    if (error) {
-      if (removed) setEntries((prev) => [...prev, removed!]);
-      setError(error.message);
-      return false;
-    }
-    return true;
-  }, []);
+      const { error } = await deleteEntry(id);
+      if (error) {
+        if (removed) setEntries((prev) => [...prev, removed!]);
+        setError(error.message);
+        return false;
+      }
+      refreshDerived();
+      return true;
+    },
+    [refreshDerived]
+  );
 
   const handleCreateCategory = useCallback(
     async (category: Omit<FinanceCategory, "id" | "created_at" | "updated_at">) => {
@@ -363,7 +435,14 @@ export function FinanceDashboard() {
         </div>
       ) : (
         <>
-          <PLSummary entries={filteredEntries} monthlyPL={monthlyPL} today={today} />
+          <PLSummary
+            entries={filteredEntries}
+            monthlyPL={monthlyPL}
+            today={today}
+            jobRows={filteredJobFinancials}
+          />
+
+          <FinanceCharts monthlyPL={monthlyPL} serviceLevels={serviceLevels} />
 
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
@@ -371,6 +450,7 @@ export function FinanceDashboard() {
                 entries={filteredEntries}
                 categories={categories}
                 fieldDefs={fieldDefs}
+                jobs={jobs}
                 onEdit={openEditEntry}
                 onDelete={handleDeleteEntry}
               />
@@ -389,6 +469,8 @@ export function FinanceDashboard() {
         categories={categories}
         fieldDefs={fieldDefs}
         opportunities={opportunities}
+        jobs={jobs}
+        customers={customers}
         onSubmit={async (entryData) =>
           selectedEntry
             ? handleUpdateEntry(selectedEntry.id, entryData)

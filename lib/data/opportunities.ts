@@ -11,6 +11,8 @@
  * Run 4: 2026-08-17 (first run that CITES ITS SOURCES — see SourceLink below.
  *         Zero open public solicitations found; the new supply this week is
  *         the veterinary lead run in lib/data/vet-leads.ts)
+ * Run 5: 2026-08-25 (two new records — one eVA courier IFB, one veterinary
+ *         aftercare lane; supply deliberately held back while the backlog grows)
  *
  * The 2026-07-28 sweep was run against SAM.gov and eVA directly in a live
  * browser session — not from cached third-party mirrors — so the federal and
@@ -129,6 +131,7 @@ export const SWEEPS = [
   { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27" },
   { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10" },
   { run: 4, label: "W4", iso: "2026-08-17", weekOf: "2026-08-17" },
+  { run: 5, label: "W5", iso: "2026-08-25", weekOf: "2026-08-24" },
 ] as const;
 
 export type Sweep = (typeof SWEEPS)[number];
@@ -156,6 +159,87 @@ export function predatesSourceCitations(
 }
 
 export const opportunities: Opportunity[] = [
+  // ───────────────────────── Run 5 — 2026-08-25 ─────────────────────────
+  {
+    id: "OPP-2026-045",
+    title:
+      "Library Courier Services — Staunton, Waynesboro & Augusta County (IFB 127152 / Bid H00226)",
+    source: "eVA",
+    naics: "492110",
+    location: "Staunton, Waynesboro and Augusta County, VA",
+    dueDate: "2026-09-10",
+    hardDeadline: true,
+    fitScore: 38,
+    status: "Found",
+    estValue: 24000,
+    agency: "City of Staunton, with the City of Waynesboro and Augusta County",
+    description:
+      "A three-locality joint procurement for courier services running between the Staunton, Waynesboro and Augusta County public libraries, published on eVA and closing 10 September 2026 at 2:00pm. It is recorded here for one reason: it is the FIRST open courier notice eVA has produced in five consecutive sweeps. For four runs the status facet showed no open bucket at all for courier, and the reasonable conclusion was that the channel was dead. It is not dead — it is just rarely local. That is a different and more useful fact.",
+    whyItFits:
+      "On paper it fits perfectly: a small, scheduled, multi-stop inter-site run between fixed public buildings, exactly the shape of work CSL is built for, published through a channel CSL is already registered on. On the ground it does not fit at all — see the action note.",
+    suggestedAction:
+      "DO NOT BID. Staunton is roughly a hundred miles from Richmond, four times CSL's stated 25-mile radius, and a one-van operation cannot run a daily Shenandoah Valley library circuit without either abandoning the Richmond market or losing money on the fuel. The correct use of this record is as evidence, not as a target: it tells Darren that eVA does still produce courier work, that it appears with about three weeks of notice, and that the next one might be closer. Keep the eVA courier search as a weekly check on that basis. If a similar joint-locality courier IFB ever appears for Richmond, Henrico, Chesterfield or Hanover, it should go straight to the top of the board.",
+    addedISO: "2026-08-25",
+    sources: [
+      {
+        label: "eVA public opportunity search — courier, STATUS facet",
+        url: "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
+        kind: "search",
+        retrievedISO: "2026-08-25",
+        note:
+          "eVA award and solicitation documents sit behind a session-bound search rather than a stable permalink, so the search page is cited honestly rather than a fabricated direct URL. The courier query returned 295 records with the STATUS facet reading Open 1 — this notice — plus Awarded 157, Closed 36, Bids Opened 5, Intent Posted 5, No Award 63, Cancelled 9, Contact Buyer 19. Record shown as 'Bid # H00226 - Library Courier Services, IFB 127152, City of Staunton - Augusta County, City of Staunton, City of Waynesboro, VA', closing 9/10/26 2:00 PM.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-046",
+    title:
+      "Veterinary Cremation & Aftercare — Overflow / Subcontract Collection Lane, Richmond Metro",
+    source: "Veterinary",
+    naics: "492110",
+    location:
+      "Sandston, King William, Richmond (Chamberlayne Ave) and the practices they collect from across the metro",
+    dueDate: "2026-09-12",
+    fitScore: 72,
+    status: "Found",
+    estValue: 31000,
+    agency:
+      "Agape Pet Services (Gateway Services Inc.), Caring Pet Cremation Services, Pet Cremation Services & Richmond Pet Memorial Park",
+    description:
+      "Run 1 of the veterinary sweep named cremation and aftercare transport as one of five genuinely uncovered lanes and then listed nobody in it. This run populated it. Three operators serve the Richmond metro: Agape in Sandston, part of the multi-state Gateway Services and the aggregator that collects from practices across the metro; Caring Pet Cremation in King William, covering fourteen counties out of a single crematory; and Richmond Pet Memorial Park on Chamberlayne Avenue, the only one offering burial as well as cremation, which means a fixed destination inside the city. All three are on the Vet Leads board as VET-2026-021 through 023.",
+    whyItFits:
+      "Aftercare collection is the one veterinary lane with no incumbent courier network defending it — IDEXX and Antech do not touch it, because it is not diagnostics. It is scheduled rather than on-demand, it is dignified and low-volume rather than time-critical, and it is exactly the kind of work a single compliant van can do well. One aggregator signature covers many clinics, which is worth more than five individual practice accounts.",
+    suggestedAction:
+      "Approach as OVERFLOW CAPACITY, never as 'let us be your courier'. Two of the three already run their own pickups and say so on their own websites, so the displacement pitch gets corrected in the first thirty seconds. Start with Agape in Sandston: it is inside the radius, it aggregates from many practices, and it publishes a 'Become a Provider' path. Ask how many metro practices they collect from in a week and where their own fleet gets stretched. Before quoting Caring Pet Cremation, price the King William leg deliberately — their collection stops are inside CSL's radius but their crematory is about 35 miles out, and that return leg is where this turns unprofitable if it is quoted casually.",
+    addedISO: "2026-08-25",
+    sources: [
+      {
+        label: "Agape Pet Services — homepage and Sandston contact page",
+        url: "https://agapepetservices.com/contact-sandston/",
+        kind: "organization",
+        retrievedISO: "2026-08-25",
+        note:
+          "Establishes the Sandston facility at 1001 Techpark Place, (804) 737-8400, the Gateway Services Inc. parent, the nine-facility multi-state footprint, and the 'Become a Provider' path for veterinary practices. Hours and pickup terms are NOT published and are not claimed here.",
+      },
+      {
+        label: "Caring Pet Cremation Services — homepage",
+        url: "https://caringpetva.com/",
+        kind: "organization",
+        retrievedISO: "2026-08-25",
+        note:
+          "Their own statement that they collect from homes and veterinary offices and return remains within 48 hours, plus the fourteen-county service area — which is why this is an overflow pitch rather than a new-lane pitch.",
+      },
+      {
+        label: "Pet Cremation Services & Richmond Pet Memorial Park — homepage",
+        url: "https://www.animalcremationinrichmondva.com/",
+        kind: "organization",
+        retrievedISO: "2026-08-25",
+        note:
+          "Establishes the Chamberlayne Avenue address and the on-site pet cemetery. Whether they collect from veterinary clinics is NOT stated on their site and is deliberately not asserted.",
+      },
+    ],
+  },
+
   // ───────────────────────── Run 4 — 2026-08-17 ─────────────────────────
   // First run under the citation rule: every record from here down carries a
   // `sources` array of URLs the engine actually opened.

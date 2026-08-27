@@ -38,6 +38,8 @@
  * them would have wasted Darren's morning.
  *
  * Run 1 of the vet sweep: 2026-08-17 (15 leads).
+ * Run 2 of the vet sweep: 2026-08-25 (10 new leads; four V1 cautions resolved).
+ * Twenty-five leads total across both runs.
  * ---------------------------------------------------------------------------
  */
 
@@ -92,6 +94,7 @@ export interface VetLead {
 /** Every vet sweep the engine has run, oldest first. */
 export const VET_SWEEPS = [
   { run: 1, label: "V1", iso: "2026-08-17", weekOf: "2026-08-17" },
+  { run: 2, label: "V2", iso: "2026-08-25", weekOf: "2026-08-24" },
 ] as const;
 
 export type VetSweep = (typeof VET_SWEEPS)[number];
@@ -110,6 +113,7 @@ export function vetLeadMapUrl(l: VetLead): string {
 }
 
 const R = "2026-08-17";
+const R2 = "2026-08-25";
 
 /** Cited on several leads — the metro's shared referral list. */
 const RAL_DIRECTORY: SourceLink = {
@@ -259,7 +263,7 @@ export const vetLeads: VetLead[] = [
     openingQuestion:
       "Your internal medicine and surgery services are referral-only — when a general practice sends you a case, how do their records, films and any samples actually get here? And what happens on a Sunday when you're closed?",
     caution:
-      "They close Sunday. That closure is itself the conversation: somebody is covering those cases elsewhere, and whatever has to move on Monday morning is backed up.",
+      "They close Sunday. That closure is itself the conversation: somebody is covering those cases elsewhere, and whatever has to move on Monday morning is backed up. VERIFIED NEGATIVE (this run): their own About page does not mention a blood bank or transfusion medicine — do not assume VRCC can supply blood products to other hospitals, and do not describe them as 24/7. Hours are Monday 8:00am through Saturday 6:00pm, closed Sunday.",
     addedISO: R,
     sources: [
       {
@@ -271,6 +275,14 @@ export const vetLeads: VetLead[] = [
           "Source for the Hockett Road address, the phone number, the hours, private ownership since 1997, the referral requirement, and the on-site CT / MRI / in-house lab list.",
       },
       RAL_DIRECTORY,
+      {
+        label: "VRCC — About page",
+        url: "https://vrccvet.com/about.html",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Re-verified the Mon-through-Sat hours, and cited for the absence of any blood bank or transfusion service.",
+      },
     ],
   },
   {
@@ -374,25 +386,27 @@ export const vetLeads: VetLead[] = [
     phone: "(804) 924-0404",
     tel: "8049240404",
     website: "https://www.urgentvet.com/locations/",
+    hours:
+      "Mon–Fri 3:00pm–11:00pm; Sat–Sun 10:00am–8:00pm; holidays 12:00pm–8:00pm. NOT open overnight.",
     siteCount: 3,
     sites: [
       {
-        label: "Midlothian",
-        address: "14300 Winterview Pkwy, Suite 106, Midlothian, VA 23113",
-        phone: "(804) 924-0404",
-        tel: "8049240404",
+        label: "Carytown",
+        address: "3531 Ellwood Avenue, Richmond, VA 23221",
+        phone: "(804) 362-0202",
+        tel: "8043620202",
       },
       {
         label: "Short Pump",
-        address: "11521 W Broad St, Henrico, VA 23233",
+        address: "11521 West Broad Street, Richmond, VA 23233",
         phone: "(804) 533-7733",
         tel: "8045337733",
       },
       {
-        label: "Carytown",
-        address: "3531 Ellwood Ave, Richmond, VA 23221",
-        phone: "(804) 362-0202",
-        tel: "8043620202",
+        label: "Midlothian",
+        address: "14300 Winterview Parkway, Suite 106, Midlothian, VA 23113",
+        phone: "(804) 924-0404",
+        tel: "8049240404",
       },
     ],
     capabilities: [
@@ -405,7 +419,7 @@ export const vetLeads: VetLead[] = [
     openingQuestion:
       "You've got three clinics across the metro — is there anything that regularly needs to move between them, or on to an emergency hospital after you close?",
     caution:
-      "Two cautions. The addresses come from the Richmond Animal League directory, and UrgentVet's own location finder did not list the Virginia clinics in the page the engine read — confirm each address on the call. And with 101 clinics nationally, vendor approval may well sit above the clinic manager.",
+      "Confirmed on their own site this run, so the V1 'directory-sourced' warning is retired. Two live cautions remain. Their own Midlothian page carries an 'American Veterinary Group' careers link — this is a chain, so vendor decisions may sit outside Richmond; the widely-reported Thrive Pet Healthcare ownership is NOT stated on their own site and must not be asserted on a call. And the other two Virginia UrgentVets are in Chesapeake and Newport News, far outside the radius — do not pitch a statewide network.",
     addedISO: R,
     sources: [
       RAL_DIRECTORY,
@@ -416,6 +430,22 @@ export const vetLeads: VetLead[] = [
         retrievedISO: R,
         note:
           "Confirms the company operates 101 clinics nationally and lists Virginia as a served state. The Richmond-area clinics were NOT enumerated in the page the engine read, which is why the addresses here are attributed to the RAL directory instead.",
+      },
+      {
+        label: "UrgentVet — Virginia locations page",
+        url: "https://urgentvet.com/locations/virginia/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Confirms all three Richmond-metro addresses and phone numbers directly from UrgentVet, replacing the directory-sourced values V1 flagged as unverified.",
+      },
+      {
+        label: "UrgentVet Midlothian — clinic page",
+        url: "https://urgentvet.com/location/midlothian-va/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the hours and, in UrgentVet's own words, that they are 'not open overnight' and that serious cases are 'better treated by a full-service, 24/7 emergency veterinary animal hospital' — which is the after-hours handoff lane stated by the prospect rather than assumed by CSL. Also carries the American Veterinary Group careers link.",
       },
     ],
   },
@@ -446,7 +476,7 @@ export const vetLeads: VetLead[] = [
   },
   {
     id: "VET-2026-008",
-    name: "Better Pet — Mechanicsville",
+    name: "BetterPet Veterinary Urgent Care — Mechanicsville",
     category: "Urgent Care",
     priority: "WARM",
     fitScore: 66,
@@ -456,6 +486,9 @@ export const vetLeads: VetLead[] = [
     zip: "23111",
     phone: "(804) 442-2713",
     tel: "8044422713",
+    website: "https://www.betterpetuc.com/contact",
+    hours:
+      "Open nights and weekends, walk-in, no appointment needed. Numeric opening times are NOT published on their own site.",
     capabilities: [
       "Urgent care serving the Hanover / Mechanicsville side of the metro",
       "The north-east corner of the radius, where the ER hubs are furthest away",
@@ -465,9 +498,19 @@ export const vetLeads: VetLead[] = [
     openingQuestion:
       "Mechanicsville is a fair drive from any of the 24-hour hospitals — when you refer a case in, does anything have to follow it, and who drives that?",
     caution:
-      "Directory-sourced only. Confirm the address and phone on the call.",
+      "Address and phone confirmed on their own site this run, so the V1 directory-sourced warning is retired. Live cautions: they are a nights-and-weekends operation, so a 10am cold call may reach nobody — try late afternoon. Their site does not state hours numerically or name a transfer partner, so do not claim to know where their overnight handoffs go. Single site, small operator. Email info@betterpetuc.com.",
     addedISO: R,
-    sources: [RAL_DIRECTORY],
+    sources: [
+      RAL_DIRECTORY,
+      {
+        label: "BetterPet Veterinary Urgent Care — contact page",
+        url: "https://www.betterpetuc.com/contact",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Confirms 7138 Mechanicsville Turnpike and (804) 442-2713 from the practice itself, and the nights-and-weekends walk-in model.",
+      },
+    ],
   },
 
   /* ─────────────────────── Nonprofit / high volume ─────────────────────── */
@@ -475,8 +518,8 @@ export const vetLeads: VetLead[] = [
     id: "VET-2026-009",
     name: "Richmond SPCA — Susan M. Markel Veterinary Hospital",
     category: "Nonprofit / High-Volume",
-    priority: "WARM",
-    fitScore: 76,
+    priority: "HOT",
+    fitScore: 81,
     address: "2519 Hermitage Road",
     city: "Richmond",
     state: "VA",
@@ -486,6 +529,21 @@ export const vetLeads: VetLead[] = [
     website:
       "https://richmondspca.org/pet-help/veterinary-services/full-service-hospital/",
     hours: "Monday–Friday 8:00am–12:00pm and 1:00pm–6:00pm; closed weekends",
+    siteCount: 2,
+    sites: [
+      {
+        label: "Robins-Starr Humane Center / Susan M. Markel Veterinary Hospital",
+        address: "2519 Hermitage Road, Richmond, VA 23220",
+        phone: "(804) 521-1330",
+        tel: "8045211330",
+      },
+      {
+        label: "Smoky's Spay & Neuter Clinic (Mechanicsville Turnpike cluster)",
+        address: "7088 Mechanicsville Turnpike, Mechanicsville, VA 23111",
+        phone: "(804) 368-6232",
+        tel: "8043686232",
+      },
+    ],
     capabilities: [
       "High-volume spay and neuter surgery",
       "In-house laboratory and radiology services",
@@ -494,9 +552,9 @@ export const vetLeads: VetLead[] = [
     pitch:
       "A high-volume nonprofit hospital runs on predictable daily throughput and a tight budget — the two conditions that make an outsourced route cheaper than paying clinical staff to drive. Nonprofits also care about who they buy from, which is where SWaM certification actually counts for something.",
     openingQuestion:
-      "With the surgery volume you run, what leaves the building each day — samples, supplies, animals moving to or from foster and partner shelters — and who moves it now?",
+      "Between Hermitage Road and Smoky's out in Mechanicsville — what actually moves back and forth in a typical week, and who's driving it today?",
     caution:
-      "The page notes temporary operating hours from April 2026 that cut the hospital to Monday–Thursday. Confirm the current schedule before proposing a route built on five days.",
+      "Nonprofit: expect price sensitivity and possibly a request for in-kind or discounted work. Their own site does NOT say that animals or supplies move between the two sites — that is the discovery question, not a finding, and asserting it would be the same mistake as the routine-lab-pickup pitch. Markel's temporarily-reduced Mon–Thu schedule, stated on their site as of 6 April 2026, is still in force, so Friday calls may not land. Smoky's is closed Fri–Sun.",
     addedISO: R,
     sources: [
       {
@@ -506,6 +564,14 @@ export const vetLeads: VetLead[] = [
         retrievedISO: R,
         note:
           "Source for the Hermitage Road address, phone, hours, the in-house laboratory and radiology, and the note about temporary reduced hours.",
+      },
+      {
+        label: "Richmond SPCA — Smoky's Spay & Neuter Clinic page",
+        url: "https://richmondspca.org/what-we-do/programs-services/snip/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the SECOND SITE that changes this lead's shape: 7088 Mechanicsville Turnpike, (804) 368-6232, Mon–Thu 7:30am–3:30pm, closed Fri–Sun.",
       },
     ],
   },
@@ -705,6 +771,522 @@ export const vetLeads: VetLead[] = [
       "Directory-sourced only, and at the outer edge of the 25-mile radius. Do not price a standalone route here — only fold it into a VRCC run.",
     addedISO: R,
     sources: [RAL_DIRECTORY],
+  },
+
+  /* ───────────────────────── Run 2 — 2026-08-25 ───────────────────────── */
+  /* ───────────────────────── ER & specialty hubs ───────────────────────── */
+  {
+    id: "VET-2026-016",
+    name: "The Oncology Service — Richmond",
+    category: "ER & Specialty Hub",
+    priority: "HOT",
+    fitScore: 86,
+    address: "5711 Staples Mill Road, Suite 200",
+    city: "Richmond",
+    state: "VA",
+    zip: "23228",
+    phone: "(804) 999-0001",
+    tel: "8049990001",
+    website: "https://tosvets.com/locations/oncology-service-richmond.html",
+    hours:
+      "Medical oncology Mon–Fri 8:30am–5:00pm; radiation oncology Tue–Fri 8:30am–5:00pm; closed weekends",
+    siteCount: 2,
+    sites: [
+      {
+        label: "The Oncology Service (Suite 200)",
+        address: "5711 Staples Mill Road, Suite 200, Richmond, VA 23228",
+        phone: "(804) 999-0001",
+        tel: "8049990001",
+      },
+      {
+        label:
+          "FETCH a Cure — Advanced Radiation Treatment Center (Suite 300, same building, separate entity)",
+        address: "5711 Staples Mill Road, Suite 300, Richmond, VA 23228",
+      },
+    ],
+    capabilities: [
+      "Free-standing veterinary oncology practice — not a department inside another hospital",
+      "Medical oncology and radiation oncology, referral-only",
+      "Shares a building with FETCH a Cure's Advanced Radiation Treatment Center, open since October 2016, with CT and stereotactic radiation",
+      "Appointment-based treatment, which means imaging and records must arrive ahead of the patient",
+      "Sister sites in Leesburg and Springfield — both far outside the 25-mile radius",
+    ],
+    pitch:
+      "Referral oncology is the one specialty where the paperwork genuinely has to beat the patient to the building. Every case arrives from somewhere else — an ER hub, a general practice — and treatment is scheduled, repeat-visit and time-boxed. That is a predictable, recurring inbound document lane rather than an on-demand one, which is the kind CSL can actually price.",
+    openingQuestion:
+      "When a referral comes in from an emergency hospital overnight, how do you get the imaging and the record in hand before the appointment — and does anything physical move between Suite 200 and the radiation centre upstairs?",
+    caution:
+      "Three things. It is a multi-state group, so purchasing may sit outside Richmond. There are TWO legal entities in one building — The Oncology Service and the nonprofit FETCH a Cure — so establish who signs before proposing anything. And do NOT offer chemotherapy or cytotoxic waste transport on a first call: those carry handling requirements beyond generic DOT-HazMat, and promising them before checking is exactly the kind of overreach that loses a clinical account.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "The Oncology Service — Richmond location page",
+        url: "https://tosvets.com/locations/oncology-service-richmond.html",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the Suite 200 address, phone, split medical/radiation hours, and that the practice is free-standing rather than hosted inside another hospital.",
+      },
+      {
+        label: "FETCH a Cure — Advanced Radiation Treatment Center announcement",
+        url:
+          "https://fetchacure.org/keeping-beloved-furry-friends-closer-longer-richmonds-new-veterinary-radiation-center/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the Suite 300 radiation facility as a separate nonprofit-owned entity operated in partnership with TOS — the reason 'who signs' is a real question here.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-017",
+    name: "Veterinary Specialists of Hanover",
+    category: "ER & Specialty Hub",
+    priority: "HOT",
+    fitScore: 84,
+    address: "6127 Mechanicsville Turnpike",
+    city: "Mechanicsville",
+    state: "VA",
+    zip: "23111",
+    phone: "(804) 277-8021",
+    tel: "8042778021",
+    website: "https://www.hanovervets.com/surgery",
+    hours: "Mon–Fri 8:00am–5:00pm; single site",
+    siteCount: 1,
+    capabilities: [
+      "Referral surgical practice led by Dr. Kristy Broaddus, DVM, MS, DACVS",
+      "Portosystemic shunt correction, gallbladder mucocele, liver lobectomy, splenectomy",
+      "Laryngeal paralysis and brachycephalic airway surgery; oncologic surgery",
+      "Orthopaedics — cruciate, fracture repair, hip dysplasia; urethrostomy; reconstructive grafts and flaps",
+      "Physical rehabilitation",
+      "Eight-to-five only — no overnight capability of its own",
+    ],
+    pitch:
+      "Splenectomy and liver lobectomy are the textbook transfusion cases, and this is an eight-to-five practice with no 24-hour floor to bank against. Blood products and overnight patient transfer are not hypothetical lanes here — they are structural consequences of doing major soft-tissue surgery on a daytime schedule. Also sits a mile from three other prospects on the same road.",
+    openingQuestion:
+      "You're eight to five and you're doing splenectomies and liver lobes. When one of those needs blood, or needs to move to a 24-hour hospital overnight, what physically has to travel with the patient — and who drives it today?",
+    caution:
+      "Small owner-led practice: the founding surgeon is almost certainly the decision maker and the budget is personal, so pitch a per-run price, not a retainer. Separately — their own referral page is STALE. It still lists Partner at the dead 6506 W Broad address and Virginia Veterinary Centers at the dead Colony Crossing address. Do not use hanovervets.com as a source on any other practice, and do not repeat those addresses back to anyone.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Veterinary Specialists of Hanover — surgery page",
+        url: "https://www.hanovervets.com/surgery",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Address, phone and the full surgical list including splenectomy and liver lobectomy. Their /contact page is blocked to automated retrieval, so the address was taken from this page instead — still their own site.",
+      },
+      {
+        label: "Veterinary Specialists of Hanover — urgent care & emergencies referral page",
+        url: "https://www.hanovervets.com/urgent-care-emergencies",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Cited as the SOURCE OF THE STALE ADDRESSES, not as evidence for them. This page is where Partner's dead 6506 W Broad and VVC's dead Colony Crossing addresses are still published.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-018",
+    name: "CVCA Cardiac Care for Pets — Richmond",
+    category: "ER & Specialty Hub",
+    priority: "WARM",
+    fitScore: 71,
+    address: "1616 Three Chopt Road",
+    city: "Henrico",
+    state: "VA",
+    zip: "23233",
+    phone: "(804) 497-8940",
+    tel: "8044978940",
+    website: "https://www.cvcavets.com/locations/richmond/",
+    hours: "Mon–Fri 9:00am–5:00pm; closed weekends",
+    siteCount: 1,
+    capabilities: [
+      "Referral cardiology — four board-certified cardiologists listed at the Richmond office",
+      "Portable echocardiography and Holter monitoring, so diagnostic kit travels with the clinician",
+      "Hosted INSIDE Partner Veterinary Emergency & Specialty Center, which runs 24/7/365",
+      "No other Virginia CVCA location listed on their own site",
+    ],
+    pitch:
+      "Itinerant cardiologists carrying portable echo and Holter kit between host hospitals is a genuine equipment-movement lane, and Holter studies have to get back to referring vets. Modest on its own — but it is a second conversation inside a building CSL is already calling on.",
+    openingQuestion:
+      "Your cardiologists work out of Partner's building. When a Holter monitor or an echo study has to get back to a referring vet, how does that move today?",
+    caution:
+      "IMPORTANT DEDUPLICATION: CVCA shares 1616 Three Chopt Road with Partner Veterinary (VET-2026-004), which is already on this board. CVCA is a TENANT. Do not call these as two unrelated prospects at the same address — mention the connection first or it will look like CSL does not know who it is talking to. Also a large national cardiology group, so vendor decisions are likely centralised, and with no second Virginia site the 'inter-site' lane here is interstate rather than local.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "CVCA — Richmond location page",
+        url: "https://www.cvcavets.com/locations/richmond/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the shared address with Partner Veterinary, the weekday-only hours, the four cardiologists, and that Partner's 24/7 emergency line is the after-hours number for this office.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-019",
+    name: "Helping Hands Veterinary Surgery & Dentistry of Virginia",
+    category: "Nonprofit / High-Volume",
+    priority: "WARM",
+    fitScore: 74,
+    address: "1605 Rhoadmiller Street",
+    city: "Richmond",
+    state: "VA",
+    zip: "23220",
+    phone: "(804) 355-3500",
+    tel: "8043553500",
+    website: "https://helpinghandsvetva.com/contact/",
+    hours: "Mon–Thu 7:30am–5:30pm; CLOSED Friday, Saturday and Sunday",
+    siteCount: 1,
+    capabilities: [
+      "Dedicated high-volume surgery and dentistry centre — affordable-surgery model",
+      "Four operating days a week through a single surgical suite",
+      "Draws patients from Virginia, Maryland, North Carolina, DC and Pennsylvania",
+    ],
+    pitch:
+      "Four surgery days a week through one suite is real throughput, and out-of-state referral patients mean records that have to travel further than anyone else's on this board. The aftercare volume that comes with a high-volume surgical centre is the honest lane here.",
+    openingQuestion:
+      "You run four surgery days a week and clients drive in from five states. What does your aftercare arrangement look like on a heavy week — and does anyone on staff ever have to make a run for you?",
+    caution:
+      "Closed Friday through Sunday — half the working week is dead air, so call Monday to Thursday morning. The entire brand is built on affordable surgery, so expect hard price sensitivity and lead with a per-run number. Their site makes NO mention of blood products, controlled substances or transport: those lanes are inferred from the service model, not stated, so ask rather than assert.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Helping Hands Veterinary Surgery & Dentistry — contact page",
+        url: "https://helpinghandsvetva.com/contact/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Address, phone, the Mon–Thu-only schedule, and the five-state catchment.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-020",
+    name: "Animal Eye Care of Richmond",
+    category: "ER & Specialty Hub",
+    priority: "WARM",
+    fitScore: 69,
+    address: "2861 Huguenot Springs Road",
+    city: "Midlothian",
+    state: "VA",
+    zip: "23113",
+    phone: "(804) 355-5594",
+    tel: "8043555594",
+    website: "https://aecrichmond.com/",
+    hours:
+      "Midlothian Mon–Thu 8:30am–4:30pm, Fri 8:30am–3:30pm, closed weekends; Charlottesville hours vary on select Thursdays",
+    siteCount: 3,
+    sites: [
+      {
+        label: "Midlothian (primary — the only site inside the radius)",
+        address: "2861 Huguenot Springs Road, Midlothian, VA 23113",
+        phone: "(804) 355-5594",
+        tel: "8043555594",
+      },
+      {
+        label:
+          "Charlottesville satellite — inside Autumn Trails Veterinary Center (~70 mi, OUTSIDE radius)",
+        address: "2407 Hydraulic Road, Charlottesville, VA 22901",
+      },
+      {
+        label:
+          "Fredericksburg satellite — inside Littlepage Animal Hospital (~60 mi, OUTSIDE radius)",
+        address: "712 Littlepage Street, Fredericksburg, VA 22401",
+      },
+    ],
+    capabilities: [
+      "Referral veterinary ophthalmology",
+      "Itinerant model — ophthalmologists run satellite days inside two OTHER hospitals, so instruments, surgical packs and records travel with them",
+      "Describe themselves as an extension of the referring practice",
+      "Treat large animals and equine as well as small animals",
+    ],
+    pitch:
+      "The itinerant satellite model is the purest version of the equipment-movement lane on this board: on a Charlottesville or Fredericksburg day, a surgical pack and a set of records physically have to be somewhere else by morning. Most practices have this lane by accident; this one has it by design.",
+    openingQuestion:
+      "Your doctors run satellite days inside two other hospitals. What has to travel with them on a Charlottesville or Fredericksburg day, and who packs and moves it?",
+    caution:
+      "Only the Midlothian site is inside CSL's 25-mile radius. The genuine inter-site lane here is a 60–90 mile run EACH WAY — price it deliberately or decline it, but do not promise it casually on a first call. They also treat equine, so 'transport' may not mean what Darren assumes; clarify early.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Animal Eye Care of Richmond — homepage",
+        url: "https://aecrichmond.com/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "All three addresses, phone, fax and per-site hours, plus the statement that the Charlottesville and Fredericksburg clinics operate inside host hospitals.",
+      },
+    ],
+  },
+
+  /* ─────────────────────── Cremation & aftercare ──────────────────────── */
+  // V1 named aftercare as one of the five uncovered lanes and then listed
+  // nobody in it. These three close that gap. Read the cautions: two of the
+  // three already run their own pickups and will say so, which makes this an
+  // overflow/subcontract conversation rather than a new-lane pitch.
+
+  {
+    id: "VET-2026-021",
+    name: "Agape Pet Services — Sandston (Gateway Services Inc.)",
+    category: "Nonprofit / High-Volume",
+    priority: "WARM",
+    fitScore: 67,
+    address: "1001 Techpark Place",
+    city: "Sandston",
+    state: "VA",
+    zip: "23150",
+    phone: "(804) 737-8400",
+    tel: "8047378400",
+    website: "https://agapepetservices.com/",
+    hours: "Not published on their own site — confirm before scheduling",
+    siteCount: 1,
+    capabilities: [
+      "Pet cremation and aftercare; the Sandston facility is the Richmond-metro site, roughly 10 miles from downtown and inside the radius",
+      "Operates under Gateway Services Inc. across nine facilities in VA, MD, WV, NC and SC",
+      "Publishes a 'Become a Provider' path for veterinary practices, so they aggregate collection from clinics across the metro",
+    ],
+    pitch:
+      "This is the aggregator every practice in the metro already hands its aftercare to. CSL does not displace them — CSL becomes the overflow van on the days their own fleet is stretched. That is a subcontract conversation with one signature covering many clinics, which is worth more than five individual practice accounts.",
+    openingQuestion:
+      "How many Richmond-area practices are you collecting from in a week, and does your own fleet cover all of them — or are there days you're stretched thin enough that a van on standby would save you a trip?",
+    caution:
+      "Gateway Services is a large corporate multi-state operator and almost certainly runs its own collection fleet with logistics bought above the local level. Their site does NOT state pickup terms, transport arrangements or opening hours — none of that is verified. Their /veterinary-professionals and /locations paths both 404, so do not cite them. Frame this as overflow capacity, never as 'let us be your courier'.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Agape Pet Services — homepage",
+        url: "https://agapepetservices.com/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the Gateway Services parent, the nine-facility footprint, and the 'Become a Provider' path for veterinary practices.",
+      },
+      {
+        label: "Agape Pet Services — Sandston contact page",
+        url: "https://agapepetservices.com/contact-sandston/",
+        kind: "organization",
+        retrievedISO: R2,
+        note: "Sandston address and phone. Hours are not published on this page.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-022",
+    name: "Caring Pet Cremation Services, Inc.",
+    category: "Nonprofit / High-Volume",
+    priority: "WATCH",
+    fitScore: 61,
+    address: "471 Jack Pen Lane",
+    city: "King William",
+    state: "VA",
+    zip: "23086",
+    phone: "(804) 885-0499",
+    tel: "8048850499",
+    website: "https://caringpetva.com/",
+    hours: "Not published on their own site",
+    siteCount: 1,
+    capabilities: [
+      "On-site crematory; collects from homes and veterinary offices and returns remains, in most cases within 48 hours",
+      "Stated service area spans fourteen counties plus Colonial Heights, Richmond, Tappahannock and Warsaw",
+      "Single facility in King William, roughly 35 miles from Richmond",
+    ],
+    pitch:
+      "They cover fourteen counties out of one building with their own vehicles. The metro stops are the dense, low-margin end of that territory and the easiest part for them to hand off — which is exactly the shape of run CSL is built for.",
+    openingQuestion:
+      "You're collecting from vet offices across fourteen counties out of King William. Where does that stretch you thinnest — and on your heavy days, would a Richmond-based van covering your metro stops actually save you a trip?",
+    caution:
+      "They ALREADY do their own pickups and say so explicitly on their own site, so opening with 'you probably need a courier' will be corrected immediately. Their crematory is ~35 miles from Richmond — the collection stops are inside CSL's radius, the delivery leg is not. Price the return leg before calling, or this becomes a job CSL loses money on.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Caring Pet Cremation Services — homepage",
+        url: "https://caringpetva.com/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Establishes the King William address, the fourteen-county service area, and their own statement that they collect from veterinary offices and return remains within 48 hours — the reason this is an overflow pitch, not a new-lane pitch.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-023",
+    name: "Pet Cremation Services & Richmond Pet Memorial Park",
+    category: "Nonprofit / High-Volume",
+    priority: "WATCH",
+    fitScore: 58,
+    address: "3815 Chamberlayne Avenue",
+    city: "Richmond",
+    state: "VA",
+    zip: "23227",
+    phone: "(804) 321-5055",
+    tel: "8043215055",
+    website: "https://www.animalcremationinrichmondva.com/",
+    hours: "Not published on their own site",
+    siteCount: 1,
+    capabilities: [
+      "Animal cremation, pet funeral services and urns",
+      "On-site pet cemetery — burial as well as cremation, which is unusual in this market",
+      "Inside the city, roughly five miles from downtown",
+    ],
+    pitch:
+      "Burial is the one aftercare service with a fixed destination and a scheduled, dignified transport requirement — and it is inside the city. That is a short, repeatable, high-care run rather than a long-haul collection.",
+    openingQuestion:
+      "For a burial at the memorial park, how does the pet get from the veterinary hospital to you — is that on the family, on the vet, or on you?",
+    caution:
+      "Their own site does NOT state whether they collect from veterinary clinics, so do not assume they do — the opening question is genuinely a question. Two different phone numbers are published with no explanation of which is which ((804) 321-5055 and (804) 638-5818). Lowest-confidence record in this run.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Pet Cremation Services & Richmond Pet Memorial Park — homepage",
+        url: "https://www.animalcremationinrichmondva.com/",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Address, both published phone numbers, and the cremation / cemetery / funeral service list. Pickup from clinics is NOT stated anywhere on this site.",
+      },
+    ],
+  },
+
+  /* ───────────────────── Corporate groups — call last ───────────────────── */
+
+  {
+    id: "VET-2026-024",
+    name: "Banfield Pet Hospital — Richmond metro (4 sites)",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 46,
+    address: "7225 Bell Creek Road",
+    city: "Mechanicsville",
+    state: "VA",
+    zip: "23111",
+    phone: "(804) 746-1926",
+    tel: "8047461926",
+    website: "https://www.banfield.com/locations/veterinarians/va/mechanicsville/mcv",
+    hours: "Mon–Sat 8:00am–6:00pm at three sites; Short Pump Mon–Sat 9–6, Sun 10–5",
+    siteCount: 4,
+    sites: [
+      {
+        label: "Mechanicsville (#1328) — part of the Mechanicsville Turnpike cluster",
+        address: "7225 Bell Creek Road, Mechanicsville, VA 23111",
+        phone: "(804) 746-1926",
+        tel: "8047461926",
+      },
+      {
+        label: "Midlothian Commonwealth (#5401)",
+        address: "13001 Hull Street Road, Midlothian, VA 23112",
+        phone: "(804) 763-1833",
+        tel: "8047631833",
+      },
+      {
+        label: "Colonial Heights (#0673)",
+        address: "42 Southgate Square, Colonial Heights, VA 23834",
+        phone: "(804) 520-4433",
+        tel: "8045204433",
+      },
+      {
+        label:
+          "Short Pump — street number NOT published on their own page; 'West Broad Street, at The Corner at Short Pump'. UNVERIFIED",
+        address: "West Broad Street, Richmond, VA (exact number unverified)",
+        phone: "(804) 364-0224",
+        tel: "8043640224",
+      },
+    ],
+    capabilities: [
+      "Four Richmond-metro general-practice hospitals under one operator",
+      "Inter-site movement is the only lane — controlled-drug transfers, equipment, records",
+    ],
+    pitch:
+      "Four sites in the metro under one operator is the largest single-signature footprint on this board. It is also the least likely to sign locally, which is why it sits at the bottom.",
+    openingQuestion:
+      "Does anything move between your hospital and the other Richmond Banfields — controlled drug transfers, equipment, records — and who handles that today?",
+    caution:
+      "HEAVY CAUTION, CALL LAST AND ONLY TO LEARN. Banfield is Mars-owned, and Mars also owns ANTECH — lab logistics is literally in-house, so any send-out pitch is dead on arrival. National procurement means a local practice manager almost certainly cannot sign a courier agreement. The Short Pump street number is not on Banfield's own page and is recorded here as unverified; a third party lists 11825 W Broad St Ste A but that is NOT confirmed. Their /available-services path is blocked by robots.txt.",
+    addedISO: R2,
+    sources: [
+      {
+        label: "Banfield — Mechanicsville hospital page",
+        url: "https://www.banfield.com/locations/veterinarians/va/mechanicsville/mcv",
+        kind: "organization",
+        retrievedISO: R2,
+      },
+      {
+        label: "Banfield — Midlothian Commonwealth hospital page",
+        url: "https://www.banfield.com/locations/veterinarians/va/midlothian/swr/",
+        kind: "organization",
+        retrievedISO: R2,
+      },
+      {
+        label: "Banfield — Colonial Heights hospital page",
+        url: "https://www.banfield.com/locations/veterinarians/va/colonial-heights/clh",
+        kind: "organization",
+        retrievedISO: R2,
+      },
+      {
+        label: "Banfield — Short Pump hospital page",
+        url: "https://www.banfield.com/locations/veterinarians/va/richmond/shp",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Cited to establish what is NOT there: this page gives no street number or ZIP, only 'West Broad Street' and 'The Corner at Short Pump'.",
+      },
+    ],
+  },
+
+  {
+    id: "VET-2026-025",
+    name: "VCA Pets First Animal Hospital",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 44,
+    address: "9201 Staples Mill Road",
+    city: "Richmond",
+    state: "VA",
+    zip: "23228",
+    phone: "(804) 672-3576",
+    tel: "8046723576",
+    website: "https://vcahospitals.com/pets-first/hospital",
+    hours: "Mon–Fri 7:30am–6:00pm; closed weekends",
+    siteCount: 1,
+    capabilities: [
+      "AAHA-accredited general practice with surgical suite, laser surgery and dentistry",
+      "In-house laboratory AND in-house pharmacy — both lanes closed",
+      "Dermatology, internal medicine, pain management, boarding and grooming",
+    ],
+    pitch:
+      "Weak. Included to close out the question of whether VCA has a Richmond footprint worth pursuing. It does not — this is the only VCA hospital in the metro.",
+    openingQuestion:
+      "You've got the lab and the pharmacy in-house. What still leaves the building — aftercare, controlled-drug transfers, anything going to a specialist?",
+    caution:
+      "Mars-owned, same parent as Banfield and Antech, with an in-house lab and national procurement. FINDING WORTH RECORDING: VCA's Richmond footprint is a SINGLE hospital — VCA Commonwealth Animal Hospital is in Fairfax, not Richmond — so there is no VCA inter-site lane in this metro and the 'large corporate group with a Richmond footprint' thesis does not hold for VCA. Their own site is also stale: it still refers patients to 'Dogwood Veterinary and Specialty Center' at 5918 West Broad Street, which now trades as BluePearl (VET-2026-005).",
+    addedISO: R2,
+    sources: [
+      {
+        label: "VCA Pets First Animal Hospital — hospital page",
+        url: "https://vcahospitals.com/pets-first/hospital",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Address, phone, hours, service list — and the stale Dogwood referral that is now BluePearl.",
+      },
+      {
+        label: "VCA Commonwealth Animal Hospital — hospital page",
+        url: "https://vcahospitals.com/commonwealth/hospital",
+        kind: "organization",
+        retrievedISO: R2,
+        note:
+          "Cited to establish a NEGATIVE: this hospital is in Fairfax, VA 22030, not Richmond. It is why VCA has no metro inter-site lane.",
+      },
+    ],
   },
 ];
 

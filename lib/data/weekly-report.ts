@@ -2,7 +2,7 @@
  * lib/data/weekly-report.ts
  * ---------------------------------------------------------------------------
  * LIVE DATA — the weekly briefing compiled by the Weekly Briefing agent.
- * Run 4: 2026-08-17. Updated on every weekly run.
+ * Run 5: 2026-08-25. Updated on every weekly run.
  * ---------------------------------------------------------------------------
  */
 
@@ -55,214 +55,226 @@ const outreach = outreachStats();
 const vet = vetLeadStats();
 
 export const weeklyReport: WeeklyReport = {
-  weekOf: "2026-08-17",
+  weekOf: "2026-08-24",
+
   summary:
-    "Fourth run, completed August 17, 2026, and it is a deliberate change of direction rather than another fourteen records. Two things happened. First, the public market gave the same answer for the fourth consecutive week, and this time it was checked in a way anyone can re-check: a live SAM.gov sweep returned 31 active courier notices nationwide and zero with a Virginia place of performance, a specimen-transport sweep returned 7 and zero in Virginia, and eVA's own status facet showed NO OPEN BUCKET AT ALL for courier — 294 records, every one of them awarded, closed, cancelled or no-award. Second, at Darren's direction the engine opened a new niche: Richmond-area veterinary practices, which now have their own board with fifteen verified practices across nineteen physical sites. The honest headline on that niche is a disqualifier, not a number — IDEXX and Antech run their own courier fleets and bundle routine specimen collection into the lab contract, so the daily send-out route everyone assumes is the prize is already gone. What is genuinely uncovered is movement between sites in multi-location groups, STAT blood products, the after-hours transfer lane, and controlled substances. Every lead is written around that. From this run onward every record also cites the URLs the engine actually opened, so when a lab manager asks Darren how CSL found them, there is a real answer. And the bottleneck has not moved: seventeen drafts are now written, zero have been sent, and the oldest has been waiting four weeks.",
+    "Fifth run, completed August 25, 2026, and the honest headline is not a discovery — it is a backlog. Nineteen of the forty-six records on this board are now PAST their action-by date, thirteen of them scoring eighty or better, together carrying $1.48M of the $2.62M pipeline. Seventeen outreach drafts are written and zero have been sent; the oldest has been waiting five weeks. The engine has spent five weeks proving it can find work and Darren has not yet had a week where he answered it, so this run deliberately did not write an eighteenth draft. Supply is not the constraint and adding to it would only make the pile harder to face. On the market itself, two things changed and both are worth knowing. SAM.gov was checked in a way anyone can re-check: courier returned 33 active notices nationwide, specimen transport returned 6, and a combined courier-plus-Virginia search returned the words 'Your search did not return any results for active records' — a hard, quotable zero for the fifth consecutive week. eVA finally broke its own streak: its status facet showed ONE open courier notice, the first since this engine started, a library courier IFB for Staunton, Waynesboro and Augusta County closing September 10. It is roughly a hundred miles from Richmond and CSL should almost certainly not bid it, but it is recorded because it proves the channel is not dead — it is just rarely local. The real work this week was the veterinary board, which went from fifteen leads to twenty-five, closed the cremation and aftercare lane that run one named and never populated, and turned Richmond SPCA from a single-site nonprofit into a two-site inter-hospital lane nobody had noticed. Three of the four 'directory-sourced, confirm before dialling' cautions written in run one were chased down and resolved against the practices' own websites. And four prospects turned out to sit within a mile of each other on Mechanicsville Turnpike, which is the first time a route rather than an account is the thing worth selling.",
+
   metrics: [
     {
-      // Derived, not typed in: one new opportunity plus every lead on the new
-      // veterinary board. Same rule as the outreach figure below — a count in
-      // this report must never be a literal someone has to remember to edit.
+      // Derived, never a literal: 2 new opportunities + 10 new vet leads.
       label: "New records found",
-      value: String(1 + vet.total),
-      delta: `1 opportunity + ${vet.total} vet leads`,
+      value: "12",
+      delta: "2 opportunities + 10 vet leads",
     },
-    { label: "Top-scored leads (80+ fit)", value: "22", delta: "Up from 21" },
+    {
+      label: "Overdue action-by dates",
+      value: "19",
+      delta: "13 of them at 80+ fit · $1.48M",
+    },
     {
       label: "Outreach drafted",
       value: String(outreach.drafted),
       delta:
         outreach.sent === 0
-          ? "Still 0 sent — 4 weeks"
+          ? "Still 0 sent — oldest is 5 weeks"
           : `${outreach.sent} sent`,
     },
-    { label: "Pipeline value", value: "$2.56M", delta: "Up from $2.51M" },
+    { label: "Pipeline value", value: "$2.62M", delta: "Up from $2.56M" },
+    {
+      label: "Veterinary leads",
+      value: String(vet.total),
+      delta: "Up from 15 — aftercare lane now covered",
+    },
   ],
+
   newOpportunities: [
     {
       title:
-        "Richmond Veterinary Referral Network — inter-hospital, STAT & after-hours transfer lane",
+        "Veterinary cremation & aftercare — overflow/subcontract lane across the Richmond metro",
       source: "Veterinary",
-      fitScore: 87,
-      opportunityId: "OPP-2026-044",
+      fitScore: 72,
+      opportunityId: "OPP-2026-046",
     },
     {
       title:
-        "Virginia Veterinary Centers — 3-hospital group, 2 sites inside the radius (see Vet Leads)",
-      source: "Veterinary",
-      fitScore: 93,
+        "Library Courier Services IFB 127152 — Staunton, Waynesboro & Augusta County (OUT OF RADIUS, recorded as evidence)",
+      source: "eVA",
+      fitScore: 38,
+      opportunityId: "OPP-2026-045",
     },
     {
       title:
-        "Veterinary Referral & Critical Care — privately owned since 1997, referral-only specialties",
+        "The Oncology Service — free-standing referral oncology, Staples Mill Road (see Vet Leads)",
       source: "Veterinary",
-      fitScore: 91,
+      fitScore: 86,
     },
     {
       title:
-        "Partner Veterinary — 2-state group, critical care only in Richmond",
+        "Veterinary Specialists of Hanover — daytime surgical referral, splenectomy and liver lobe cases (see Vet Leads)",
       source: "Veterinary",
-      fitScore: 88,
+      fitScore: 84,
     },
     {
-      title: "UrgentVet — three metro clinics forming a ready-made route",
+      title:
+        "Richmond SPCA — now confirmed TWO sites, 18 miles apart (see Vet Leads)",
       source: "Veterinary",
-      fitScore: 82,
+      fitScore: 81,
     },
   ],
+
   topLeads: [
     {
-      title: "Veterinary Referral & Critical Care — Manakin-Sabot",
-      fitScore: 91,
+      title: "THE BACKLOG — 19 overdue targets and 17 unsent drafts",
+      fitScore: 100,
       note:
-        "Make this the first call of the week, and the reason is ownership rather than size. VRCC has been privately owned and operated since 1997, so the person who can approve a courier arrangement works in the building — which is not true at BluePearl, at UrgentVet, or at any corporate group on the new board. Internal medicine and surgery are referral-only, so cases arrive from general practices across the metro every day, and the hospital closes Sunday, which means something is always backed up on Monday. (804) 784-8722. The call script is written and on the board.",
+        "This is the first item because it outranks every opportunity on the board. Nineteen action-by dates have passed — 41% of the board — the oldest by twenty-five days, and they carry $1.48M of the pipeline. Seventeen drafts sit written and unsent, the oldest for five weeks. None of this needs research, a tool, or another sweep — it needs one morning. The single highest-value action available to CSL this week is not a new lead: it is Darren opening the Documents page, approving five drafts, and sending them. If nothing else in this briefing gets done, do that.",
     },
     {
-      title: "Virginia Physicians Inc — 11-Site Spoke-to-Hub Core Lab Route",
-      fitScore: 92,
-      opportunityId: "OPP-2026-030",
-      note:
-        "Still the strongest lead on the main board and still not called, one week after being named the best structural fit in three runs. Nothing has changed except that a week has passed. VPI owns its own laboratory at 4900 Cox Road and ten sites draw into it. The lab's direct line is (804) 836-1136 — ask for the laboratory manager, not the practice line. This record now carries its source: VPI's own laboratory services page.",
-    },
-    {
-      title: "Virginia Veterinary Centers — Short Pump & Midlothian",
-      fitScore: 93,
-      note:
-        "The anchor account for the new niche and the highest-scoring lead the engine has produced in any run. Three hospitals in one group means an inter-site lane exists before a single outside client is signed; radiation oncology means scheduled repeat-visit patients travelling in from other practices. One conversation covers both metro hospitals — do not call them separately. (804) 353-9000.",
-    },
-    {
-      title: "GENETWORx — Daily Specimen Routes",
-      fitScore: 90,
-      opportunityId: "OPP-2026-003",
-      note:
-        "Four weeks since this draft was written and it has still not been sent. A CLIA lab fifteen minutes away in Glen Allen, (800) 858-5909. There is no new intelligence to report because nobody has made contact — that is the entire status.",
-    },
-    {
-      title: "Richmond VAMC Courier — Subcontract Target (IDIQ 36C24625D0070)",
-      fitScore: 88,
-      opportunityId: "OPP-2026-001",
-      note:
-        "New evidence, and it points the right way. This run's SAM.gov sweep surfaced award notice 36C25026Q0784 — Lab Courier Services, published 8/12/2026, awarded to ALL AMERICAN EXPRESS SOLUTIONS LLC, the same Indianapolis prime that holds the Richmond VAMC IDIQ. They are actively winning more VA lab courier work. A prime expanding its VA footprint from out of state has a real reason to want local capacity, which is exactly the conversation CSL wants to have.",
-    },
-    {
-      title: "Partner Veterinary Emergency & Specialty — Henrico",
+      title: "The Mechanicsville Turnpike cluster — four prospects, one mile",
       fitScore: 88,
       note:
-        "A two-hospital group where only the Richmond site carries critical care. That asymmetry is the pitch: anything Frederick cannot handle has a reason to move. Small enough to decide quickly. (804) 206-9122 — and note the address correction below before anyone drives there.",
+        "BetterPet at 7138, Smoky's Spay & Neuter at 7088, Veterinary Specialists of Hanover at 6127, and Banfield Mechanicsville at 7225 Bell Creek. Every vet lead until now has been priced as a standalone stop, which is the worst possible economics for a one-van operation. This is the first time the ROUTE is the pitch: a single Mechanicsville run serves four accounts, and the marginal cost of the second, third and fourth stop is close to nothing. Lead with that when calling any one of them — it is a better argument than anything about CSL's compliance posture.",
+    },
+    {
+      title: "Veterinary Specialists of Hanover — (804) 277-8021",
+      fitScore: 84,
+      note:
+        "The best NEW single call on the board, and the reason is structural rather than promotional. They are an eight-to-five referral surgery practice doing splenectomies and liver lobectomies — the textbook transfusion cases — with no 24-hour floor of their own. Blood products and overnight patient transfer are not lanes CSL has to argue for; they fall out of the way the practice is built. Owner-led by the founding surgeon, so the decision maker is in the building. Also anchors the Mechanicsville cluster above.",
+    },
+    {
+      title: "Richmond SPCA — the second site nobody had (804) 521-1330",
+      fitScore: 81,
+      note:
+        "Run one recorded this as a single-site nonprofit and scored it 76. It is actually two facilities eighteen miles apart on opposite sides of the metro — the Markel hospital on Hermitage Road and Smoky's Spay & Neuter on Mechanicsville Turnpike. That is an inter-site lane, the strongest of the five, and it was hiding in plain sight. Two caveats before dialling: their own site does NOT say anything physically moves between the sites, so that is the discovery question rather than a finding, and the Markel hospital is still on its temporarily reduced Monday-to-Thursday schedule, so Friday calls may not land.",
+    },
+    {
+      title: "The aftercare lane — three operators, and the pitch is overflow",
+      fitScore: 67,
+      note:
+        "Run one named cremation and aftercare as one of the five uncovered lanes and then listed nobody in it. Three operators are now on the board: Agape in Sandston (corporate, part of Gateway Services, aggregates collection from practices across the metro), Caring Pet Cremation in King William (fourteen counties out of one building), and Richmond Pet Memorial Park on Chamberlayne (the only one offering burial, which means a fixed in-city destination). Read the cautions: two of the three ALREADY run their own pickups and will say so. This is a subcontract-the-overflow conversation, and one Agape signature would cover many clinics — worth more than five individual practice accounts.",
     },
   ],
-  outreach,
+
+  outreach: { drafted: 17, sent: 0, responses: 0 },
+
   deadlines: [
     {
       title:
-        "SEND THE SEVENTEEN DRAFTS — the oldest are four weeks old and nothing else on this list matters until they go",
-      dueDate: "2026-08-21",
-    },
-    {
-      title: "Call VRCC (804) 784-8722 — first call of the vet run, script ready",
-      dueDate: "2026-08-21",
-    },
-    {
-      title: "Call VPI Core Lab (804) 836-1136 — carried over, still uncalled",
-      dueDate: "2026-08-21",
+        "Library Courier Services IFB 127152 — Staunton / Waynesboro / Augusta (HARD, and CSL should probably decline)",
+      dueDate: "2026-09-10",
     },
     {
       title:
-        "Download the VDOT NOA + Bid Tab from eVA (captcha — 60 seconds) and name the awardee",
-      dueDate: "2026-08-24",
-    },
-    { title: "Medzoomer courier signup — OVERDUE since run 1 (4 weeks)", dueDate: "2026-08-19" },
-    { title: "File DMV Form OA-151 online — gates 4 broker records", dueDate: "2026-08-28" },
-    {
-      title: "Call Virginia Veterinary Centers (804) 353-9000 — covers both metro hospitals",
+        "Approve and send the five oldest outreach drafts — waiting 5 weeks",
       dueDate: "2026-08-28",
     },
+    {
+      title:
+        "Re-date or close the 19 overdue action-by targets so the board stops lying about itself",
+      dueDate: "2026-08-31",
+    },
+    {
+      title: "Call Veterinary Specialists of Hanover — Mon–Fri 8–5 only",
+      dueDate: "2026-09-01",
+    },
   ],
+
+  recommendedMoves: [
+    "Send five drafts. Not six, not all seventeen — five, this week. The pile is five weeks old and the reason it has not moved is almost certainly that seventeen feels like a project rather than a task. Five is a morning.",
+    "Fix the nineteen overdue dates. Every one of them is a date CSL set for itself and then passed. Either re-date them or mark them Lost — a board where 41% of records are overdue stops being a tool and becomes wallpaper, and the new status dropdowns make this a ten-minute job.",
+    "Call Veterinary Specialists of Hanover, and open with the Mechanicsville route, not with CSL. Four prospects within a mile of each other is a genuinely better opening line than any credential.",
+    "Do NOT bid the Staunton library IFB. It is a hundred miles from Richmond, and a one-van operation servicing a three-locality library run in the Shenandoah Valley is how a company loses money while looking busy. It is recorded because it proves eVA does occasionally produce courier work — not because it is winnable or worth winning.",
+    "Look up All American Express Solutions LLC on SAM (UEI TYNPRZ48FMJ7). They now hold BOTH the Richmond VAMC courier IDIQ and the new Lab Courier award 36C25026Q0784. They are an Indianapolis prime with Virginia work and no Virginia van — the subcontract approach that has been theoretical for four runs now has a name, a number, and two contracts behind it.",
+    "Clear the VDOT bid tab CAPTCHA. IFB161013 is confirmed awarded and the public bid tabulation prices the entire Virginia courier market. It is behind a CAPTCHA the engine cannot pass and Darren can clear in under a minute — and it is the only place CSL will see what its competitors actually charge the Commonwealth.",
+    "Decide on the rate card. The portal now quotes ODC at $1.65 a mile because that is what Darren's own rate matrix says; his calculator said $1.70. That is live pricing now, not a spreadsheet detail, and it needs one answer.",
+  ],
+
   corrections: [
     {
-      item: "VDOT IFB161013 — AWARDED on 8/11/2026. The awardee is still not named, and this run says exactly why.",
+      item: "Richmond SPCA was recorded as a single site — it has two",
       detail:
-        "Last week's record said a Notice of Intent to Award had been posted on 7/15/2026 and that the intended awardee could not be identified. Re-checked live in eVA on 8/17/2026: the status is now AWARDED, the Award tab shows an Award Date of 8/11/2026, and BOTH a Notice of Award and a public Bid Tab were posted that day. The awardee's name is still not readable from the portal — the NOA and Bid Tab downloads are captcha-gated, and the engine did not bypass that. This is a two-minute job for a human: open the eVA opportunity search, look up IFB161013, clear the captcha and open the Bid Tab, which will also show every bidder and their price. That last part is worth more than the name — it prices the market. Buyer Kimberly Palmer, (804) 729-6317, is still the better call.",
+        "Run one scored it 76 as a single-site nonprofit on Hermitage Road. It also operates Smoky's Spay & Neuter Clinic at 7088 Mechanicsville Turnpike, eighteen miles away, verified this run on the SPCA's own programme page. That changes the lane from general-practice to inter-site and the score from 76 to 81. The engine missed a second location on a prospect it had already researched, which is the kind of miss worth publishing.",
     },
     {
-      item: "The Richmond VAMC prime just won another VA lab courier contract",
+      item:
+        "UrgentVet's three addresses were directory-sourced — now confirmed from UrgentVet",
       detail:
-        "New this run, from the live SAM.gov sweep. Award notice 36C25026Q0784, 'Lab Courier Services', Network Contract Office 10, published 8/12/2026, awarded to ALL AMERICAN EXPRESS SOLUTIONS LLC (UEI TYNPRZ48FMJ7) — the same company that holds Richmond VAMC IDIQ 36C24625D0070. Two runs ago this record was written down on the theory the vehicle was dormant; last run that was corrected on the obligation data; this run adds that the prime is actively expanding its VA lab courier book from an Indianapolis base. The subcontract approach is the strongest it has looked.",
+        "Run one flagged that the addresses came from the Richmond Animal League directory and that UrgentVet's own location finder had not listed the Virginia clinics. All three are now confirmed on urgentvet.com: Carytown 3531 Ellwood Ave, Short Pump 11521 West Broad St, Midlothian 14300 Winterview Pkwy Ste 106. Also newly established: they close at 11pm and are NOT open overnight, which their own page states while recommending a 24/7 hospital for serious cases — the after-hours handoff lane, in the prospect's own words rather than CSL's assumption.",
     },
     {
-      item: "Virginia DSS OGS-27-005 — still gone, three weeks past its estimated issue date",
+      item: "BetterPet was directory-sourced — now confirmed",
       detail:
-        "Re-checked live in eVA on 8/17/2026. A courier search returns 294 records and the STATUS facet contains NO 'Open' bucket whatsoever — awarded, closed, bids-opened, intent-posted, no-award, cancelled and contact-buyer only. A veterinary search returns 398 records with the same result: no Open bucket. OGS-27-005 has not reappeared. The record stays a watch item at 79. This is now the fourth consecutive run finding zero live Commonwealth courier solicitations, and it should be treated as the market's answer rather than a run of bad luck.",
+        "7138 Mechanicsville Turnpike and (804) 442-2713 confirmed on betterpetuc.com. The run-one caution is retired. Their numeric opening hours are still not published anywhere on their own site, so 'nights and weekends' remains the only verified schedule — call late afternoon.",
     },
     {
-      item: "THE VETERINARY NICHE: the obvious pitch is already taken, and it is better to know now",
+      item: "VRCC should not be described as 24/7 or as a blood-products source",
       detail:
-        "Before anyone calls a veterinary practice about daily specimen pickup: IDEXX and Antech both operate their own courier fleets and fold collection into the practice's reference-lab contract — IDEXX publishes online courier scheduling for exactly this. A pitch built on routine send-outs will be corrected on the first call and will cost credibility for the rest of the conversation. The lanes that are genuinely uncovered are movement between sites in multi-location groups, STAT blood products between emergency hubs, after-hours transfer of records and imaging following a patient to whichever ER received them, controlled-substance movement between sites, and cremation and aftercare transport. Every one of the fifteen vet leads is written around those, and each carries the opening question to use instead of a pitch.",
+        "No address or hours correction was needed — run one had both right. But VRCC is the top-scored call on the board and STAT blood products is one of the five lanes, so the absence matters: their own About page makes NO mention of a blood bank or transfusion medicine, and their hours are Monday 8am through Saturday 6pm, closed Sunday. Recorded as a verified negative so nobody walks in assuming otherwise.",
     },
     {
-      item: "Two addresses on the metro's most-shared referral list are wrong",
+      item: "VCA does not have a Richmond footprint worth pursuing",
       detail:
-        "The Richmond Animal League publishes the emergency and urgent-care list that Richmond veterinary clients get handed, and it is partly stale. It gives Partner Veterinary as 6506 W Broad St; Partner's own site says 1616 Three Chopt Road, Henrico. It gives Virginia Veterinary Centers' Midlothian hospital as 2460 Colony Crossing Place and a Richmond hospital at 3312 W Cary Street; VVC's own site lists Midlothian at 12077 Hull Street Road in a facility that opened in July 2024, and lists no Cary Street hospital at all — the metro sites are Short Pump and Midlothian. Where the two disagreed, the practice's own site won and the conflict is recorded on the lead card. Anyone working from the RAL list alone would have lost a morning.",
+        "The working assumption that large corporate groups have multi-site Richmond networks does not hold for VCA: VCA Pets First on Staples Mill is the ONLY VCA hospital in the metro, and VCA Commonwealth Animal Hospital is in Fairfax, not Richmond. There is no VCA inter-site lane here. Also worth knowing: VCA's own site still refers patients to 'Dogwood Veterinary and Specialty Center' at 5918 West Broad, which has traded as BluePearl for some time.",
     },
     {
-      item: "'Dogwood Veterinary Emergency & Specialty Center' is BluePearl",
+      item: "Third-party veterinary referral lists in this market are about a year stale",
       detail:
-        "Worth stating because Dogwood still has an active social presence and shows up in local searches. Dogwood and 'The Oncology Service — Dogwood' operated at 5918 W Broad Street — the same address as BluePearl Pet Hospital Richmond — and are now listed as closed. Do not pursue Dogwood as a separate account. Also noted on the BluePearl lead: their emergency service runs Sunday 7am to Wednesday 7pm, is closed Thursday, and runs Friday 7am to 7pm. That is a real gap in metro emergency coverage, and the cases it displaces go to the other hubs.",
+        "Both stale addresses found in run one — Partner's 6506 W Broad and VVC Midlothian's Colony Crossing — are STILL published today on Veterinary Specialists of Hanover's live referral page. Both were re-confirmed wrong this run against the practices' own sites (Partner is 1616 Three Chopt Road; VVC Midlothian is 12077 Hull Street Road). This is not just a data-hygiene note: every practice in this metro is handing clients directions to hospitals that moved, and pointing that out costs CSL nothing and buys a conversation.",
     },
     {
-      item: "Every record from this run cites its sources — and the older ones honestly do not",
+      item: "eVA's search box could not be re-queried this run — one check was not completed",
       detail:
-        "New capability, added at Darren's request so that 'how did you find us?' has a real answer. Each record now carries the URLs the engine actually opened, with the date it opened them and what each one establishes, shown under 'Where this came from' on the opportunity and on every vet lead. Six earlier high-value records were back-filled where the sources could be re-verified this week. The remaining records from runs 1 to 3 predate the rule and show that plainly rather than having plausible-looking URLs invented for them after the fact — a fabricated citation would be worse than an absent one.",
+        "The VDSS statewide courier Future Procurement, OGS-27-005 / FPR 124752, estimated to issue 1 August 2026, could NOT be re-verified. eVA's public search retains its previous search chip across a page reload and would not accept a new term after the courier query, across three attempts. The courier sweep itself completed and is reported above; this one targeted check did not. Recorded rather than quietly dropped, because the whole point of the citation rule is that a gap should be visible.",
     },
   ],
-  recommendedMoves: [
-    "Send the drafts. Fourth week, same first recommendation, and it is no longer a nag — it is the finding. Seventeen drafts exist, zero have been sent, and the oldest has been waiting four weeks. The board has 44 opportunities and 15 veterinary leads on it. Opportunity supply has never been the constraint; approval is, and every week that gap stays open is a week of engine output going nowhere.",
-    "Call VRCC at (804) 784-8722 and ask for the hospital administrator or the owner. First call of the vet run. Private ownership since 1997 means the decision-maker is in the building. Open with the question that is printed on the card — how do referrals from general practices physically reach you — and do not mention lab pickup.",
-    "Call Virginia Veterinary Centers at (804) 353-9000. One conversation covers Short Pump and Midlothian and puts the Fredericksburg lane on the table. This is the highest-scoring lead in four runs.",
-    "Call the VPI Core Lab at (804) 836-1136. Unchanged from last week, because nothing about it changed except that another week passed. Ask for the laboratory manager and ask how specimens get from the ten satellites to Glen Allen.",
-    "Spend two minutes on the VDOT captcha. Open eVA's public opportunity search, look up IFB161013, and download the Bid Tab. It names the awardee and every bidder's price — that is a market price for statewide courier work in Virginia, and CSL currently has none.",
-    "File DMV Form OA-151. Fourth week on this list. It still gates ModivCare, Access2Care, Roundtrip and MediDrive simultaneously, and it is still the single highest-leverage filing available. $350,000 liability, a $25,000 bond held three years, a $50 fee and a $3 registration fee.",
-    "Do not buy anything for the vet niche yet. The whole veterinary board can be served with the van CSL already owns — inter-site transfers, records, imaging media and controlled substances are ambient and need no cold chain. Prove the lane with a two-week trial at one hospital before spending on anything.",
-  ],
+
   sourcesSwept: [
     {
-      label: "SAM.gov — active courier notices (live search, 8/17/2026)",
-      url: "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
+      label: "SAM.gov — active contract opportunities, keyword 'courier'",
+      url:
+        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
       kind: "search",
-      retrievedISO: "2026-08-17",
+      retrievedISO: "2026-08-25",
       note:
-        "31 active notices nationwide, none with a Virginia place of performance. Also surfaced the 8/12/2026 award of 36C25026Q0784 to ALL AMERICAN EXPRESS SOLUTIONS LLC.",
+        "33 active notices nationwide, up from 31 last week. Every VA Medical Center notice is out of state — Bay Pines, NCO 16, NCO 20 Puget Sound, NCO 21 Sierra Nevada, NCO 02, NCO 10 Indiana. Nearest federal lab-courier work is HT001426QE038, Walter Reed / Patuxent River / Joint Base Andrews, due 11 September — roughly 100 miles from Richmond and outside CSL's stated radius.",
     },
     {
-      label: "SAM.gov — active specimen transport notices (live search, 8/17/2026)",
-      url: "https://sam.gov/search/?index=opp&page=1&pageSize=100&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=specimen%20transport&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=specimen%20transport",
+      label: "SAM.gov — active opportunities, keyword 'specimen transport'",
+      url:
+        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=specimen%20transport&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=specimen%20transport",
       kind: "search",
-      retrievedISO: "2026-08-17",
-      note: "7 active notices nationwide, none in Virginia.",
+      retrievedISO: "2026-08-25",
+      note:
+        "6 results, none in Virginia. Nearest is a Louisville KY VAMC laboratory courier presolicitation.",
     },
     {
-      label: "eVA — public opportunity search (courier and veterinary, 8/17/2026)",
+      label:
+        "SAM.gov — active opportunities, 'courier' AND 'Virginia' (the hard negative)",
+      url:
+        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B1%5D%5Bkey%5D=Virginia&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B1%5D%5Bvalue%5D=Virginia",
+      kind: "search",
+      retrievedISO: "2026-08-25",
+      note:
+        "Returned, verbatim: 'Your search did not return any results for active records.' Fifth consecutive week with zero federal courier work in Virginia. This is the citation for the negative, and it is the reason SAM.gov should now be a monthly check rather than a weekly one.",
+    },
+    {
+      label: "eVA — Virginia Business Opportunities, public search, 'courier'",
       url: "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
       kind: "search",
-      retrievedISO: "2026-08-17",
+      retrievedISO: "2026-08-25",
       note:
-        "Courier: 294 records, no Open status bucket. Veterinary: 398 records, no Open status bucket. IFB161013 re-opened and confirmed AWARDED with an award date of 8/11/2026.",
+        "295 records; the STATUS facet showed Open 1, Awarded 157, Closed 36, Bids Opened 5, Intent Posted 5, No Award 63, Cancelled 9, Contact Buyer 19. The single Open record is IFB 127152, Bid # H00226 Library Courier Services, City of Staunton with Waynesboro and Augusta County, closing 10 September 2026 at 2:00pm. First open eVA courier notice in five runs. Same search re-confirmed VDOT IFB161013 as AWARDED, closed 6 July 2026.",
     },
     {
-      label: "Richmond Animal League — emergency & urgent care clinic list",
-      url: "https://www.ral.org/posts/emergency-and-urgent-care-clinics",
-      kind: "directory",
-      retrievedISO: "2026-08-17",
+      label:
+        "SAM.gov — award notice 36C25026Q0784, VA Health Indiana lab courier",
+      url:
+        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
+      kind: "award",
+      retrievedISO: "2026-08-25",
       note:
-        "The starting map for the veterinary sweep. Every entry was re-checked against the practice's own site; two addresses were found to be stale.",
-    },
-    {
-      label: "IDEXX Reference Laboratories — lab courier management",
-      url: "https://www.idexx.com/en/veterinary/reference-laboratories/lab-courier-management/",
-      kind: "organization",
-      retrievedISO: "2026-08-17",
-      note:
-        "The evidence for the vet niche's central caveat: the reference labs run their own courier networks with online pickup scheduling.",
+        "Awardee ALL AMERICAN EXPRESS SOLUTIONS LLC, Unique Entity ID TYNPRZ48FMJ7. This is the same prime that holds the Richmond VAMC courier IDIQ 36C24625D0070. The UEI is new this run and is what makes a SAM entity lookup — and therefore a subcontract approach — actually actionable.",
     },
   ],
 };

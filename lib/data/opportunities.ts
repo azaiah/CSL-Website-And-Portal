@@ -13,6 +13,9 @@
  *         the veterinary lead run in lib/data/vet-leads.ts)
  * Run 5: 2026-08-25 (two new records — one eVA courier IFB, one veterinary
  *         aftercare lane; supply deliberately held back while the backlog grows)
+ * Run 6: 2026-09-30, labelled "9/30" (nine new records — the first federal
+ *         courier requirement inside Richmond, one open City RFP, two LTC
+ *         pharmacies, two community health centres; swept 30 Sep – 2 Oct)
  *
  * The 2026-07-28 sweep was run against SAM.gov and eVA directly in a live
  * browser session — not from cached third-party mirrors — so the federal and
@@ -132,6 +135,9 @@ export const SWEEPS = [
   { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10" },
   { run: 4, label: "W4", iso: "2026-08-17", weekOf: "2026-08-17" },
   { run: 5, label: "W5", iso: "2026-08-25", weekOf: "2026-08-24" },
+  // Labelled by date rather than "W6" at Darren's request — weeks were missed
+  // between runs, so a date says more than a run number.
+  { run: 6, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28" },
 ] as const;
 
 export type Sweep = (typeof SWEEPS)[number];
@@ -159,6 +165,344 @@ export function predatesSourceCitations(
 }
 
 export const opportunities: Opportunity[] = [
+  // ───────────────────── 9/30 sweep (run 6) — 2026-09-30 ─────────────────────
+  // Labelled "9/30" rather than "W6" because weeks were missed between runs.
+  {
+    id: "OPP-2026-047",
+    title:
+      "Richmond VAMC — HLA Transplant Testing + Courier (Sources Sought 36C24627Q0029): courier leg to the VCU HLA lab",
+    source: "VA Medical Center",
+    naics: "492110",
+    location: "Richmond VA Medical Center to the VCU HLA laboratory, Richmond, VA",
+    dueDate: "2026-10-09",
+    fitScore: 78,
+    status: "Found",
+    estValue: 8600,
+    agency:
+      "Department of Veterans Affairs — Network Contracting Office 6 (36C246), Hampton VA, for the Richmond VAMC laboratory",
+    description:
+      "The first federal notice in six sweeps that names a courier requirement INSIDE Richmond. On 14 September 2026 the VA's Network Contracting Office 6 published a sources-sought notice titled 'VCU Heart and Renal Lab and Transplant Testing' for Human Leukocyte Antigen (HLA) testing for the Richmond VAMC — and the notice is explicit that the contractor must also 'provide transportation/courier services to transport samples from Richmond VAMC to VCU HLA laboratory'. It is registered under NAICS 621511 (Medical Laboratories), so the prime will be a laboratory, not a courier: CSL cannot bid it alone. The response window closed 21 September and the notice goes inactive on 6 October; a solicitation should follow. Value is a CSL estimate for the courier leg only (roughly three runs a week at about $55), not a published figure — transplant crossmatch volume is low but time-critical.",
+    whyItFits:
+      "This is exactly the work CSL is built for, on its home turf: a short, scheduled, chain-of-custody specimen run between two Richmond buildings, for a federal client, where the lab that wins needs a local courier it can name in its quote. It is also the cleanest possible subcontract — the prime is a lab with no van, and the courier leg is written into the scope rather than implied.",
+    suggestedAction:
+      "This week, before the notice goes inactive on 6 October: email the contracting officer, Gordon Burns (gordon.burns@va.gov, 757-251-4333), to ask to be added to the interested-vendors list for the follow-on solicitation and whether the courier leg may be performed by a subcontractor. Do NOT pitch him — contracting officers do not buy from emails. Then find who at VCU Health's HLA laboratory would respond to the solicitation and offer CSL as the named courier on their quote, with the e-POD and chain-of-custody sample records in hand. Watch SAM.gov for the solicitation under the same notice number.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "SAM.gov — 36C24627Q0029 VCU Heart and Renal Lab and Transplant Testing (sources sought)",
+        url: "https://sam.gov/opp/450cbb12ead845878b25ac0b116d504c/view",
+        kind: "solicitation",
+        retrievedISO: "2026-10-02",
+        note:
+          "Opened 2 Oct 2026. Establishes: sources sought published 14 Sep 2026, response date 21 Sep, inactive 6 Oct; NAICS 621511; no set-aside; contracting office NCO 6, 100 Emancipation Dr, Hampton VA; primary contact Gordon Burns; and clause (i) — 'The Contractor shall provide transportation/courier services to transport samples from Richmond VAMC to VCU HLA laboratory.' Results are to be faxed back to the VA lab on 804-675-5518.",
+      },
+      {
+        label: "SAM.gov — active opportunities, keyword 'specimen transport'",
+        url:
+          "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=specimen%20transport&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=specimen%20transport",
+        kind: "search",
+        retrievedISO: "2026-10-02",
+        note: "The search that surfaced it: 5 active results nationwide, and this is the only one with a Virginia place of performance.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-048",
+    title:
+      "Richmond City Justice Center — Inmate Pharmaceutical Services RFP #260019872: delivery subcontract to a bidding pharmacy",
+    source: "eVA",
+    naics: "492210",
+    location: "Richmond City Justice Center, 900 E Broad St, Richmond, VA 23219",
+    dueDate: "2026-10-08",
+    hardDeadline: true,
+    fitScore: 55,
+    status: "Found",
+    estValue: 15600,
+    agency: "City of Richmond (for the Richmond City Sheriff's Office)",
+    description:
+      "An OPEN City of Richmond RFP — confirmed live on eVA on 2 October 2026 as RFP 127938, status Open, closing 8 October 2026 at 2:00pm. It asks for comprehensive pharmacy services at the Richmond City Justice Center in coordination with the existing medical provider. The listed procurement contact is Sue Demery (sue.demery@rva.gov, 804-646-1874). CSL is not a pharmacy and cannot be the prime; the opening is as the local, SWaM-certified delivery subcontractor named in a pharmacy's proposal. Value is a CSL estimate (about 260 weekday deliveries at $60) and assumes daily delivery, which the RFP may not require.",
+    whyItFits:
+      "Scheduled medication delivery into a secure building with documented custody is precisely CSL's service, inside downtown Richmond. A SWaM subcontractor also helps a prime meet the City's small-business participation expectations, which is a reason for a pharmacy to take the call.",
+    suggestedAction:
+      "Six days is tight but possible. Today: download the RFP from eVA and read the delivery frequency, security clearance and small-business subcontracting sections — if delivery is by mail-order or the prime's own fleet, stop there. If not, identify likely pharmacy bidders (pre-proposal sign-in sheet or planholder list if the City publishes one) and send each a one-page subcontract offer by 5 October. Procedural questions only to Sue Demery, and no contact with Sheriff's Office staff during the procurement — that can disqualify the prime.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "eVA public opportunity search — '260019872'",
+        url: "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
+        kind: "search",
+        retrievedISO: "2026-10-02",
+        note:
+          "eVA has no stable permalink, so the search is cited. Opened 2 Oct 2026: one result, 'RFP #260019872 Richmond City Justice Center Inmate...', Status Open, RFP 127938, City of Richmond Government, 900 E Broad St Richmond VA 23219, closing 10/8/26 2:00 PM.",
+      },
+      {
+        label: "LightRFP — listing of RFP #260019872",
+        url: "https://www.lightrfp.com/marketplace/bid/VA_EVA-IV127938/rfp-260019872-richmond-city-justice-center-inmate-pharmaceutical-services",
+        kind: "solicitation",
+        retrievedISO: "2026-09-30",
+        note:
+          "Aggregator copy of the eVA notice: posted 4 Sep 2026, the scope language, the work address and the procurement contact. Superseded as the primary citation by the eVA search above.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-049",
+    title:
+      "Omnicare of Richmond — long-term-care pharmacy changing hands (CVS sale to GenieRx, closing expected October 2026)",
+    source: "Pharmacy",
+    naics: "492210",
+    location: "8575 Magellan Pkwy, Ste 100, Richmond, VA 23227",
+    dueDate: "2026-10-31",
+    fitScore: 65,
+    status: "Found",
+    estValue: 46800,
+    agency:
+      "Omnicare of Richmond (legal name Neighborcare Pharmacy of Virginia, LLC), being acquired by GenieRx Holdings",
+    description:
+      "The NPI registry lists this site as a long-term-care pharmacy serving skilled-nursing and congregate-living facilities; a pharmacy directory lists it as open 24 hours with delivery, on (833) 342-5704. Omnicare filed for Chapter 11 in September 2025 and the court approved a $250M sale to GenieRx (Milrose Capital and Integro); trade press reported on 18 September 2026 that closing is expected in October 2026 and that what it means for facilities remains unresolved. Value is a CSL estimate for one dedicated facility route (about 260 days at $180), not a published figure.",
+    whyItFits:
+      "A new owner inheriting a 24-hour delivery pharmacy is the one moment when delivery vendors are genuinely up for review — and the nursing homes it serves have a reason to want a dependable local backup while the ownership settles.",
+    suggestedAction:
+      "Call (833) 342-5704 and ask for the Richmond pharmacy manager or the delivery / operations lead. Offer STAT, overflow and backup routes priced per stop, with HIPAA handling and e-POD. Stay strictly factual — do not comment on the bankruptcy or any litigation. Separately, the same offer can go to Richmond nursing-home administrators as backup coverage, without criticising Omnicare.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "NPI profile 1689753907 — Omnicare of Richmond",
+        url: "https://npiprofile.com/npi/1689753907",
+        kind: "registry",
+        retrievedISO: "2026-09-30",
+        note: "Legal name, Magellan Parkway address, long-term-care pharmacy classification and facility-delivery focus.",
+      },
+      {
+        label: "WellRx — Omnicare of Richmond pharmacy detail",
+        url: "https://www.wellrx.com/find-a-pharmacy-near-me/pharmacydetail/omnicare%20of%20richmond/4817423/",
+        kind: "directory",
+        retrievedISO: "2026-09-30",
+        note: "Phone (833) 342-5704, open 24 hours, offers delivery. Directory-sourced — confirm on the call.",
+      },
+      {
+        label: "Hoodline — Omnicare bankruptcy sets up $250M sale to GenieRx (18 Sep 2026)",
+        url: "https://hoodline.com/2026/09/omnicare-bankruptcy-sets-up-250-million-sale-to-genierx-as-long-term-care-pharmacy-sector-faces-pressure/",
+        kind: "news",
+        retrievedISO: "2026-09-30",
+        note: "The sale, the expected October 2026 closing, and delivery continuity flagged as an open question.",
+      },
+      {
+        label: "Skilled Nursing News — Omnicare wins approval for sale to GenieRx (May 2026)",
+        url: "https://skillednursingnews.com/2026/05/long-term-care-pharmacy-giant-omnicare-wins-approval-for-sale-to-genierx/",
+        kind: "news",
+        retrievedISO: "2026-09-30",
+        note: "Court approval of the sale; the September 2025 Chapter 11 filing; facilities served in 47 states.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-050",
+    title:
+      "Family Care Pharmacy — independent LTC pharmacy (Richmond + Mechanicsville): after-hours STAT & overflow delivery",
+    source: "Pharmacy",
+    naics: "492210",
+    location: "2576 Gayton Centre Dr, Richmond, VA 23238 and 7016 Lee Park Rd, Mechanicsville, VA 23111",
+    dueDate: "2026-10-24",
+    fitScore: 70,
+    status: "Found",
+    estValue: 23400,
+    agency: "Family Care Pharmacy (family-owned)",
+    description:
+      "A family-owned long-term-care pharmacy serving assisted living, Alzheimer's care units, nursing facilities and adult care facilities across the Richmond area, advertising timely delivery and 24/7/365 emergency service from Richmond and Mechanicsville sites (plus one in Remington). Its own site names Vice President Timothy A. Dowdy (804-968-5530, tdowdy@familycareltc.com) and Richmond Pharmacy Director Tim Oley, RPh (804-740-3300). No driver postings were found, so whether it runs its own drivers is not known. Value is a CSL estimate: about ten STAT or after-hours runs a week at $45.",
+    whyItFits:
+      "A local pharmacy that promises 24/7 emergency delivery has to staff 2am runs somehow; a vetted, HIPAA-trained, on-call backup courier inside the radius is the obvious answer. The Mechanicsville site on Lee Park Road is also next door to the Mechanicsville vet cluster on the Vet Leads board — one route, two industries.",
+    suggestedAction:
+      "Email, then call, Tim Dowdy. Offer a 30-day trial of on-call after-hours and weekend STAT coverage, with sample e-POD and chain-of-custody records. Open by asking what they do today for a 2am emergency run — do not assume they are unhappy with their current drivers.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Family Care Pharmacy — homepage",
+        url: "https://www.familycareltc.com/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Long-term-care focus and Richmond-area service area.",
+      },
+      {
+        label: "Family Care Pharmacy — About",
+        url: "https://www.familycareltc.com/copy-of-about",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Timely delivery and the 24/7/365 emergency-service promise.",
+      },
+      {
+        label: "Family Care Pharmacy — Locations",
+        url: "https://www.familycareltc.com/copy-of-locations",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Both addresses, phone numbers and the named contacts.",
+      },
+      {
+        label: "ZipRecruiter — Family Care Pharmacy jobs",
+        url: "https://www.ziprecruiter.com/co/Family-Care-Pharmacy/Jobs/-in-Mechanicsville,VA",
+        kind: "directory",
+        retrievedISO: "2026-09-30",
+        note: "Only a pharmacy technician posting; no driver postings.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-051",
+    title:
+      "Capital Area Health Network — 4-Site Community Health Center Loop (specimens, pharmacy, supplies)",
+    source: "Commercial",
+    naics: "492110",
+    location:
+      "719 N. 25th St (Church Hill); 2809 North Ave (Northside & corporate); 2740 Bensley Commons Blvd (Chesterfield); 5855 Bremo Rd Ste 302",
+    dueDate: "2026-10-31",
+    fitScore: 60,
+    status: "Found",
+    estValue: 16900,
+    agency: "Capital Area Health Network (federally funded community health center)",
+    description:
+      "A community health center network with four Richmond-area medical sites and a mobile unit, offering primary care, pediatrics, dental, behavioural health and pharmacy (pharmacy line 804-215-2938). The flagship Vernon J. Harris centre has offered pharmacy services since it opened in 1999. Main line 804-780-0840. Its website does not describe its lab arrangements, so the specimen lane is a question, not a finding. Value is a CSL estimate: one daily weekday loop of the four sites at about $65.",
+    whyItFits:
+      "Four sites spread across the City, Henrico and Chesterfield with one pharmacy is the classic shape of a standing inter-site loop, all inside the radius — and grant-funded buyers weigh SWaM certification more heavily than commercial ones.",
+    suggestedAction:
+      "Call 804-780-0840 and ask for the COO or director of operations. Open by asking how specimens, medications and supplies move between the four sites today; offer a fixed-price daily loop with e-POD logs only once that answer is in. Do not claim a lab or 340B arrangement the site does not state.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Capital Area Health Network — homepage",
+        url: "https://cahealthnet.org/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "The four site addresses and the pharmacy and main phone numbers.",
+      },
+      {
+        label: "Capital Area Health Network — About",
+        url: "https://cahealthnet.org/about/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Services list including pharmacy; corporate address.",
+      },
+      {
+        label: "Capital Area Health Network — Vernon J. Harris Medical Center",
+        url: "https://cahealthnet.org/vernon-j-harris-medical-center/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "The flagship site with pharmacy services since 1999, and its hours.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-052",
+    title: "Daily Planet Health Services — 4-Clinic Prescription & Specimen Loop (downtown + Southside)",
+    source: "Commercial",
+    naics: "492110",
+    location: "517 & 511 W. Grace St, 180 E. Belt Blvd, 24 E. Cary St, Richmond, VA",
+    dueDate: "2026-11-06",
+    fitScore: 55,
+    status: "Found",
+    estValue: 13000,
+    agency: "Daily Planet Health Services (federally funded community health center)",
+    description:
+      "Daily Planet runs four clinical sites in Richmond — two on W. Grace Street, one on E. Belt Boulevard in Southside and one on E. Cary Street — all reached on (804) 783-2505. The 517 W. Grace site lists primary care, behavioural health, addiction treatment, dental, PHARMACY and case management; Southside and East Cary list primary and dental care. Value is a CSL estimate: a daily weekday loop at about $50.",
+    whyItFits:
+      "One pharmacy and three other clinics, all in the centre of CSL's radius: filled prescriptions have to reach patients seen at Southside and East Cary somehow.",
+    suggestedAction:
+      "Call (804) 783-2505 and ask for operations or the pharmacy director. Propose moving filled prescriptions from the Grace Street pharmacy to the other three sites, plus specimen pickup. Patient dignity first — this population includes people in addiction treatment, so discretion is part of the pitch, not an afterthought.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Daily Planet Health Services — Locations",
+        url: "https://dailyplanetva.org/locations/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "All four addresses, services by site, the pharmacy at 517 W. Grace, and the shared phone line.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-053",
+    title: "Shady Grove Fertility — Richmond: temperature-logged specimen & frozen-tissue moves between offices",
+    source: "Commercial",
+    naics: "492110",
+    location: "7607 Forest Ave, Suite 400, Richmond, VA 23229 (page also references a Stony Point office)",
+    dueDate: "2026-11-13",
+    fitScore: 50,
+    status: "Found",
+    estValue: 9600,
+    agency: "Shady Grove Fertility (SGF Richmond)",
+    description:
+      "The Forest Avenue office offers IVF, egg freezing and donor-egg programmes, with an on-site laboratory and 7–10am monitoring hours, and its page references a separate Stony Point office. Value is a CSL estimate: about four frozen-tissue or inter-office transports a month at $200. The SGF announcement of how the Richmond practices combined could not be opened, so the date of that change is not claimed.",
+    whyItFits:
+      "Two offices and an on-site lab create the most time- and temperature-sensitive specimen moves in human medicine, where a documented chain of custody and a temperature log are the whole product.",
+    suggestedAction:
+      "Ask the main office for the lab director or practice administrator. Before quoting, ask what dry-shipper and cryogenic handling standards they require — CSL must not offer frozen-tissue transport it is not equipped to do. Never use the published emergency lines for a sales call.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Shady Grove Fertility — Richmond, Henrico Doctors' Forest fertility center",
+        url: "https://www.shadygrovefertility.com/locations/virginia/richmond-henrico-doctors-forest-fertility-center/",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Address, on-site lab, services, monitoring hours and the reference to a Stony Point office.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-054",
+    title: "New Kent Direct Care — new membership primary-care clinic with in-house lab (opened September 2026)",
+    source: "Commercial",
+    naics: "492110",
+    location: "3215 Rock Creek Villa Drive, Quinton, VA (New Kent County) — at the edge of the 25-mile radius",
+    dueDate: "2026-10-16",
+    fitScore: 35,
+    status: "Found",
+    estValue: 6200,
+    agency: "New Kent Direct Care",
+    description:
+      "Richmond BizSense reported on 29 September 2026 that this 1,500 sq ft clinic — three exam rooms and a laboratory — was slated to open that month, self-funded with $100,000 plus a $10,000 New Kent EDA grant. Services include primary care, same-day or next-day urgent visits, lab testing and chronic care management, with additional testing ordered through Labcorp. Founders include Christopher Lindsay (former VDH COO) and Medical Director Matt Nottingham; operations are run by Jaynie Lindsay. Value is a CSL estimate: about three runs a week at $40.",
+    whyItFits:
+      "A brand-new independent clinic has no vendor habits yet. It is small, and it is the one record this run that is genuinely new since the last sweep.",
+    suggestedAction:
+      "A relationship play, not a revenue one. Contact Jaynie Lindsay and offer pay-per-run specimen and member medication delivery. Ask first what Labcorp's own pickup covers and do not pitch against it. Check the drive time before quoting — Quinton is close to the edge of the radius.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Richmond BizSense — New Kent locals launch direct primary care clinic (29 Sep 2026)",
+        url: "https://richmondbizsense.com/2026/09/29/new-kent-locals-launch-direct-primary-care-clinic-in-their-home-county/",
+        kind: "news",
+        retrievedISO: "2026-09-30",
+        note: "The opening, address, in-house lab, Labcorp ordering, founders and staff, and funding.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-055",
+    title: "Dispatch — 'Courier Partners' programme, Greater Richmond (fill idle van hours)",
+    source: "Courier Network",
+    naics: "492210",
+    location: "Greater Richmond (Henrico, Chesterfield, Mechanicsville, Glen Allen, Midlothian)",
+    dueDate: "2026-10-15",
+    fitScore: 40,
+    status: "Found",
+    estValue: 26000,
+    agency: "Dispatch (dispatchit.com)",
+    description:
+      "Dispatch runs last-mile and local courier work across Greater Richmond with real-time tracking and proof of delivery. Cargo van is one of its vehicle classes, and alongside individual-driver onboarding it runs a separate 'Courier Partners' programme for delivery businesses. Its Richmond page does not mention medical deliveries. Value is a CSL estimate, GROSS before vehicle costs: about two idle-van days a week at $250.",
+    whyItFits:
+      "Utilisation, not strategy. With one van, every unbooked hour is lost revenue; network jobs fill those hours without any sales effort. It is scored low because it is non-medical and does nothing for CSL's positioning.",
+    suggestedAction:
+      "Apply as a Courier Partner, not as an individual driver, through the link on Dispatch's Richmond page — and only if the terms let CSL decline jobs that clash with medical routes. Keep cargo segregated: nothing that compromises the van's clean, HIPAA-controlled condition.",
+    addedISO: "2026-09-30",
+    sources: [
+      {
+        label: "Dispatch — Richmond location page",
+        url: "https://www.dispatchit.com/company/locations/richmond",
+        kind: "organization",
+        retrievedISO: "2026-09-30",
+        note: "Richmond coverage, the cargo-van class, and the driver and Courier Partners programmes.",
+      },
+    ],
+  },
+
   // ───────────────────────── Run 5 — 2026-08-25 ─────────────────────────
   {
     id: "OPP-2026-045",

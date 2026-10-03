@@ -39,7 +39,10 @@
  *
  * Run 1 of the vet sweep: 2026-08-17 (15 leads).
  * Run 2 of the vet sweep: 2026-08-25 (10 new leads; four V1 cautions resolved).
- * Twenty-five leads total across both runs.
+ * Run 3 of the vet sweep: 2026-09-30, labelled "9/30" in the UI (10 new leads —
+ *   the first multi-site independent general practice, the first equine
+ *   hospitals, the zoo and an in-home end-of-life vet; BluePearl's emergency
+ *   hours corrected). Thirty-five leads total across three runs.
  * ---------------------------------------------------------------------------
  */
 
@@ -95,6 +98,9 @@ export interface VetLead {
 export const VET_SWEEPS = [
   { run: 1, label: "V1", iso: "2026-08-17", weekOf: "2026-08-17" },
   { run: 2, label: "V2", iso: "2026-08-25", weekOf: "2026-08-24" },
+  // Labelled by date rather than "V3" at Darren's request — weeks were missed
+  // between runs, so a date says more than a run number.
+  { run: 3, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28" },
 ] as const;
 
 export type VetSweep = (typeof VET_SWEEPS)[number];
@@ -114,6 +120,7 @@ export function vetLeadMapUrl(l: VetLead): string {
 
 const R = "2026-08-17";
 const R2 = "2026-08-25";
+const R3 = "2026-09-30";
 
 /** Cited on several leads — the metro's shared referral list. */
 const RAL_DIRECTORY: SourceLink = {
@@ -338,16 +345,16 @@ export const vetLeads: VetLead[] = [
     tel: "8047164700",
     website: "https://bluepearlvet.com/hospital/richmond-va/",
     hours:
-      "Emergency: Sunday 7am – Wednesday 7pm; Thursday closed; Friday 7am – 7pm. Specialty by appointment.",
+      "Emergency (per their own site, 30 Sep 2026): Mon 12am–7am & 9am–midnight; Tue 24 hours; Wed 12am–7am & 9am–midnight; Thu & Fri 24 hours; Sat & Sun CLOSED. Specialty by appointment.",
     capabilities: [
       "Emergency and specialty referral",
       "On-site MRI and advanced imaging",
       "Specialists work directly with the referring primary-care veterinarian",
     ],
     pitch:
-      "Worth a call, but expect a longer road than the independents — BluePearl is a national chain and vendor decisions rarely sit with the hospital. The genuinely interesting detail is the hours: emergency coverage stops Wednesday evening and does not resume until Friday morning. Those cases go somewhere else, and something has to follow them.",
+      "Worth a call, but expect a longer road than the independents — BluePearl is a national chain and vendor decisions rarely sit with the hospital. The genuinely interesting detail is still the hours, and they have changed: emergency is now closed every Saturday and Sunday, with a 7–9am gap on Mondays and Wednesdays. Every weekend case in the west end goes somewhere else, and something has to follow it back on Monday.",
     openingQuestion:
-      "When your emergency service is closed Thursday, where do those cases go — and how do the records and any samples get back here afterwards?",
+      "When your emergency service is closed at the weekend, where do those cases go — and how do the records and any samples get back here on Monday?",
     caution:
       "Two things. First, procurement is likely national, so ask early who actually approves a local vendor before investing calls. Second: 'Dogwood Veterinary Emergency & Specialty Center' and 'The Oncology Service — Dogwood' operated at THIS SAME address and are now listed as closed. Do not chase Dogwood as a separate business — it is this hospital.",
     addedISO: R,
@@ -359,6 +366,14 @@ export const vetLeads: VetLead[] = [
         retrievedISO: R,
         note:
           "Source for the West Broad Street address, phone, the unusual emergency hours, and the on-site MRI.",
+      },
+      {
+        label: "BluePearl Richmond hospital page — re-checked on the 9/30 sweep",
+        url: "https://bluepearlvet.com/hospital/richmond-va/",
+        kind: "organization",
+        retrievedISO: R3,
+        note:
+          "Re-opened 30 Sep 2026. Same address and phone, but the emergency schedule is DIFFERENT from what V1 recorded: now closed Saturday and Sunday, 24 hours Tue/Thu/Fri, with 7–9am gaps on Mon and Wed. The hours line on this card was corrected from this page.",
       },
       {
         label: "Yelp listing — The Oncology Service / Dogwood, 5918 W Broad St, marked CLOSED",
@@ -572,6 +587,14 @@ export const vetLeads: VetLead[] = [
         retrievedISO: R2,
         note:
           "Establishes the SECOND SITE that changes this lead's shape: 7088 Mechanicsville Turnpike, (804) 368-6232, Mon–Thu 7:30am–3:30pm, closed Fri–Sun.",
+      },
+      {
+        label: "12 On Your Side — Richmond SPCA adjusts veterinary hospital hours (6 May 2026)",
+        url: "https://www.12onyourside.com/2026/05/06/richmond-spca-adjusts-veterinary-hospital-hours-due-staffing-shortage/",
+        kind: "news",
+        retrievedISO: R3,
+        note:
+          "Explains the Monday–Thursday schedule: a veterinarian and technician shortage. Also reports the hospital sees about 9,000 patients a year. The SPCA's own page, re-opened 30 Sep 2026, still shows the temporary Mon–Thu schedule.",
       },
     ],
   },
@@ -1285,6 +1308,541 @@ export const vetLeads: VetLead[] = [
         retrievedISO: R2,
         note:
           "Cited to establish a NEGATIVE: this hospital is in Fairfax, VA 22030, not Richmond. It is why VCA has no metro inter-site lane.",
+      },
+    ],
+  },
+  /* ───────────────────── 9/30 sweep — run 3, 2026-09-30 ───────────────────── */
+  /* ── Multi-site independents ── */
+  {
+    id: "VET-2026-026",
+    name: "Locke A. Taylor Veterinary Hospital (3 sites, incl. Glen Allen Animal Hospital)",
+    category: "General Practice",
+    priority: "HOT",
+    fitScore: 80,
+    address: "9023 Woodman Road",
+    city: "Richmond",
+    state: "VA",
+    zip: "23228",
+    phone: "(804) 262-8629",
+    tel: "8042628629",
+    website: "https://lockeataylordvm.com/",
+    hours:
+      "Monday & Wednesday 9am–8pm; Tuesday, Thursday, Friday 9am–6pm; by appointment (one schedule published for all three sites)",
+    siteCount: 3,
+    sites: [
+      {
+        label: "Woodman Road (main)",
+        address: "9023 Woodman Road, Richmond, VA 23228",
+        phone: "(804) 262-8629",
+        tel: "8042628629",
+      },
+      {
+        label: "N Parham Road",
+        address: "2801 N Parham Road, Richmond, VA 23294",
+        phone: "(804) 308-1384",
+        tel: "8043081384",
+      },
+      {
+        label: "Glen Allen Animal Hospital",
+        address: "10222 Staples Mill Road, Glen Allen, VA 23060",
+        phone: "(804) 308-9971",
+        tel: "8043089971",
+      },
+    ],
+    capabilities: [
+      "Three hospitals in Henrico / North Richmond under one brand and one shared schedule",
+      "Surgery, dental care, exotic and pocket-pet care, rehabilitation, end-of-life planning",
+      "Handles emergencies during business hours at Woodman Road and N Parham Road",
+      "Sends after-hours emergencies to outside ER hospitals — the after-hours transfer lane",
+    ],
+    pitch:
+      "The best new multi-site independent in the metro: three hospitals roughly fifteen minutes apart, open until 8pm two nights a week. That is a standing inter-site lane for samples, records and medication, plus a same-evening hand-off to the ER for every patient who leaves at closing time.",
+    openingQuestion:
+      "When a patient seen at Parham needs something that's stocked or done at Woodman or Glen Allen, how does it get there today — and who drives it?",
+    caution:
+      "Two things before dialling. (1) Their own emergency page still sends clients to 'Dogwood Specialty Center (804) 716-4700' and 'Veterinary Referral and Care' — Dogwood now trades as BluePearl, which per its own site is closed for emergencies at weekends. Do not repeat the old names on the call. (2) The site refers to 'the late Dr. Locke A. Taylor' and does not say who owns the practice now — confirm the decision maker before pitching.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Locke A. Taylor — mobile homepage (locations)",
+        url: "https://m.lockeataylordvm.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for all three addresses and phone numbers and the shared hours.",
+      },
+      {
+        label: "Locke A. Taylor — homepage",
+        url: "https://lockeataylordvm.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the services list and the founder reference.",
+      },
+      {
+        label: "Locke A. Taylor — Richmond pet emergencies page",
+        url: "https://m.lockeataylordvm.com/richmond-pet-emergencies.php",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes business-hours emergency handling and the outdated after-hours ER referral names cited in the caution.",
+      },
+      {
+        label: "Lab Rescue Richmond — veterinarian list",
+        url: "https://www.labrescue-richmond.com/veternarians",
+        kind: "directory",
+        retrievedISO: R3,
+        note: "Lists only two locations; the practice's own site shows three, and the own site wins.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-027",
+    name: "Mechanicsville Animal Hospital + Rutland Animal Hospital (sister practices)",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 72,
+    address: "7044 Lee Park Rd.",
+    city: "Mechanicsville",
+    state: "VA",
+    zip: "23111",
+    phone: "(804) 559-9800",
+    tel: "8045599800",
+    website: "https://www.mechanicsvilleanimalhospital.com/",
+    hours:
+      "Mechanicsville: Mon–Thu 7:30am–7pm; Fri 7:30am–6pm; Sat 8am–3pm; Sun closed (medication and boarding pickup only)",
+    siteCount: 2,
+    sites: [
+      {
+        label: "Mechanicsville Animal Hospital",
+        address: "7044 Lee Park Rd., Mechanicsville, VA 23111",
+        phone: "(804) 559-9800",
+        tel: "8045599800",
+      },
+      {
+        label: "Rutland Animal Hospital (Mon–Thu 7:30am–7pm, Fri 7:30am–6pm, closed weekends)",
+        address: "9375 Atlee Road, Suite 4109, Mechanicsville, VA 23116",
+        phone: "(804) 559-6502",
+        tel: "8045596502",
+      },
+    ],
+    capabilities: [
+      "Two Hanover County hospitals; Rutland sends its Saturday patients to Mechanicsville, so patients already move between the sites",
+      "Mechanicsville: orthopaedic and soft-tissue surgery, internal medicine, dentistry, boarding; founded 1998",
+      "Rutland: surgery, dental cleanings and wellness for cats and dogs; operating since 2016",
+      "After hours, Rutland refers to the Richmond 24-hour hospitals (VVC, BluePearl, VRCC)",
+    ],
+    pitch:
+      "Their own website already describes an inter-site hand-off — Rutland clients are sent to Lee Park on Saturdays. The Lee Park Road hospital is also in the same Mechanicsville (23111) corridor as the Mechanicsville Turnpike cluster — BetterPet, Smoky's, Veterinary Specialists of Hanover, Banfield — so it is a candidate stop on a route that already exists on paper (drive distance not yet measured).",
+    openingQuestion:
+      "When a Rutland patient has to be seen at Lee Park, or go to the ER after you close, what goes with them — and who carries it?",
+    caution:
+      "Neither site says who owns the practices or whether they belong to a corporate group — confirm independence before scoring higher. Mechanicsville's /emergencies page returned a 404, so its own after-hours policy is not published.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Mechanicsville Animal Hospital — homepage",
+        url: "https://www.mechanicsvilleanimalhospital.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the Lee Park Road address, phone, hours, services and the link to the sister location.",
+      },
+      {
+        label: "Mechanicsville Animal Hospital — About",
+        url: "https://www.mechanicsvilleanimalhospital.com/about-us",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the 'Visit Our Second Location' link to Rutland. No ownership stated.",
+      },
+      {
+        label: "Rutland Animal Hospital — About",
+        url: "https://www.rutlandanimalhospital.com/about-us",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for Rutland's address, phone, hours, 2016 opening and the Saturday redirect to Mechanicsville.",
+      },
+      {
+        label: "Rutland Animal Hospital — Emergencies",
+        url: "https://www.rutlandanimalhospital.com/emergencies",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the after-hours ER referral list.",
+      },
+    ],
+  },
+
+  /* ── Equine & large animal ── */
+  {
+    id: "VET-2026-028",
+    name: "Woodside Equine Clinic",
+    category: "ER & Specialty Hub",
+    priority: "HOT",
+    fitScore: 82,
+    address: "13011 Blanton Road",
+    city: "Ashland",
+    state: "VA",
+    zip: "23005",
+    phone: "(804) 798-3281",
+    tel: "8047983281",
+    website: "https://www.woodsideequineclinic.com/",
+    hours: "Monday–Friday 8am–5pm; closed weekends; emergency service 24/7",
+    capabilities: [
+      "Privately owned — Dr. Scott Anderson has owned it since 1989; eleven veterinarians including two board-certified surgeons and a theriogenologist",
+      "24/7 emergency service; 'surgeons are available 24/7 for referrals'; colic surgery with overnight hospitalisation",
+      "In-house laboratory: CBC, chemistry, SAA, fibrinogen, Salmonella, Strangles and EHV-1 PCR, fecals",
+      "Digital radiography, ultrasound, endoscopy and nuclear scintigraphy",
+      "Ambulatory farm-call service, reproductive centre and sports medicine",
+      "Site states it has expanded into a new Emergency & Surgery facility",
+    ],
+    pitch:
+      "A completely new lane for the board: the 24/7 surgical referral hospital for horses north of Richmond, owner-led, with referring vets sending colic cases at all hours. When a referring vet sends a horse at 2am, the bloodwork, films and history have to follow — on a documented chain of custody.",
+    openingQuestion:
+      "When a referring vet sends you an emergency, how do their bloodwork, imaging and history reach you — and how often does that arrive late or not at all?",
+    caution:
+      "(1) The in-house lab covers most routine testing — do not pitch lab send-outs. (2) Nuclear scintigraphy involves radioactive material: do NOT imply CSL can carry Class 7 material. (3) The site announces a new Emergency & Surgery facility but publishes no separate address for it — ask for it before quoting any route.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Woodside Equine Clinic — homepage",
+        url: "https://www.woodsideequineclinic.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for address, phone, hours, services, private ownership and the expansion notice.",
+      },
+      {
+        label: "Woodside Equine Clinic — Emergency",
+        url: "https://www.woodsideequineclinic.com/services/emergency.html",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the 24/7 surgeon referrals, the fast-track emergency system and the in-house lab.",
+      },
+      {
+        label: "Woodside Equine Clinic — Diagnostics",
+        url: "https://www.woodsideequineclinic.com/services/diagnostics.html",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the in-house lab test menu and imaging, including scintigraphy.",
+      },
+      {
+        label: "Woodside Equine Clinic — About",
+        url: "https://www.woodsideequineclinic.com/about/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the eleven veterinarians, the board-certified surgeons and the ownership history.",
+      },
+      {
+        label: "Woodside Equine Clinic — Surgery",
+        url: "https://www.woodsideequineclinic.com/services/surgery.html",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes colic surgery, overnight hospitalisation and support for referring vets.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-029",
+    name: "Virginia Equine, PLLC",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 70,
+    address: "1994 Shallow Well Rd",
+    city: "Manakin-Sabot",
+    state: "VA",
+    zip: "23103",
+    phone: "(804) 784-5419",
+    tel: "8047845419",
+    website: "https://virginiaequinepllc.com/",
+    hours: "Clinic Monday–Friday 9am–4pm; after-hours emergency service for clients inside its service area",
+    capabilities: [
+      "Owner-led: Douglas K. Daniels DVM has owned and operated the practice since 1997",
+      "Five mobile veterinarians covering Goochland, Powhatan, Midlothian, Chesterfield, Louisa, Hanover and Henrico",
+      "Haul-in clinic with an on-site surgical stall",
+      "Portable ultrasound, gastroscopy, upper-airway endoscopy, lameness exams; reproductive and neonatal care",
+      "In-house lab capability: not published",
+    ],
+    pitch:
+      "Five vets in five trucks across seven counties. Every field draw and every controlled-drug restock currently depends on a vet driving back to Manakin-Sabot — a scheduled collection run gives those hours back to billable farm calls.",
+    openingQuestion:
+      "When one of your field vets draws blood in Powhatan at 3pm, how does it get to the lab — and how do controlled-drug restocks reach the trucks?",
+    caution:
+      "Whether they run an in-house lab, and which reference lab they use, is NOT published — ask before assuming the sample lane exists. The clinic is roughly 20 miles west of downtown (estimate, not measured).",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Virginia Equine — homepage",
+        url: "https://virginiaequinepllc.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone, hours, the five mobile vets, service area and after-hours emergencies.",
+      },
+      {
+        label: "Virginia Equine — About",
+        url: "https://virginiaequinepllc.com/about/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes Dr. Daniels' ownership since 1997 and the haul-in clinic.",
+      },
+      {
+        label: "Virginia Equine — Services",
+        url: "https://virginiaequinepllc.com/services/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the diagnostic, surgical and reproductive services.",
+      },
+    ],
+  },
+
+  /* ── Zoo, mobile & end-of-life ── */
+  {
+    id: "VET-2026-030",
+    name: "Metro Richmond Zoo — on-site animal hospital",
+    category: "Nonprofit / High-Volume",
+    priority: "WARM",
+    fitScore: 66,
+    address: "8300 Beaver Bridge Road",
+    city: "Moseley",
+    state: "VA",
+    zip: "23120",
+    phone: "(804) 739-5666",
+    tel: "8047395666",
+    website: "https://metrorichmondzoo.com/",
+    hours: "Zoo open Monday–Saturday 9:30am–5pm, closed Sundays (public hours — hospital hours not published)",
+    capabilities: [
+      "Privately owned and operated with no government funding — the owner decides, not a board or agency",
+      "About 2,000 animals of 190 species on 150 acres in Chesterfield County",
+      "On-site hospital with a small pharmacy, surgery room, blood chemistry analyser and x-ray",
+      "Vet-tech job description includes preparing biological specimens for lab exams and shipment",
+    ],
+    pitch:
+      "The zoo's own vet team already packs specimens for outside testing. CSL can take the local leg off them — Moseley to the lab, the airport or a Richmond specialist — documented end to end.",
+    openingQuestion:
+      "When the hospital needs a sample tested outside, where does it go and how does it leave the zoo today — FedEx, a staff drive, or a lab courier?",
+    caution:
+      "(1) The specimen-shipping evidence comes from a job posting, which may be old. (2) Many exotic-species tests go to national labs by overnight air, so CSL's realistic role is the local leg, not the whole journey. (3) Some species' specimens fall under USDA or CITES rules — ask before handling them. Roughly 20 miles southwest of downtown (estimate).",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Metro Richmond Zoo — homepage",
+        url: "https://metrorichmondzoo.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone and public hours.",
+      },
+      {
+        label: "Metro Richmond Zoo — press kit",
+        url: "https://metrorichmondzoo.com/newsroom/press-kit/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the on-site hospital, private ownership, 2,000 animals, 190 species and 150 acres.",
+      },
+      {
+        label: "Metro Richmond Zoo — Veterinary Technician posting",
+        url: "https://metrorichmondzoo.com/employment/veterinary-technician/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes the hospital pharmacy, surgery room and analyser, and the specimen-shipment duty.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-031",
+    name: "House Call Vet RVA (in-home end-of-life care)",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 60,
+    address: "Mobile practice — no street address published",
+    city: "Richmond",
+    state: "VA",
+    zip: "",
+    phone: "(804) 382-3684",
+    tel: "8043823684",
+    website: "https://housecallvetrva.com/",
+    hours: "Hours vary based on availability; evening and weekend options offered",
+    capabilities: [
+      "Owner: Dr. Kaitlyn Hemsley, DVM, CVA (certified veterinary acupuncturist)",
+      "In-home euthanasia, hospice and end-of-life care; pain management, laser therapy, acupuncture",
+      "Serves Richmond, Chesterfield, Hanover, Henrico, Midlothian, Mechanicsville, Ashland and Goochland",
+      "Aftercare and cremation arrangements: not published",
+    ],
+    pitch:
+      "The missing link in the aftercare lane: after an in-home euthanasia, often in the evening or at a weekend, someone has to take the pet to the crematory. CSL does that transfer with dignity and paperwork, so the vet can go straight to the next family.",
+    openingQuestion:
+      "After an in-home euthanasia, who transports the pet to the crematory — and how does that work at 8pm on a Saturday?",
+    caution:
+      "Her aftercare partner is not published and may already be one of the three cremation providers on this board (Agape, Caring Pet Cremation, Pet Cremation Services). Frame CSL as a carrier that works alongside them, not a replacement. The vehicle must be appropriate for carrying remains.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "House Call Vet RVA — Contact",
+        url: "https://housecallvetrva.com/contact/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the phone, the hours language, service area and services.",
+      },
+      {
+        label: "House Call Vet RVA — in-home veterinarian page",
+        url: "https://housecallvetrva.com/richmond-va-in-home-veterinarian/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes Dr. Hemsley as owner and the end-of-life focus.",
+      },
+    ],
+  },
+
+  /* ── General practices & specialists — after-hours hand-off lane ── */
+  {
+    id: "VET-2026-032",
+    name: "Iron Bridge Animal Hospital",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 45,
+    address: "7540 Iron Bridge Road",
+    city: "Richmond",
+    state: "VA",
+    zip: "23237",
+    phone: "(804) 743-1704",
+    tel: "8047431704",
+    website: "https://ironbridgevet.com/",
+    hours: "Mon–Wed 7am–7pm; Thu 7am–5pm; Fri 7am–6pm; Sat 9am–noon (by appointment)",
+    capabilities: [
+      "Full-service companion-animal hospital (medical, surgical, dental) serving Chesterfield and Chester for over thirty years",
+      "Online pharmacy through Vetsource home delivery",
+      "Sends after-hours emergencies to outside ER hospitals",
+    ],
+    pitch:
+      "When a patient goes to the ER at 7pm, CSL makes sure the chart, films and labs are already there when the client walks in.",
+    openingQuestion:
+      "When a patient goes from you to the ER after hours, how do their records and any samples get there?",
+    caution:
+      "Their emergency list uses old names — 'Veterinary Emergency Center – South 744-9800' and '– Cary Street 353-9000' — which are now VVC Midlothian and VVC Short Pump. Dr. William Dunnavant is named on the site but his role is not stated; ownership is not published.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Iron Bridge Animal Hospital — homepage",
+        url: "https://ironbridgevet.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone, hours, services and the outdated ER list.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-033",
+    name: "Short Pump Animal Hospital",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 42,
+    address: "4730 Pouncey Tract Road",
+    city: "Glen Allen",
+    state: "VA",
+    zip: "23059",
+    phone: "(804) 360-0100",
+    tel: "8043600100",
+    website: "https://www.shortpumpvet.com/",
+    hours: "Monday–Friday 7:30am–6:30pm; closed weekends",
+    capabilities: [
+      "AAHA-accredited; six doctors",
+      "Same-day urgent care for stable sick patients",
+      "X-ray, ultrasound, dermatology, dental and surgery",
+      "Sends critical after-hours cases to partner hospitals",
+    ],
+    pitch:
+      "Six doctors and same-day sick visits means some of those patients end up at the ER that night — CSL gets their workup there before the client arrives.",
+    openingQuestion:
+      "How many of your same-day urgent cases end up at the ER, and how does their workup get there?",
+    caution:
+      "No owner or parent company is published; it could be corporate-owned. Confirm before investing time.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Short Pump Animal Hospital — homepage",
+        url: "https://www.shortpumpvet.com/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone, hours, doctors, services and AAHA accreditation.",
+      },
+      {
+        label: "Short Pump Animal Hospital — urgent care",
+        url: "https://www.shortpumpvet.com/glen-allen-va/urgent-care/",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Establishes same-day urgent care and after-hours referral to partner hospitals.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-034",
+    name: "Animal Dermatology Clinic — Richmond (formerly Veterinary Dermatology of Richmond)",
+    category: "ER & Specialty Hub",
+    priority: "WATCH",
+    fitScore: 38,
+    address: "13815 Fribble Way",
+    city: "Midlothian",
+    state: "VA",
+    zip: "23112",
+    phone: "(804) 740-9555",
+    tel: "8047409555",
+    website: "https://www.animaldermatology.com/locations/richmond",
+    hours: "Mon–Thu 8am–5pm; Fri 8am–noon (closed every other Friday); closed weekends; closed 12:15–12:45pm daily",
+    capabilities: [
+      "Board-certified dermatologist Amy Shumaker, DVM, plus a resident",
+      "Referral specialty for complex skin and ear disease, allergies and immune-mediated conditions",
+      "Online referral portal for veterinarians",
+    ],
+    pitch:
+      "Referrals arrive from all over the metro; a scheduled pickup of the referring vet's records and prior cultures means first visits start complete.",
+    openingQuestion:
+      "How often do referred patients arrive without their history or prior cultures, and what does that cost your schedule?",
+    caution:
+      "The site says the clinic is 'now part of the renowned Animal Dermatology Group (ADG)' — vendor decisions likely sit with the corporate group, which is why this scores low. Biopsy and culture send-outs probably go to national labs with their own couriers.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Animal Dermatology Clinic — Richmond location page",
+        url: "https://www.animaldermatology.com/locations/richmond",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone, hours, doctors and ADG ownership. The old vavetderm.com domain redirects here.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-035",
+    name: "Hanover County Animal Protection and Shelter",
+    category: "Nonprofit / High-Volume",
+    priority: "WATCH",
+    fitScore: 32,
+    address: "12471 Taylor Complex Lane",
+    city: "Ashland",
+    state: "VA",
+    zip: "23005",
+    phone: "(804) 365-6485",
+    tel: "8043656485",
+    website: "https://www.hanovercounty.gov/172/Animal-Protection-and-Shelter",
+    hours: "Tue–Fri 10am–4:30pm; Sat 10am–3:30pm (by appointment); closed Sun–Mon",
+    capabilities: [
+      "County shelter providing veterinarian care for homeless or unwanted animals",
+      "Holds rabies clinics in fall and winter",
+      "Whether it has an on-site clinic or contract vets: not published",
+    ],
+    pitch:
+      "For a county agency, documented custody on every outside transfer is the selling point — and Hanover is the county the Mechanicsville cluster already sits in.",
+    openingQuestion:
+      "When a shelter animal needs care beyond what's done on site, who takes it there — staff, or a contractor?",
+    caution:
+      "A county agency: it almost certainly buys through public procurement (Hanover posts its solicitations on eVA). Treat as a long-cycle lead, not a cold call that closes.",
+    addedISO: R3,
+    sources: [
+      {
+        label: "Hanover County — Animal Protection and Shelter",
+        url: "https://www.hanovercounty.gov/172/Animal-Protection-and-Shelter",
+        kind: "organization",
+        retrievedISO: R3,
+        note: "Source for the address, phone, hours, veterinary care for shelter animals and the rabies clinics.",
+      },
+      {
+        label: "CARE — local shelters and emergency vets",
+        url: "https://care-cats.org/contact-information-for-local-shelters-and-rescues/",
+        kind: "directory",
+        retrievedISO: R3,
+        note: "Cross-checks the same address and phone.",
       },
     ],
   },

@@ -41,6 +41,8 @@ import {
   vetLeadMapUrl,
   VET_CATEGORIES,
   VET_PRIORITY_ORDER,
+  VET_SWEEPS,
+  LATEST_VET_RUN_ISO,
   type VetLead,
   type VetLeadCategory,
   type VetLeadPriority,
@@ -165,7 +167,13 @@ export function VetLeadsBoard() {
 
       {/* ── Stat strip ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Leads" value={String(stats.total)} hint="First vet run" />
+        <Stat
+          label="Leads"
+          value={String(stats.total)}
+          hint={`${
+            vetLeads.filter((l) => l.addedISO === LATEST_VET_RUN_ISO).length
+          } new on ${VET_SWEEPS[VET_SWEEPS.length - 1].label} · ${VET_SWEEPS.length} sweeps`}
+        />
         <Stat
           label="Physical sites"
           value={String(stats.sites)}
@@ -331,6 +339,27 @@ function VetLeadCard({
               >
                 {l.priority}
               </span>
+              {/* Which sweep found this lead. Gold on the newest run, so what
+                  is new this time is obvious at a glance; muted afterwards. */}
+              {(() => {
+                const sweep = VET_SWEEPS.find((v) => v.iso === l.addedISO);
+                if (!sweep) return null;
+                const isNew = l.addedISO === LATEST_VET_RUN_ISO;
+                return (
+                  <span
+                    title={`Found on the ${sweep.iso} veterinary sweep`}
+                    className={cn(
+                      "inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+                      // HOT is already solid gold, so "new" is an outlined chip to stay distinct.
+                      isNew
+                        ? "border border-gold bg-gold/10 text-[#8a6c1f]"
+                        : "bg-navy/10 text-navy/70"
+                    )}
+                  >
+                    {isNew ? `New ${sweep.label}` : sweep.label}
+                  </span>
+                );
+              })()}
               <span className="inline-flex items-center gap-1 rounded-full bg-navy/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-navy/70">
                 <Building2 className="h-3 w-3" aria-hidden />
                 {l.category}

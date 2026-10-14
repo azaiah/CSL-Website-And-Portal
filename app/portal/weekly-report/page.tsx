@@ -12,6 +12,7 @@ import { OpportunityButton } from "@/components/portal/opportunity-trigger";
 import { SourceLinks } from "@/components/portal/source-links";
 import { OutreachSummary } from "@/components/portal/dashboard-stats";
 import { weeklyReport } from "@/lib/data/weekly-report";
+import { SweepLog } from "@/components/portal/sweep-log";
 import { formatDate } from "@/lib/utils";
 
 export default function WeeklyReportPage() {
@@ -25,6 +26,7 @@ export default function WeeklyReportPage() {
         icon={FileBarChart}
       />
       <SampleDataRibbon />
+      <SweepLog />
 
       {/* Summary */}
       <div className="card">

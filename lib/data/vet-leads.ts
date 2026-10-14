@@ -43,6 +43,10 @@
  *   the first multi-site independent general practice, the first equine
  *   hospitals, the zoo and an in-home end-of-life vet; BluePearl's emergency
  *   hours corrected). Thirty-five leads total across three runs.
+ * Run 4 of the vet sweep: 2026-10-14, labelled "10/14", run Wed 14 Oct 2026
+ *   10:25–10:49 AM ET (8 new leads — a second in-home end-of-life provider,
+ *   an urgent-care practice open to 8pm, the board's first reproduction
+ *   service, and five daytime practices). Forty-three leads across four runs.
  * ---------------------------------------------------------------------------
  */
 
@@ -96,11 +100,20 @@ export interface VetLead {
 
 /** Every vet sweep the engine has run, oldest first. */
 export const VET_SWEEPS = [
-  { run: 1, label: "V1", iso: "2026-08-17", weekOf: "2026-08-17" },
-  { run: 2, label: "V2", iso: "2026-08-25", weekOf: "2026-08-24" },
+  // startedAt / finishedAt are null for runs 1–3, which recorded a date only.
+  { run: 1, label: "V1", iso: "2026-08-17", weekOf: "2026-08-17", startedAt: null, finishedAt: null },
+  { run: 2, label: "V2", iso: "2026-08-25", weekOf: "2026-08-24", startedAt: null, finishedAt: null },
   // Labelled by date rather than "V3" at Darren's request — weeks were missed
   // between runs, so a date says more than a run number.
-  { run: 3, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28" },
+  { run: 3, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28", startedAt: null, finishedAt: null },
+  {
+    run: 4,
+    label: "10/14",
+    iso: "2026-10-14",
+    weekOf: "2026-10-12",
+    startedAt: "2026-10-14T10:25:00-04:00",
+    finishedAt: "2026-10-14T10:49:00-04:00",
+  },
 ] as const;
 
 export type VetSweep = (typeof VET_SWEEPS)[number];
@@ -121,6 +134,7 @@ export function vetLeadMapUrl(l: VetLead): string {
 const R = "2026-08-17";
 const R2 = "2026-08-25";
 const R3 = "2026-09-30";
+const R4 = "2026-10-14";
 
 /** Cited on several leads — the metro's shared referral list. */
 const RAL_DIRECTORY: SourceLink = {
@@ -1843,6 +1857,295 @@ export const vetLeads: VetLead[] = [
         kind: "directory",
         retrievedISO: R3,
         note: "Cross-checks the same address and phone.",
+      },
+    ],
+  },
+  /* ────────── 10/14 vet sweep (run 4) — Wed 14 Oct 2026, 10:25–10:49 AM ET ────────── */
+  {
+    id: "VET-2026-036",
+    name: "Lap of Love — Richmond (in-home euthanasia, hospice & aftercare)",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 66,
+    address: "Mobile practice — no street address published",
+    city: "Richmond",
+    state: "VA",
+    zip: "",
+    phone: "(804) 510-0363",
+    tel: "8045100363",
+    website: "https://www.lapoflove.com/find-a-vet/Virginia/Richmond/about",
+    hours: "Care coordinators answer 24/7, including weekends and holidays; vet visits scheduled through the week",
+    capabilities: [
+      "In-home euthanasia, veterinary hospice, telehospice, aftercare and pet-loss support",
+      "Serves Greater Richmond: Richmond, Goochland, Henrico and Hanover",
+      "Same-day visits attempted with a few hours' notice (not guaranteed)",
+      "Part of the Lap of Love network — the same page carries a national line, (855) 933-5683",
+      "Crematory partner and transport arrangements: not published",
+    ],
+    pitch:
+      "Lap of Love lists aftercare as a service, which means after every in-home visit a pet has to get to a crematory — often in the evening or at a weekend. CSL can run that transfer with dignity and paperwork so the vet can go straight to the next family.",
+    openingQuestion:
+      "After a home visit, who takes the pet to the crematory — and what happens when that visit is at 8pm on a Saturday?",
+    caution:
+      "A second in-home end-of-life provider on the board alongside House Call Vet RVA (VET-2026-031). Their crematory is not named and may be one of the three already listed (Agape, Caring Pet Cremation, Pet Cremation Services) — position CSL as the carrier that works alongside them. The vehicle must be appropriate for carrying remains.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Lap of Love — Richmond, VA",
+        url: "https://www.lapoflove.com/find-a-vet/Virginia/Richmond/about",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Phone, service area, services, 24/7 coordinator hours and same-day policy.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-037",
+    name: "Animal Medical Center — Midlothian (urgent-care walk-ins, open to 8pm Mon–Sat)",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 64,
+    address: "13821 Fribble Way",
+    city: "Midlothian",
+    state: "VA",
+    zip: "23112",
+    phone: "(804) 639-3900",
+    tel: "8046393900",
+    website: "https://www.animalmedicalcenterrichmond.com",
+    hours: "Mon–Sat 8am–8pm; closed Sunday",
+    capabilities: [
+      "AAHA-accredited",
+      "Urgent-care walk-in appointments; testing and diagnostics; surgery",
+      "Open until 8pm six days a week — later than most general practices in the metro",
+    ],
+    pitch:
+      "A practice that takes urgent walk-ins until 8pm will regularly have a patient at 7:30pm who needs to go to an emergency hospital overnight. CSL can carry the records, films and samples that have to follow that patient, so nobody on their staff has to drive across town after closing.",
+    openingQuestion:
+      "When a walk-in at 7:30 in the evening needs overnight care, how do the records and any samples get to the ER?",
+    caution:
+      "Its website is built on the same template as Springfield Veterinary Center, River City Veterinary Hospital and Powhatan Animal Hospital (all new on this sweep), which may mean one owner group. That is UNVERIFIED — ask who makes vendor decisions. If it is one group, one conversation could cover four hospitals.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Animal Medical Center — homepage",
+        url: "https://www.animalmedicalcenterrichmond.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, phone, Mon–Sat 8am–8pm hours, urgent-care walk-ins, AAHA accreditation.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-038",
+    name: "Springfield Veterinary Center — Glen Allen (lists canine reproduction)",
+    category: "General Practice",
+    priority: "WARM",
+    fitScore: 62,
+    address: "4416 Springfield Rd",
+    city: "Glen Allen",
+    state: "VA",
+    zip: "23060",
+    phone: "(804) 270-7274",
+    tel: "8042707274",
+    website: "https://www.springfieldvetcenter.com",
+    hours: "Mon–Fri 8am–6pm; Sat 8am–12pm; closed Sunday",
+    capabilities: [
+      "AAHA-accredited",
+      "Testing and diagnostics, advanced care, surgery",
+      "Canine reproduction listed as a service — the one practice on the board that does",
+    ],
+    pitch:
+      "Reproduction work is about timing: samples and shipments that have to arrive within hours, on a temperature. That is the same discipline CSL already runs for lab specimens.",
+    openingQuestion:
+      "For your reproduction cases, how do time-sensitive samples or shipments move today, and has one ever arrived too late?",
+    caution:
+      "Do not assume what their reproduction service involves — the site lists it without detail. Ask first. Same website template as Animal Medical Center, River City and Powhatan; a shared owner is unverified.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Springfield Veterinary Center — homepage",
+        url: "https://www.springfieldvetcenter.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, phone, hours, AAHA accreditation and the canine reproduction service.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-039",
+    name: "River City Veterinary Hospital — West Broad Street",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 45,
+    address: "5220 West Broad Street",
+    city: "Richmond",
+    state: "VA",
+    zip: "23230",
+    phone: "(804) 308-8920",
+    tel: "8043088920",
+    website: "https://www.rivercityvethospital.com",
+    hours: "Mon–Fri 7:30am–6pm; Sat 8am–1pm; closed Sunday",
+    capabilities: [
+      "Wellness, testing and diagnostics, advanced care, surgery",
+    ],
+    pitch:
+      "A daytime general practice on the West Broad corridor — the after-hours hand-off to an ER is the lane, not routine lab work.",
+    openingQuestion:
+      "When a patient has to go to an emergency hospital after you close, who takes the records and any samples?",
+    caution:
+      "The page title mentions emergency care but no emergency hours are published — do not describe them as an emergency practice. The site hosts an image on svptemplate.vet and shares a template with three other new leads; ownership is unverified.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "River City Veterinary Hospital — homepage",
+        url: "https://www.rivercityvethospital.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, phone, hours and services.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-040",
+    name: "Powhatan Animal Hospital",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 42,
+    address: "2540 Anderson Highway",
+    city: "Powhatan",
+    state: "VA",
+    zip: "23139",
+    phone: "(804) 598-3168",
+    tel: "8045983168",
+    website: "https://www.powhatanvet.com",
+    hours: "Mon–Fri 8am–6pm; Sat 8am–1pm; closed Sunday",
+    capabilities: [
+      "Same-day appointments; urgent care mentioned",
+      "Testing and diagnostics, surgery",
+    ],
+    pitch:
+      "Powhatan is a long drive from every emergency hospital in the metro. When a patient has to be transferred, someone loses half a day — CSL can take that run.",
+    openingQuestion:
+      "When you send a patient to an emergency or specialty hospital in Richmond, how do their records and samples get there?",
+    caution:
+      "Pairs with River Run Animal Hospital (VET-2026-015), also in Powhatan, as two stops on one western run. Same website template as three other new leads; shared ownership unverified.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Powhatan Animal Hospital — homepage",
+        url: "https://www.powhatanvet.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, phone, hours, same-day appointments and services.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-041",
+    name: "Kinship Animal Hospital — Manchester",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 48,
+    address: "1200 McDonough St, Suite 100",
+    city: "Richmond",
+    state: "VA",
+    zip: "23224",
+    phone: "(804) 424-3600",
+    tel: "8044243600",
+    website: "https://kinshipanimalhospital.com",
+    hours: "Mon–Fri 8am–5pm",
+    capabilities: [
+      "Weekday general practice",
+      "Sends after-hours emergencies to Virginia Veterinary Centers, VRCC and Partner Veterinary Emergency — all three already on this board",
+    ],
+    pitch:
+      "Closes at 5pm and names three emergency hospitals for everything after that. CSL already has all three on its route list, so it can carry what follows a Kinship patient to whichever one takes them.",
+    openingQuestion:
+      "When you refer a patient to VVC, VRCC or Partner, how do the records and any samples follow them?",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Kinship Animal Hospital — homepage",
+        url: "https://kinshipanimalhospital.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, phone, weekday hours, and the three after-hours emergency referrals.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-042",
+    name: "Chester Animal Clinic (with West Chester Pet Resort)",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 46,
+    address: "12021 Iron Bridge Road",
+    city: "Chester",
+    state: "VA",
+    zip: "23831",
+    phone: "(804) 748-2244",
+    tel: "8047482244",
+    website: "https://chesteranimalclinic.com",
+    hours: "Mon–Fri 8am–6pm; closed Saturday and Sunday",
+    capabilities: [
+      "Many diagnostic tests run on site; partners with local specialists for advanced cases",
+      "Boarding and daycare through West Chester Pet Resort (separate website)",
+      "Phone line accepts calls or texts",
+    ],
+    pitch:
+      "A clinic that refers advanced cases to specialists and boards pets over weekends has two moments when something has to move: a referral, and a boarded pet that needs care while the clinic is closed.",
+    openingQuestion:
+      "When you refer a case to a specialist, or a boarded pet needs an ER at the weekend, how does it get there?",
+    caution:
+      "The clinic's site names no parent company. Who owns it is unverified — ask who makes vendor decisions.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "Chester Animal Clinic — homepage",
+        url: "https://chesteranimalclinic.com",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, call-or-text phone, hours, on-site diagnostics, specialist partnerships and the boarding link.",
+      },
+    ],
+  },
+  {
+    id: "VET-2026-043",
+    name: "New Market Veterinary Clinic — eastern Henrico",
+    category: "General Practice",
+    priority: "WATCH",
+    fitScore: 35,
+    address: "2458 New Market Road",
+    city: "Henrico",
+    state: "VA",
+    zip: "23231",
+    phone: "(804) 795-4350",
+    tel: "8047954350",
+    website: "https://www.newmarketvetclinic.com/",
+    capabilities: [
+      "Surgery, radiology, dentistry, microchips, laser therapy",
+    ],
+    pitch:
+      "One of very few practices in eastern Henrico and Varina, so a long way from the emergency hospitals in the west end — the after-hours transfer is the lane.",
+    openingQuestion:
+      "When a patient needs an emergency hospital, which one do you send them to, and how do the records get there?",
+    caution:
+      "Hours are not published. The clinic's own site prints the phone as 795-4350 without an area code; (804) is the area code shown on Lantern's Richmond vet directory.",
+    addedISO: R4,
+    sources: [
+      {
+        label: "New Market Veterinary Clinic — homepage",
+        url: "https://www.newmarketvetclinic.com/",
+        kind: "organization",
+        retrievedISO: R4,
+        note: "Address, front-desk number and services.",
+      },
+      {
+        label: "Lantern — Richmond veterinarians directory",
+        url: "https://lantern.llc/va/richmond/pet-services/vets",
+        kind: "directory",
+        retrievedISO: R4,
+        note: "Lists the phone as (804) 795-4350. Also the list this sweep used to find practices not yet on the board.",
       },
     ],
   },

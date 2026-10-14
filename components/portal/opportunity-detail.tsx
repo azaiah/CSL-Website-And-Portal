@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import {
   sweepFor,
+  formatSweepStamp,
   LATEST_RUN_ISO,
   predatesSourceCitations,
   type Opportunity,
@@ -176,7 +177,7 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
 
           {sweep && (
             <span
-              title={`First found on the ${formatDate(sweep.iso)} sweep`}
+              title={`First found on the sweep run ${formatSweepStamp(sweep)}`}
               className={cn(
                 "inline-flex rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wide",
                 o.addedISO === LATEST_RUN_ISO
@@ -184,7 +185,16 @@ export function OpportunityDetail({ opportunity }: { opportunity: Opportunity })
                   : "bg-navy/10 text-navy/70"
               )}
             >
-              {sweep.label} sweep
+              {o.addedISO === LATEST_RUN_ISO
+                ? `New · ${sweep.label} sweep`
+                : `${sweep.label} sweep`}
+            </span>
+          )}
+
+          {/* The run's date AND time, always visible — never only in a tooltip. */}
+          {sweep && (
+            <span className="text-xs text-ink/55">
+              Found {formatSweepStamp(sweep)}
             </span>
           )}
 

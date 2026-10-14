@@ -3,6 +3,7 @@ import { Radio, Satellite, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AGENT_STATUS_LABEL } from "@/lib/agents";
 import { ENGINE_META } from "@/lib/data/engine-meta";
+import { LATEST_SWEEP, formatSweepStamp } from "@/lib/data/opportunities";
 
 /** "Live — engine running" status badge for agents. */
 export function ComingOnlineBadge({ className }: { className?: string }) {
@@ -24,10 +25,8 @@ export function ComingOnlineBadge({ className }: { className?: string }) {
 
 /** "Live data" ribbon shown atop engine-data pages. */
 export function SampleDataRibbon({ className }: { className?: string }) {
-  const lastRun = new Date(ENGINE_META.lastRunISO + "T12:00:00").toLocaleDateString(
-    "en-US",
-    { month: "long", day: "numeric", year: "numeric" }
-  );
+  // Date AND time of the last run, from the same helper every other label uses.
+  const lastRun = formatSweepStamp(LATEST_SWEEP);
   return (
     <div
       className={cn(
@@ -38,7 +37,8 @@ export function SampleDataRibbon({ className }: { className?: string }) {
       <Satellite className="h-4 w-4 shrink-0" aria-hidden />
       <span>
         <strong className="font-semibold">Live data.</strong>{" "}
-        Real opportunities found and scored by the AI engine — last sweep {lastRun}.{" "}
+        Real opportunities found and scored by the AI engine — last sweep run{" "}
+        {lastRun}.{" "}
         {ENGINE_META.cadence}.
       </span>
     </div>

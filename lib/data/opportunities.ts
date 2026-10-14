@@ -16,6 +16,11 @@
  * Run 6: 2026-09-30, labelled "9/30" (nine new records — the first federal
  *         courier requirement inside Richmond, one open City RFP, two LTC
  *         pharmacies, two community health centres; swept 30 Sep – 2 Oct)
+ * Run 7: 2026-10-14, labelled "10/14", run Wed 14 Oct 2026 10:25–10:49 AM ET
+ *         (four new records — all commercial / health-system; no open public
+ *         bid fitting CSL anywhere on SAM.gov, eVA or Henrico. From this run
+ *         onward every sweep records its start and finish TIME as well as its
+ *         date, and the UI shows both.)
  *
  * The 2026-07-28 sweep was run against SAM.gov and eVA directly in a live
  * browser session — not from cached third-party mirrors — so the federal and
@@ -130,20 +135,79 @@ export const IS_SAMPLE_DATA = false;
  * Add one entry per run.
  */
 export const SWEEPS = [
-  { run: 1, label: "W1", iso: "2026-07-21", weekOf: "2026-07-20" },
-  { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27" },
-  { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10" },
-  { run: 4, label: "W4", iso: "2026-08-17", weekOf: "2026-08-17" },
-  { run: 5, label: "W5", iso: "2026-08-25", weekOf: "2026-08-24" },
+  // startedAt / finishedAt are null for runs 1–6: those runs recorded a date
+  // only. They are left null rather than back-filled with a guessed time.
+  { run: 1, label: "W1", iso: "2026-07-21", weekOf: "2026-07-20", startedAt: null, finishedAt: null },
+  { run: 2, label: "W2", iso: "2026-07-28", weekOf: "2026-07-27", startedAt: null, finishedAt: null },
+  { run: 3, label: "W3", iso: "2026-08-10", weekOf: "2026-08-10", startedAt: null, finishedAt: null },
+  { run: 4, label: "W4", iso: "2026-08-17", weekOf: "2026-08-17", startedAt: null, finishedAt: null },
+  { run: 5, label: "W5", iso: "2026-08-25", weekOf: "2026-08-24", startedAt: null, finishedAt: null },
   // Labelled by date rather than "W6" at Darren's request — weeks were missed
   // between runs, so a date says more than a run number.
-  { run: 6, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28" },
+  { run: 6, label: "9/30", iso: "2026-09-30", weekOf: "2026-09-28", startedAt: null, finishedAt: null },
+  // First run stamped with a start and finish time (Eastern).
+  {
+    run: 7,
+    label: "10/14",
+    iso: "2026-10-14",
+    weekOf: "2026-10-12",
+    startedAt: "2026-10-14T10:25:00-04:00",
+    finishedAt: "2026-10-14T10:49:00-04:00",
+  },
 ] as const;
 
 export type Sweep = (typeof SWEEPS)[number];
 
 /** ISO date of the most recent sweep. */
 export const LATEST_RUN_ISO = SWEEPS[SWEEPS.length - 1].iso;
+
+/** Anything with a sweep date and, from run 7 on, a start/finish time. */
+export interface SweepStampable {
+  iso: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+}
+
+const SWEEP_TZ = "America/New_York";
+
+/**
+ * The human-readable date AND time of a sweep, always in Eastern time, e.g.
+ * "Wed, Oct 14, 2026, 10:25–10:49 AM ET". Every sweep label in the portal goes
+ * through this so the run date can never be shown without its time, or with a
+ * time that differs from one screen to the next. Runs that predate time
+ * stamping show their date only — a guessed time would be worse than none.
+ */
+export function formatSweepStamp(s: SweepStampable): string {
+  const dayOpts: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: SWEEP_TZ,
+  };
+  if (!s.startedAt) {
+    // Noon UTC is the same calendar day in every US time zone.
+    return new Date(s.iso + "T12:00:00Z").toLocaleDateString("en-US", dayOpts);
+  }
+  const t = (iso: string) =>
+    new Date(iso).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: SWEEP_TZ,
+    });
+  const day = new Date(s.startedAt).toLocaleDateString("en-US", dayOpts);
+  const start = t(s.startedAt);
+  if (!s.finishedAt) return `${day}, ${start} ET`;
+  const end = t(s.finishedAt);
+  // "10:25 AM–10:49 AM" reads better as "10:25–10:49 AM" when both share AM/PM.
+  const sm = start.slice(-2);
+  const em = end.slice(-2);
+  const range = sm === em ? `${start.slice(0, -3)}–${end}` : `${start}–${end}`;
+  return `${day}, ${range} ET`;
+}
+
+/** The most recent sweep record. */
+export const LATEST_SWEEP = SWEEPS[SWEEPS.length - 1];
 
 /** Which sweep first surfaced this opportunity. */
 export function sweepFor(o: Pick<Opportunity, "addedISO">): Sweep | undefined {
@@ -165,6 +229,173 @@ export function predatesSourceCitations(
 }
 
 export const opportunities: Opportunity[] = [
+  // ─────────────── 10/14 sweep (run 7) — Wed 14 Oct 2026, 10:25–10:49 AM ET ───────────────
+  // Labelled "10/14". Every record below carries addedISO "2026-10-14" and is
+  // shown as NEW until the next sweep. No open public bid fitting CSL was found
+  // anywhere this run — these four are all commercial / health-system targets.
+  {
+    id: "OPP-2026-056",
+    title:
+      "JenCare Senior Medical Centers — 4 Richmond-area centres with on-site pharmacy: inter-centre medication & specimen loop",
+    source: "Commercial",
+    naics: "492110",
+    location:
+      "1712 E Broad St (Shockoe Bottom) · 6530 Hull Street Rd · 3806 Mechanicsville Tpke · 524 Southpark Blvd, Colonial Heights",
+    dueDate: "2026-10-23",
+    fitScore: 66,
+    status: "Found",
+    estValue: 15600,
+    agency: "JenCare Senior Medical Centers — Richmond market",
+    description:
+      "JenCare's own Richmond market page lists four senior primary-care centres: Shockoe Bottom (804-344-9848), Hull Street (804-674-3425), Mechanicsville Turnpike (804-228-1143) and Colonial Heights (804-504-7980). The Shockoe Bottom listing on SeniorNavigator shows hours of Monday to Friday 7:30am–5pm, an on-site pharmacy, on-site tests and screenings ordered by the centre's doctors, and courtesy transportation for eligible patients. Four sites that each dispense medication and each send tests out is a standing route, not a one-off. Value is a CSL estimate — one daily loop across the four centres at about $60 a day, 260 days — not a published figure.",
+    whyItFits:
+      "The four centres sit in a ring around CSL's base — downtown, Southside, the east end and Colonial Heights — so one van can run all of them in a morning. Senior patients who cannot drive are exactly the patients for whom a missed medication delivery matters, and an operator that already runs patient transport understands why logistics is worth paying for.",
+    suggestedAction:
+      "Call the Shockoe Bottom centre on (804) 344-9848 and ask for the centre or practice administrator. Ask one question first: how do lab specimens and pharmacy restock move between the four centres today? Offer a fixed daily loop with chain-of-custody and e-POD. Do NOT pitch patient transport — they already provide it; this conversation is about specimens and medications only.",
+    addedISO: "2026-10-14",
+    sources: [
+      {
+        label: "JenCare — Richmond, Virginia market page (four centres)",
+        url: "https://www.jencaremed.com/find-a-location/market/richmond-virginia",
+        kind: "organization",
+        retrievedISO: "2026-10-14",
+        note: "Opened 14 Oct 2026. Lists all four Richmond-area centres with addresses and phone numbers.",
+      },
+      {
+        label: "SeniorNavigator — JenCare Senior Medical Centers, 1712 East Broad Street",
+        url: "https://seniornavigator.org/node/49468",
+        kind: "directory",
+        retrievedISO: "2026-10-14",
+        note: "Hours Mon–Fri 7:30am–5pm; on-site pharmacy; on-site tests and screenings; courtesy transportation for eligible patients. Directory-sourced — confirm on the call.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-057",
+    title:
+      "Richmond Heart and Vascular Associates — 3 offices + surgery centre (Mechanicsville · Midlothian · Hopewell), new Chesterfield campus under construction",
+    source: "Commercial",
+    naics: "492110",
+    location:
+      "8160 Pleasant Grove Rd (office Ste 101, surgery centre Ste 100), Mechanicsville · 611 Watkins Centre Pkwy Ste 170, Midlothian · 5303 Plaza Dr Ste 102, Hopewell",
+    dueDate: "2026-10-28",
+    fitScore: 58,
+    status: "Found",
+    estValue: 10140,
+    agency: "Richmond Heart and Vascular Associates (RHVA)",
+    description:
+      "A cardiology and vascular practice whose own site lists three offices — Mechanicsville, Midlothian and Hopewell, all Monday to Friday 8am–5pm, main line (804) 800-6600 — plus an affiliated ambulatory surgery centre at 8160 Pleasant Grove Road, Suite 100. It does interventional, structural and electrophysiology work with IAC-accredited in-house echo, vascular and nuclear testing. Richmond BizSense reported on 31 March 2026 that RHVA is building a 40,000 sq ft building at 15200 East West Road in western Chesterfield with a 9,000 sq ft cardiac surgery centre, a cardiac catheterisation lab (state approval in December) and its primary-care subsidiary, Nautilus Health, upstairs — opening planned for July 2027. The practice's homepage carries a 'Chesterfield Campus Construction Underway' item dated 22 July 2026, and BizSense's permit list of 14 October 2026 shows a fire-sprinkler permit at 15200 East West Road filed as 'Watkins Medical Center'. Value is a CSL estimate — three runs a week around the three offices at about $65 — not a published figure.",
+    whyItFits:
+      "Three offices thirty-plus miles apart on a triangle around CSL's base, a surgery centre already operating, and a second one being built. The time to become the practice's courier is before the new campus opens, when someone has to decide how specimens, devices and records will move between four buildings instead of three.",
+    suggestedAction:
+      "Call (804) 800-6600 and ask for the practice administrator. Open with inter-office movement and the surgery centre, then ask who is planning logistics for the East West Road campus. Caution: their website does not mention an in-office blood lab — do not assume daily blood draws; ask.",
+    addedISO: "2026-10-14",
+    sources: [
+      {
+        label: "RHVA — Contact Us (all locations)",
+        url: "https://richmondheart.com/contact-us/",
+        kind: "organization",
+        retrievedISO: "2026-10-14",
+        note: "The three office addresses, phone numbers and Mon–Fri 8am–5pm hours.",
+      },
+      {
+        label: "RHVA — homepage",
+        url: "https://richmondheart.com/",
+        kind: "organization",
+        retrievedISO: "2026-10-14",
+        note: "Services, in-house diagnostics, the surgery centre at 8160 Pleasant Grove Rd Ste 100, and the 22 July 2026 'Chesterfield Campus Construction Underway' item.",
+      },
+      {
+        label: "Richmond BizSense — Cardiology practice teams with Lingerfelt for new building in western Chesterfield (31 Mar 2026)",
+        url: "https://richmondbizsense.com/2026/03/31/cardiology-practice-teams-with-lingerfelt-for-new-building-in-western-chesterfield/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "The 15200 East West Rd building, surgery centre, cath lab, Nautilus Health, and the July 2027 opening plan.",
+      },
+      {
+        label: "Richmond BizSense — Breaking Ground: local building permits for 10.14.26",
+        url: "https://richmondbizsense.com/2026/10/14/breaking-ground-local-building-permits-for-10-14-26/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Fire-sprinkler permit, $112,400, 15200 East West Rd, filed as 'Watkins Medical Center'.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-058",
+    title:
+      "HCA Virginia freestanding ERs — Scott's Walk and Chesterfield opened in summer 2026, two more coming (ER-to-hospital STAT lane)",
+    source: "Hospital System",
+    naics: "492110",
+    location:
+      "Scott's Walk ER, 1801 Ellen Rd, Richmond · Chesterfield ER, 9630 Iron Bridge Rd · planned: 3830 Hull Street Rd and 4415 S Laburnum Ave",
+    dueDate: "2026-11-13",
+    fitScore: 42,
+    status: "Found",
+    estValue: 18000,
+    agency:
+      "HCA Virginia — Henrico Doctors' Hospital (Scott's Walk ER) and Chippenham Hospital (Chesterfield ER, South Richmond ER)",
+    description:
+      "Richmond BizSense reported that HCA's Chesterfield freestanding ER — 9630 Iron Bridge Road, about 11,000 sq ft, 24 hours, CT and X-ray, an arm of Chippenham Hospital — had its ribbon-cutting in June 2026, and that the Scott's Walk ER at 1801 Ellen Road, an arm of Henrico Doctors' Hospital, was slated to open on 22 July 2026. Two more are approved: a South Richmond ER in the former Octapharma Plasma building at 3830 Hull Street Road, and an 11-bed ER on the former Red Lobster site at 4415 S. Laburnum Avenue in eastern Henrico, both expected in late 2028. A freestanding ER depends on its parent hospital for blood bank, pathology and pharmacy restock. Value is a CSL estimate for a backup / overflow STAT lane, not a published figure.",
+    whyItFits:
+      "New buildings, new routes, inside CSL's radius, and the number of them is growing. HCA very likely already has a transport arrangement, so this is an overflow-and-backup position rather than a primary contract — which is also the realistic way a small courier gets into a hospital system.",
+    suggestedAction:
+      "Do the HealthTrust supplier registration first (see OPP-2026-043) — without it nobody at HCA can buy from CSL. Then ask the laboratory managers at Chippenham and Henrico Doctors' who moves STAT specimens and blood products between the ERs and the hospital, and whether they keep a backup courier for nights and surges.",
+    addedISO: "2026-10-14",
+    sources: [
+      {
+        label: "Richmond BizSense — HCA opening Chesterfield ER, secures state approval for similar facility in South Richmond (11 Jun 2026)",
+        url: "https://richmondbizsense.com/2026/06/11/hca-opening-chesterfield-er-secures-state-approval-for-similar-facility-in-south-richmond/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Chesterfield ER address, size, services, Chippenham affiliation and ribbon-cutting; the 3830 Hull Street Rd site and late-2028 timing.",
+      },
+      {
+        label: "Richmond BizSense — HCA readies Scott's Walk ER, eyes location on site of closed Red Lobster in eastern Henrico (20 Jul 2026)",
+        url: "https://richmondbizsense.com/2026/07/20/hca-readies-scotts-walk-er-eyes-location-on-site-of-closed-red-lobster-in-eastern-henrico/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Scott's Walk ER at 1801 Ellen Rd, slated to open 22 Jul 2026 under Henrico Doctors'; the 4415 S. Laburnum Ave 11-bed ER expected late 2028.",
+      },
+    ],
+  },
+  {
+    id: "OPP-2026-059",
+    title:
+      "Bon Secours Iron Bridge Emergency Center — ground broken October 2026, opens fall 2027 (Bon Secours' sixth Richmond-area ER)",
+    source: "Hospital System",
+    naics: "492110",
+    location:
+      "Chippenham Crossing, Chesterfield (12 On Your Side gives 5201 Chippenham Crossing Center; the building permits are filed at 4930 Ridgedale Pkwy)",
+    dueDate: "2026-12-15",
+    fitScore: 38,
+    status: "Found",
+    estValue: 12000,
+    agency: "Bon Secours Richmond (St. Francis Medical Center leadership quoted)",
+    description:
+      "12 On Your Side reported on 6 October 2026 that Bon Secours broke ground on the Iron Bridge Emergency Center — 14,800 sq ft, 24/7 emergency care with X-ray and CT, opening fall 2027, its sixth emergency department in the Richmond area. Richmond BizSense's permit list of 14 October 2026 shows the new-construction permit ($4.85M, 14,224 sq ft, 'Bon Secours Iron Bridge FSED') and its electrical, mechanical and plumbing permits at 4930 Ridgedale Parkway. The two sources give different street addresses for what is plainly the same project; confirm which is the mailing address before using either. Value is a CSL estimate for a backup STAT lane once open, not a published figure.",
+    whyItFits:
+      "A long-horizon positioning play, not revenue this year. The logistics for a new emergency department are set up in the months before it opens, and Bon Secours is already on the board as a vendor-credentialing target (OPP-2026-010).",
+    suggestedAction:
+      "Finish Bon Secours vendor credentialing and supplier-diversity registration (OPP-2026-010) before the end of the year, then ask the St. Francis laboratory and pharmacy leads who will move STAT specimens and restock for the Iron Bridge ER. Re-check this record in spring 2027.",
+    addedISO: "2026-10-14",
+    sources: [
+      {
+        label: "12 On Your Side — Bon Secours breaks ground on new emergency department (6 Oct 2026)",
+        url: "https://www.12onyourside.com/2026/10/06/bon-secours-breaks-ground-new-emergency-department/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Name, size, services, fall 2027 opening, sixth Richmond-area ED, address given as 5201 Chippenham Crossing Center.",
+      },
+      {
+        label: "Richmond BizSense — Breaking Ground: local building permits for 10.14.26",
+        url: "https://richmondbizsense.com/2026/10/14/breaking-ground-local-building-permits-for-10-14-26/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Permits for 'Bon Secours Iron Bridge FSED' at 4930 Ridgedale Pkwy: $4,847,739 new construction, 14,224 sq ft, plus electrical, mechanical and plumbing.",
+      },
+    ],
+  },
   // ───────────────────── 9/30 sweep (run 6) — 2026-09-30 ─────────────────────
   // Labelled "9/30" rather than "W6" because weeks were missed between runs.
   {
@@ -181,7 +412,7 @@ export const opportunities: Opportunity[] = [
     agency:
       "Department of Veterans Affairs — Network Contracting Office 6 (36C246), Hampton VA, for the Richmond VAMC laboratory",
     description:
-      "The first federal notice in six sweeps that names a courier requirement INSIDE Richmond. On 14 September 2026 the VA's Network Contracting Office 6 published a sources-sought notice titled 'VCU Heart and Renal Lab and Transplant Testing' for Human Leukocyte Antigen (HLA) testing for the Richmond VAMC — and the notice is explicit that the contractor must also 'provide transportation/courier services to transport samples from Richmond VAMC to VCU HLA laboratory'. It is registered under NAICS 621511 (Medical Laboratories), so the prime will be a laboratory, not a courier: CSL cannot bid it alone. The response window closed 21 September and the notice goes inactive on 6 October; a solicitation should follow. Value is a CSL estimate for the courier leg only (roughly three runs a week at about $55), not a published figure — transplant crossmatch volume is low but time-critical.",
+      "The first federal notice in six sweeps that names a courier requirement INSIDE Richmond. On 14 September 2026 the VA's Network Contracting Office 6 published a sources-sought notice titled 'VCU Heart and Renal Lab and Transplant Testing' for Human Leukocyte Antigen (HLA) testing for the Richmond VAMC — and the notice is explicit that the contractor must also 'provide transportation/courier services to transport samples from Richmond VAMC to VCU HLA laboratory'. It is registered under NAICS 621511 (Medical Laboratories), so the prime will be a laboratory, not a courier: CSL cannot bid it alone. The response window closed 21 September and the notice goes inactive on 6 October; a solicitation should follow. Value is a CSL estimate for the courier leg only (roughly three runs a week at about $55), not a published figure — transplant crossmatch volume is low but time-critical. UPDATE 14 Oct 2026 (10/14 sweep): SAM.gov now shows 36C24627Q0029 as INACTIVE, and a search for the notice number and for 'HLA transplant' found no follow-on solicitation yet. Keep the weekly SAM.gov check on 'specimen transport' — that is the search that found it.",
     whyItFits:
       "This is exactly the work CSL is built for, on its home turf: a short, scheduled, chain-of-custody specimen run between two Richmond buildings, for a federal client, where the lab that wins needs a local courier it can name in its quote. It is also the cleanest possible subcontract — the prime is a lab with no van, and the courier leg is written into the scope rather than implied.",
     suggestedAction:
@@ -220,7 +451,7 @@ export const opportunities: Opportunity[] = [
     estValue: 15600,
     agency: "City of Richmond (for the Richmond City Sheriff's Office)",
     description:
-      "An OPEN City of Richmond RFP — confirmed live on eVA on 2 October 2026 as RFP 127938, status Open, closing 8 October 2026 at 2:00pm. It asks for comprehensive pharmacy services at the Richmond City Justice Center in coordination with the existing medical provider. The listed procurement contact is Sue Demery (sue.demery@rva.gov, 804-646-1874). CSL is not a pharmacy and cannot be the prime; the opening is as the local, SWaM-certified delivery subcontractor named in a pharmacy's proposal. Value is a CSL estimate (about 260 weekday deliveries at $60) and assumes daily delivery, which the RFP may not require.",
+      "An OPEN City of Richmond RFP — confirmed live on eVA on 2 October 2026 as RFP 127938, status Open, closing 8 October 2026 at 2:00pm. It asks for comprehensive pharmacy services at the Richmond City Justice Center in coordination with the existing medical provider. The listed procurement contact is Sue Demery (sue.demery@rva.gov, 804-646-1874). CSL is not a pharmacy and cannot be the prime; the opening is as the local, SWaM-certified delivery subcontractor named in a pharmacy's proposal. Value is a CSL estimate (about 260 weekday deliveries at $60) and assumes daily delivery, which the RFP may not require. UPDATE 14 Oct 2026 (10/14 sweep): eVA lists RFP #260019872 as CLOSED on 8 Oct 2026 at 2:00pm. The record stays on the board as history; there is nothing left to act on.",
     whyItFits:
       "Scheduled medication delivery into a secure building with documented custody is precisely CSL's service, inside downtown Richmond. A SWaM subcontractor also helps a prime meet the City's small-business participation expectations, which is a reason for a pharmacy to take the call.",
     suggestedAction:
@@ -259,7 +490,7 @@ export const opportunities: Opportunity[] = [
     agency:
       "Omnicare of Richmond (legal name Neighborcare Pharmacy of Virginia, LLC), being acquired by GenieRx Holdings",
     description:
-      "The NPI registry lists this site as a long-term-care pharmacy serving skilled-nursing and congregate-living facilities; a pharmacy directory lists it as open 24 hours with delivery, on (833) 342-5704. Omnicare filed for Chapter 11 in September 2025 and the court approved a $250M sale to GenieRx (Milrose Capital and Integro); trade press reported on 18 September 2026 that closing is expected in October 2026 and that what it means for facilities remains unresolved. Value is a CSL estimate for one dedicated facility route (about 260 days at $180), not a published figure.",
+      "The NPI registry lists this site as a long-term-care pharmacy serving skilled-nursing and congregate-living facilities; a pharmacy directory lists it as open 24 hours with delivery, on (833) 342-5704. Omnicare filed for Chapter 11 in September 2025 and the court approved a $250M sale to GenieRx (Milrose Capital and Integro); trade press reported on 18 September 2026 that closing is expected in October 2026 and that what it means for facilities remains unresolved. Value is a CSL estimate for one dedicated facility route (about 260 days at $180), not a published figure. UPDATE 14 Oct 2026 (10/14 sweep): no announcement that the GenieRx sale has CLOSED was found; CVS's own release of 13 May 2026 said only that it was 'expected to close later this year'. The pitch is unchanged — call before the new owner settles its vendors.",
     whyItFits:
       "A new owner inheriting a 24-hour delivery pharmacy is the one moment when delivery vendors are genuinely up for review — and the nursing homes it serves have a reason to want a dependable local backup while the ownership settles.",
     suggestedAction:
@@ -1400,11 +1631,20 @@ export const opportunities: Opportunity[] = [
     agency: "VCU Health / VCU Procurement",
     addedISO: "2026-07-21",
     description:
-      "RE-CONFIRMED 2026-07-28. Virginia's statewide delivery contracts still cover parcel/express only (UPS E194-103735, FedEx MA454) — same-day local courier remains uncovered, so departments buy it ad hoc as small purchases, and no new statewide same-day solicitation has appeared. Important policy update: HB61, which would have set a 42% statewide SWaM utilization goal and strengthened set-asides, passed both chambers but was VETOED on 2026-05-19. The existing $10,000–$100,000 small-purchase set-aside remains the lever — no expansion is coming, so the current rules are what CSL should plan around. Value is CSL-estimated annual potential across departments.",
+      "RE-CONFIRMED 2026-07-28. Virginia's statewide delivery contracts still cover parcel/express only (UPS E194-103735, FedEx MA454) — same-day local courier remains uncovered, so departments buy it ad hoc as small purchases, and no new statewide same-day solicitation has appeared. Important policy update: HB61, which would have set a 42% statewide SWaM utilization goal and strengthened set-asides, passed both chambers but was VETOED on 2026-05-19. The existing $10,000–$100,000 small-purchase set-aside remains the lever — no expansion is coming, so the current rules are what CSL should plan around. Value is CSL-estimated annual potential across departments. UPDATE 14 Oct 2026 (10/14 sweep): VCU Health announced on 6 Nov 2025 that all seven of its Richmond-area pharmacies offer free home delivery through UPS, within Virginia only — but controlled substances and short-term therapies such as antibiotics are excluded and must be picked up. Routine refills are no longer an opening; same-day and short-course medication is.",
     whyItFits:
       "A public buyer inside CSL's radius with an uncontracted need that maps to SWaM small purchases — the exact lane CSL's certification unlocks. VCU posts solicitations exclusively on eVA.",
     suggestedAction:
       "Register with VCU Procurement (804-828-1077) and the VCU Health vendor portal; set eVA alerts on NIGP 962-86 / 948-55. Do not wait on policy change — HB61's veto means today's thresholds are the ones to work with.",
+    sources: [
+      {
+        label: "VCU Health — VCU Health pharmacies expand access through new home delivery options (6 Nov 2025)",
+        url: "https://www.vcuhealth.org/news/vcu-health-pharmacies-expand-access-through-new-home-delivery-options/",
+        kind: "news",
+        retrievedISO: "2026-10-14",
+        note: "Free home delivery from all seven Richmond-area VCU Health pharmacies via UPS, within Virginia; controlled substances and short-term therapies excluded.",
+      },
+    ],
   },
   {
     id: "OPP-2026-010",

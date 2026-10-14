@@ -2,8 +2,8 @@
  * lib/data/weekly-report.ts
  * ---------------------------------------------------------------------------
  * LIVE DATA — the weekly briefing compiled by the Weekly Briefing agent.
- * Run 6 — the 9/30 sweep (2026-09-30, swept 30 Sep – 2 Oct). Updated on every
- * weekly run.
+ * Run 7 — the 10/14 sweep (run Wed 14 Oct 2026, 10:25–10:49 AM ET). Updated on
+ * every weekly run.
  * ---------------------------------------------------------------------------
  */
 
@@ -56,112 +56,118 @@ const outreach = outreachStats();
 const vet = vetLeadStats();
 
 export const weeklyReport: WeeklyReport = {
-  weekOf: "2026-09-28",
+  weekOf: "2026-10-12",
 
   summary:
-    "The 9/30 sweep — the sixth run, and the first in five weeks, so it is labelled by date rather than as W6 and every record it added carries a '9/30' chip on the board. It ran 30 September to 2 October 2026. The headline has two halves and both matter. The good half: for the first time in six runs SAM.gov produced a courier requirement INSIDE Richmond. A VA sources-sought notice for transplant (HLA) testing at the Richmond VAMC, published 14 September, writes the courier leg into the scope in plain words — the contractor 'shall provide transportation/courier services to transport samples from Richmond VAMC to VCU HLA laboratory.' The prime will be a laboratory, so CSL's route in is as the named courier on that lab's quote, and the notice goes inactive on 6 October — this week. eVA also has one genuinely open, genuinely local item: the City of Richmond's Justice Center pharmacy RFP, closing 8 October, which CSL can only join as a pharmacy's delivery subcontractor. The bad half is the same as last time, only larger. Five weeks without a run means 44 of the 55 records on the board are now past their action-by date, including every single one of the 22 that score 80 or better, carrying $2.56M of the $2.78M pipeline. Seventeen outreach drafts are still written and unsent according to the engine's data, the oldest now ten weeks old. If any of that has moved on the portal's status controls since 25 August, those edits win — but if it has not, the board is no longer a list of opportunities so much as a list of dates that passed. On the veterinary side the board went from 25 leads to 35 and opened two lanes nobody had touched: the first multi-site independent general practice (Locke A. Taylor, three hospitals), and equine medicine, led by a 24/7 owner-run surgical referral hospital in Ashland. One existing record was materially wrong and is corrected: BluePearl's emergency service is now closed every weekend.",
+    "The 10/14 sweep — the seventh run, carried out on Wednesday 14 October 2026 from 10:25 to 10:49 AM Eastern, two weeks after the 9/30 run. From this run on, every sweep records the time it ran as well as the date, and everything it found is labelled 'New · 10/14' on the boards. The short version has three parts. First, the bid side came back empty, and that is a real finding rather than a gap: SAM.gov has no courier, specimen or pharmacy-delivery notice anywhere in Virginia for the seventh run in a row, eVA has no open courier bid, and Henrico's eight open solicitations are all unrelated. Two items from 9/30 have run their course — the Richmond VAMC transplant-testing notice is now inactive with no follow-on solicitation yet, and the Justice Center pharmacy RFP closed on 8 October. Second, the commercial side produced four new targets, led by JenCare's four senior medical centres, which each run an on-site pharmacy and sit in a ring around CSL's base, and Richmond Heart and Vascular Associates, a three-office cardiology practice with a surgery centre that is building a second campus in western Chesterfield. Two new freestanding emergency rooms (HCA's Scott's Walk and Chesterfield, both opened this summer) and a third under construction (Bon Secours Iron Bridge, fall 2027) are on the board as longer plays. Third, the veterinary board grew from 35 to 43: a second in-home end-of-life provider (Lap of Love), an urgent-care practice open until 8pm six days a week, the board's first practice offering canine reproduction, and five daytime practices. Four of the new practices' websites are built on the same template, which may mean one owner — that is unverified, and it is worth one question on the first call. The backlog is still the largest number on this page: by the engine's data, 48 of the 59 action-by dates on the board have passed, including all 22 records that score 80 or better. If statuses have been updated on the portal since 9/30, those edits win.",
 
   metrics: [
     {
       label: "New records found",
-      value: "19",
-      delta: "9 opportunities + 10 vet leads, all tagged 9/30",
+      value: "12",
+      delta: "4 opportunities + 8 vet leads, all tagged New · 10/14",
+    },
+    {
+      label: "Open bids that fit CSL",
+      value: "0",
+      delta: "SAM.gov, eVA and Henrico all checked 14 Oct",
     },
     {
       label: "Overdue action-by dates",
-      value: "44",
-      delta: "All 22 records at 80+ fit · $2.56M",
+      value: "48",
+      delta: "Of 59 · all 22 records at 80+ fit",
     },
     {
       label: "Outreach drafted",
       value: String(outreach.drafted),
       delta:
         outreach.sent === 0
-          ? "Still 0 sent — oldest is 10 weeks"
+          ? "Still 0 sent according to the engine's data"
           : `${outreach.sent} sent`,
     },
-    { label: "Pipeline value", value: "$2.78M", delta: "Up from $2.62M" },
+    { label: "Pipeline value", value: "$2.84M", delta: "Up from $2.78M" },
     {
       label: "Veterinary leads",
       value: String(vet.total),
-      delta: "Up from 25 — equine lane and first 3-site independent",
+      delta: "Up from 35 — 8 new on 10/14",
     },
   ],
 
   newOpportunities: [
     {
       title:
-        "Richmond VAMC HLA transplant testing + courier — sources sought 36C24627Q0029, courier leg to the VCU HLA lab",
-      source: "VA Medical Center",
-      fitScore: 78,
-      opportunityId: "OPP-2026-047",
+        "JenCare Senior Medical Centers — 4 Richmond-area centres with on-site pharmacy (daily inter-centre loop)",
+      source: "Commercial",
+      fitScore: 66,
+      opportunityId: "OPP-2026-056",
     },
     {
       title:
-        "Family Care Pharmacy — independent LTC pharmacy promising 24/7 emergency delivery (Richmond + Mechanicsville)",
-      source: "Pharmacy",
-      fitScore: 70,
-      opportunityId: "OPP-2026-050",
+        "Richmond Heart and Vascular Associates — 3 offices + surgery centre, new Chesterfield campus under construction",
+      source: "Commercial",
+      fitScore: 58,
+      opportunityId: "OPP-2026-057",
     },
     {
       title:
-        "Omnicare of Richmond — LTC pharmacy changing owners in October (CVS sale to GenieRx)",
-      source: "Pharmacy",
-      fitScore: 65,
-      opportunityId: "OPP-2026-049",
+        "HCA Virginia freestanding ERs — Scott's Walk and Chesterfield opened in summer 2026, two more coming",
+      source: "Hospital System",
+      fitScore: 42,
+      opportunityId: "OPP-2026-058",
     },
     {
       title:
-        "Richmond City Justice Center pharmacy RFP #260019872 — OPEN, closes 8 Oct (subcontract only)",
-      source: "eVA",
-      fitScore: 55,
-      opportunityId: "OPP-2026-048",
+        "Bon Secours Iron Bridge Emergency Center — ground broken October 2026, opens fall 2027",
+      source: "Hospital System",
+      fitScore: 38,
+      opportunityId: "OPP-2026-059",
     },
     {
       title:
-        "Woodside Equine Clinic, Ashland — 24/7 owner-run surgical referral hospital for horses (see Vet Leads)",
+        "Lap of Love — Richmond: in-home euthanasia, hospice and aftercare, coordinators 24/7 (see Vet Leads)",
       source: "Veterinary",
-      fitScore: 82,
+      fitScore: 66,
     },
     {
       title:
-        "Locke A. Taylor Veterinary Hospital — three hospitals, one owner group, open to 8pm (see Vet Leads)",
+        "Animal Medical Center, Midlothian — urgent-care walk-ins until 8pm, Monday to Saturday (see Vet Leads)",
       source: "Veterinary",
-      fitScore: 80,
+      fitScore: 64,
     },
   ],
 
   topLeads: [
     {
-      title: "THE BACKLOG — 44 overdue dates, every 80+ record among them",
+      title: "JenCare Shockoe Bottom — (804) 344-9848",
+      fitScore: 66,
+      note:
+        "The best new call this run. Four senior primary-care centres — Shockoe Bottom, Hull Street, Mechanicsville Turnpike and Colonial Heights — each with an on-site pharmacy and on-site testing, and all within CSL's radius. One question opens it: how do specimens and pharmacy restock move between the four centres today? Do not pitch patient transport; they already provide it.",
+      opportunityId: "OPP-2026-056",
+    },
+    {
+      title: "Richmond Heart and Vascular Associates — (804) 800-6600",
+      fitScore: 58,
+      note:
+        "Three offices on a triangle around CSL's base (Mechanicsville, Midlothian, Hopewell), a surgery centre in Mechanicsville, and a second campus with a cardiac surgery centre and cath lab under construction on East West Road for July 2027. Ask who is planning logistics for the new building — that decision is made before it opens. Their site does not mention an in-office blood lab, so ask rather than assume.",
+      opportunityId: "OPP-2026-057",
+    },
+    {
+      title: "Lap of Love — Richmond, (804) 510-0363",
+      fitScore: 66,
+      note:
+        "The aftercare lane gets its second in-home provider. Lap of Love's care coordinators answer around the clock and aftercare is a listed service, which means a pet has to reach a crematory after every home visit, often in the evening. Their crematory is not named, so present CSL as the carrier that works alongside it.",
+    },
+    {
+      title: "Animal Medical Center, Midlothian — (804) 639-3900",
+      fitScore: 64,
+      note:
+        "Takes urgent walk-ins until 8pm six days a week, so it regularly has a patient at closing time who needs an ER overnight. Ask how the records and samples follow that patient. Then ask the template question: its website matches Springfield, River City and Powhatan exactly. If the four share an owner, one conversation covers four hospitals.",
+    },
+    {
+      title: "THE BACKLOG — 48 overdue dates, every 80+ record among them",
       fitScore: 100,
       note:
-        "Still the most valuable hour available to CSL, and the five-week gap made it worse: 44 of 55 action-by dates have passed, including all 22 of the strongest records, together $2.56M of a $2.78M pipeline. The oldest has been overdue since 31 July. None of this needs research — it needs the status dropdowns. Re-date what is still alive, mark Lost what is not, and the board becomes useful again in an afternoon. Equally, if the 17 drafts have been sent and the portal shows it, this card is out of date and the briefing should say so next run.",
-    },
-    {
-      title: "Richmond VAMC courier leg — email the contracting officer before 6 October",
-      fitScore: 78,
-      note:
-        "The most time-sensitive item on the board: the only one on the board with a clock that runs out this week and a federal client asking, in writing, for exactly what CSL does. The VA's sources-sought for HLA transplant testing at the Richmond VAMC requires the winning lab to courier samples from the VAMC to VCU's HLA laboratory. CSL cannot bid it — it is a 621511 laboratory buy — but the lab that wins needs a local courier it can name. Two actions: email Gordon Burns (gordon.burns@va.gov) asking to be notified of the follow-on solicitation and whether the courier leg may be subcontracted, and find who at VCU Health's HLA lab will respond. This is also the first time in six runs that the 'subcontract to the prime' strategy has a prime that genuinely has no van.",
-      opportunityId: "OPP-2026-047",
-    },
-    {
-      title: "Woodside Equine Clinic — (804) 798-3281",
-      fitScore: 82,
-      note:
-        "The best new veterinary call, and an entirely new lane for the board. Owner-run since 1989, eleven vets, two board-certified surgeons, 24/7 surgical referrals for colic. Referring vets send horses at all hours, and the bloodwork, films and history have to follow. Read the caution: they run their own lab, they do nuclear scintigraphy (CSL must not imply it can carry radioactive material), and the new Emergency & Surgery facility has no published address yet — ask for it.",
-    },
-    {
-      title: "Locke A. Taylor — three hospitals, one owner group, (804) 262-8629",
-      fitScore: 80,
-      note:
-        "The multi-site independent general practice this board has been missing: Woodman Road, N Parham Road and Glen Allen Animal Hospital, roughly fifteen minutes apart, open until 8pm two nights a week. A standing inter-site lane plus a same-evening ER hand-off. Two cautions: their emergency page still points clients to 'Dogwood' (now BluePearl, which is closed at weekends) — do not repeat that name on the call — and the current owner is not published, so ask who decides.",
-    },
-    {
-      title: "Lee Park Road — the Mechanicsville route gets two more stops",
-      fitScore: 72,
-      note:
-        "Mechanicsville Animal Hospital at 7044 Lee Park Rd and Family Care Pharmacy's Mechanicsville site at 7016 Lee Park Rd are neighbours on the same street, in the same 23111 corridor as the four Mechanicsville Turnpike prospects flagged in August. Drive distances have not been measured, so check them on a map before saying it on a call — but if they hold, one Mechanicsville run could serve six accounts across two industries, which is a better opening line than any credential.",
+        "Still the most valuable hour available, and unchanged in kind since 9/30: by the engine's data, 48 of 59 action-by dates have passed, including all 22 of the strongest records. None of this needs research. Re-date what is still alive, mark Lost what is not, and the board becomes a working list again. If statuses were updated on the portal after 9/30, those edits already override these numbers.",
     },
   ],
 
@@ -169,65 +175,72 @@ export const weeklyReport: WeeklyReport = {
 
   deadlines: [
     {
-      title:
-        "Richmond VAMC HLA + courier sources sought goes inactive — email Gordon Burns before then",
-      dueDate: "2026-10-06",
+      title: "Call JenCare (Shockoe Bottom) — first call from the 10/14 sweep",
+      dueDate: "2026-10-23",
     },
     {
-      title:
-        "Richmond City Justice Center pharmacy RFP #260019872 closes 2:00pm (HARD — subcontract offers to bidders by 5 Oct)",
-      dueDate: "2026-10-08",
+      title: "Call Richmond Heart and Vascular Associates before campus logistics are set",
+      dueDate: "2026-10-28",
     },
     {
-      title: "Re-date or close the 44 overdue action-by targets",
-      dueDate: "2026-10-09",
+      title: "HealthTrust supplier registration — needed before any HCA ER conversation",
+      dueDate: "2026-11-13",
     },
     {
       title: "Register on Chesterfield County's Bonfire portal (PInG retires 31 Dec 2026)",
       dueDate: "2026-12-15",
     },
+    {
+      title: "Bon Secours vendor credentialing, ahead of the Iron Bridge ER (fall 2027)",
+      dueDate: "2026-12-15",
+    },
   ],
 
   recommendedMoves: [
-    "Email the VA contracting officer this week. The Richmond VAMC sources-sought goes inactive on 6 October; one polite email asking to be notified of the solicitation, and whether the courier leg can be subcontracted, costs ten minutes and puts CSL on the record before a single competitor has a reason to look.",
-    "Decide on the Justice Center RFP by Monday. It closes 8 October. Read the delivery and subcontracting sections first — if delivery is by mail-order or the prime's own fleet, let it go without regret. If it is not, offer two or three likely pharmacy bidders a SWaM delivery subcontract by 5 October.",
-    "Spend one afternoon on the status dropdowns. 44 overdue dates is not a pipeline, it is a backlog. Re-date what is alive, mark Lost what is not. Every strong record on the board is in that pile.",
-    "Send five drafts. The advice from August stands unchanged: not seventeen, five. The oldest is now ten weeks old.",
-    "Call Woodside Equine and Locke A. Taylor first among the new vet leads. One opens a lane nobody else in this market is serving; the other is the inter-site general practice the board has been missing.",
-    "Do not bid the Staunton library IFB — and do not worry about it: eVA now shows it as 'Bids Opened', so it closed on 10 September without CSL, which was the right outcome.",
-    "Register on Chesterfield County's Bonfire portal before January. Chesterfield moves its solicitations from PInG to Bonfire on 1 January 2027, and a county that is building three hospitals is a county whose procurement CSL should be able to see.",
+    "Call JenCare's Shockoe Bottom centre first. It is the strongest new record and the only one that is a daily route from the first conversation.",
+    "Call Richmond Heart and Vascular Associates next, and ask about the East West Road campus. Being in the room before July 2027 is the whole point.",
+    "On the vet board, call Lap of Love and Animal Medical Center first, and ask Animal Medical Center the ownership question: four of this week's new practices share a website template.",
+    "Do not chase the HCA or Bon Secours ERs yet. Finish the HealthTrust and Bon Secours supplier registrations first; without them nobody inside either system can buy from CSL.",
+    "Keep watching SAM.gov for the Richmond VAMC transplant-testing solicitation. The sources-sought going inactive is routine and does not tell us whether a solicitation will follow. If one does, the 'specimen transport' search is the one that will catch it.",
+    "Spend one afternoon on the status dropdowns. 48 overdue dates is still the biggest number in this report, and every strong record is in that pile.",
+    "Send five outreach drafts. The advice is unchanged since August: not seventeen, five.",
   ],
 
   corrections: [
     {
-      item: "BluePearl Richmond's emergency hours were wrong on the board — it is now closed every weekend",
+      item: "The Richmond VAMC transplant-testing notice (36C24627Q0029) is now inactive — no follow-on solicitation yet",
       detail:
-        "V1 recorded emergency as Sunday 7am to Wednesday 7pm, closed Thursday. BluePearl's own page, re-opened 30 September, now reads: Monday and Wednesday 12–7am and 9am–midnight, Tuesday, Thursday and Friday 24 hours, Saturday and Sunday CLOSED. The hours, pitch and opening question on VET-2026-005 were corrected and the new citation appended. It changes the after-hours picture for the whole west end: weekend emergencies now go to VVC Short Pump, VRCC (closed Sundays) or further.",
+        "On 2 October it was active and due to go inactive on 6 October. SAM.gov on 14 October shows it inactive, and searches for the notice number and for 'HLA transplant' found no solicitation to replace it. OPP-2026-047 is updated with this note and stays on the board.",
     },
     {
-      item: "The VDSS statewide courier procurement (OGS-27-005) has still not issued — two months late",
+      item: "The Richmond City Justice Center pharmacy RFP (#260019872) closed on 8 October",
       detail:
-        "OPP-2026-016 was the top-valued eVA item for four runs on the strength of a Future Procurement estimated to issue 1 August 2026. An eVA search for 'Social Services courier' on 2 October returned 18 records with NO open status at all (Awarded 11, Intent Posted 2, No Award 4, Cancelled 1); the newest DSS courier solicitation listed is SP-CSE-24-049 from 2024. Last run this check could not be completed; this run it was, and the answer is that nothing has been issued. Its 15 September action-by date has passed for a solicitation that does not yet exist — it should be re-dated, not chased.",
+        "eVA lists it as Closed, 8 Oct 2026, 2:00pm. OPP-2026-048 is updated and stays on the board as history. The notice links to procurement.opengov.com/portal/rva, which shows the City of Richmond now posts there — see the next item.",
     },
     {
-      item: "Staunton library courier IFB is closed — 'Bids Opened'",
+      item: "The City of Richmond's procurement portal could not be read this run",
       detail:
-        "OPP-2026-045 was recorded in August as an open eVA notice closing 10 September. eVA now lists IFB 127152 as 'Bids Opened'. The record's advice was not to bid, and it was not bid; it stays on the board as evidence that eVA does occasionally produce courier work.",
+        "The City now publishes on OpenGov, which displayed a 'verify you are human' check. The engine does not get past those checks, so City of Richmond opportunities were NOT swept this run. To close this gap, someone can register CSL as a vendor on that portal and turn on its email alerts for courier and delivery categories.",
     },
     {
-      item: "Richmond SPCA's Monday–Thursday schedule is a staffing problem, not a short-term blip",
+      item: "VCU Health already delivers prescriptions by UPS — the opening is same-day, not routine",
       detail:
-        "Their own page still shows the temporary Monday–Thursday schedule that began 6 April. 12 On Your Side reported in May that it is due to a veterinarian and technician shortage, and that the hospital sees about 9,000 patients a year. Citation appended to VET-2026-009. Friday calls still will not land.",
+        "VCU Health announced on 6 November 2025 that all seven of its Richmond-area pharmacies offer free home delivery through UPS within Virginia, excluding controlled substances and short-term therapies such as antibiotics. OPP-2026-009 predated this and did not mention it; it is now noted and cited. Routine refills are covered. Same-day and short-course medication is still the gap.",
     },
     {
-      item: "Third-party referral lists are still stale — two new practices are sending clients to old names",
+      item: "The Omnicare sale has not been reported as closed",
       detail:
-        "Locke A. Taylor's emergency page still sends clients to 'Dogwood Specialty Center', and Iron Bridge Animal Hospital's still lists 'Veterinary Emergency Center – South' and '– Cary Street' (now VVC Midlothian and VVC Short Pump). Same pattern as August. Unverified and NOT acted on: VVC's own Short Pump page still mentions a 'Cary St. Hospital' while its locations page lists only three hospitals — call before routing anything to Cary Street.",
+        "OPP-2026-049 said closing was expected in October. No completion announcement was found on 14 October; CVS's 13 May release said only 'later this year'. The record is updated and the advice is unchanged.",
     },
     {
-      item: "Some practice websites could not be verified this run and were left off rather than guessed",
+      item: "The state Social Services courier procurement (OGS-27-005) has still not issued",
       detail:
-        "Prevent A Litter (W Cary St), Hanover Animal Hospital, Fan Animal Hospital and Goochland Animal Clinic all failed to load or were blocked; Richmond Animal Care & Control, Henrico Animal Protection, Chesterfield Animal Services and Maymont publish no on-site veterinary clinic. None was added on directory evidence alone. City of Richmond, Chesterfield, Hanover, VCU and Richmond Public Schools procurement listings could not be read either (JavaScript-rendered or blocked) — so 'nothing open' is confirmed only for eVA, Henrico's visible rows and GRTC.",
+        "The same eVA search as 2 October ('Social Services courier') returns the same 18 records, none open. It is now two and a half months past its projected August issue date.",
+    },
+    {
+      item: "Henrico was read in full this time",
+      detail:
+        "On 9/30 only 7 of 11 open solicitations loaded. On 14 October all 8 open solicitations were read (aircraft, paving, HVAC, snow removal, a treatment coordinator, A&E for a school, recreation software, a comprehensive-plan study). None is courier, delivery or medical work.",
     },
   ],
 
@@ -237,66 +250,59 @@ export const weeklyReport: WeeklyReport = {
       url:
         "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier",
       kind: "search",
-      retrievedISO: "2026-10-02",
+      retrievedISO: "2026-10-14",
       note:
-        "39 active notices nationwide, up from 33 in August. Every VA courier notice is out of state — Northern California SPS courier, NCO 16, Cincinnati VAMC (due 15 Oct), Stratton VAMC, VISN 22. Award notices worth knowing: Allstate Courier Systems won Stratton VAMC FY27 courier, FCX LLC the C.W. Bill Young pharmacy on-demand courier, Tri-Tone Management Services the Overton Brooks courier — the VA medical-courier market is a market of small primes.",
+        "Run 14 Oct 2026, 10:25–10:35 AM ET. 34 active notices nationwide (39 on 2 Oct), none with a Virginia place of performance. Same check for 'specimen transport' (3), 'medical courier' (13), 'pharmacy delivery' (17), 'laboratory courier' (7), 'specimen' (50), 'messenger' (27) and '492110' (26): none in Virginia. 'courier' + 'Virginia' and 'Richmond courier' returned zero — the seventh consecutive run.",
     },
     {
-      label: "SAM.gov — active opportunities, 'courier' AND 'Virginia' (the hard negative)",
-      url:
-        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=courier&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B1%5D%5Bkey%5D=Virginia&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B1%5D%5Bvalue%5D=Virginia",
-      kind: "search",
-      retrievedISO: "2026-10-02",
-      note:
-        "Returned, verbatim: 'Your search did not return any results for active records.' Sixth consecutive run. Note the keyword search MISSED the Richmond VAMC notice below, because its text says 'Richmond VAMC' rather than 'Virginia' — the specimen-transport search is what found it, and both should stay in the weekly routine.",
-    },
-    {
-      label: "SAM.gov — active opportunities, keyword 'specimen transport'",
-      url:
-        "https://sam.gov/search/?index=opp&page=1&pageSize=25&sort=-modifiedDate&sfm%5Bstatus%5D%5Bis_active%5D=true&sfm%5BsimpleSearch%5D%5BkeywordRadio%5D=ALL&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bkey%5D=specimen%20transport&sfm%5BsimpleSearch%5D%5BkeywordTags%5D%5B0%5D%5Bvalue%5D=specimen%20transport",
-      kind: "search",
-      retrievedISO: "2026-10-02",
-      note:
-        "5 active results. One is in Richmond: 36C24627Q0029, VCU Heart and Renal Lab and Transplant Testing, a sources-sought from NCO 6 for the Richmond VAMC that includes a courier requirement (OPP-2026-047).",
-    },
-    {
-      label: "SAM.gov — 36C24627Q0029 notice page",
+      label: "SAM.gov — 36C24627Q0029 notice page (now inactive)",
       url: "https://sam.gov/opp/450cbb12ead845878b25ac0b116d504c/view",
       kind: "solicitation",
-      retrievedISO: "2026-10-02",
-      note:
-        "Published 14 Sep 2026, response 21 Sep, inactive 6 Oct; NAICS 621511; no set-aside; contact Gordon Burns, gordon.burns@va.gov, 757-251-4333.",
+      retrievedISO: "2026-10-14",
+      note: "Status inactive on 14 Oct 2026; no follow-on solicitation found under the notice number or 'HLA transplant'.",
     },
     {
-      label: "eVA — Virginia Business Opportunities, public search, 'courier'",
+      label: "eVA — Virginia Business Opportunities, public search",
       url: "https://mvendor.cgieva.com/Vendor/public/AllOpportunities.jsp",
       kind: "search",
-      retrievedISO: "2026-10-02",
+      retrievedISO: "2026-10-14",
       note:
-        "295 records; STATUS facet: Awarded 157, Closed 36, Bids Opened 6, Intent Posted 5, No Award 63, Cancelled 9, Contact Buyer 19 — NO open bucket. The Staunton library IFB 127152 that was open in August is now 'Bids Opened'; VDOT IFB161013 still 'Awarded'. Same search page also run for 'specimen' (157 records, none open), 'veterinary' (402 records; the 2 open are a Northern Virginia Community College K-9 RFP and a VCCS dosimeter RFP, neither relevant), 'Social Services courier' (18 records, none open — see corrections) and '260019872' (the open Justice Center RFP).",
+        "'courier': 295 records, no open bucket (Awarded 157, Closed 36, Bids Opened 6, Intent Posted 5, No Award 63, Cancelled 9, Contact Buyer 19 — identical to 2 Oct). 'specimen': 158, none open. 'pharmacy': 490, 2 open — Albemarle County benefits administration (RFP 129453) and Birmingham Green pharmacy services in Manassas (RFP 129368), neither local nor courier. 'laboratory' 3 open, 'medical' 9 open and 'delivery services' 15 open: none courier or medical delivery. 'Social Services courier': 18, none open. '260019872': Closed 8 Oct 2026.",
     },
     {
       label: "Henrico County — open solicitations",
       url: "https://apds.henrico.gov/ords/prod/f?p=233193%3A410",
       kind: "search",
-      retrievedISO: "2026-09-30",
-      note:
-        "11 open solicitations; the 7 rows that loaded were HVAC, A&E, recreation software, water and road works and police equipment, closing 7–21 October. Nothing for courier, delivery, medical or lab in those rows.",
+      retrievedISO: "2026-10-14",
+      note: "All 8 open solicitations read; none is courier, delivery, medical or lab work.",
     },
     {
-      label: "Chesterfield County — Procurement (PInG to Bonfire move)",
-      url: "https://www.chesterfield.gov/840/Procurement",
-      kind: "regulation",
-      retrievedISO: "2026-09-30",
-      note:
-        "States solicitations stay on PInG until 31 December 2026 and move to Bonfire on 1 January 2027. The listings themselves could not be read. Procurement contact 804-748-1617, procurement@chesterfield.gov.",
-    },
-    {
-      label: "GRTC — procurement bid opportunities",
-      url: "https://www.ridegrtc.com/business/procurement-bid-opportunities/",
+      label: "City of Richmond — OpenGov procurement portal",
+      url: "https://procurement.opengov.com/portal/rva",
       kind: "search",
-      retrievedISO: "2026-09-30",
-      note: "No open items and no planned courier or paratransit work listed.",
+      retrievedISO: "2026-10-14",
+      note: "Displayed a bot-verification check and could not be read. City of Richmond opportunities were not swept this run.",
+    },
+    {
+      label: "Richmond BizSense — Breaking Ground: local building permits for 10.14.26",
+      url: "https://richmondbizsense.com/2026/10/14/breaking-ground-local-building-permits-for-10-14-26/",
+      kind: "news",
+      retrievedISO: "2026-10-14",
+      note: "Healthcare permits in Chesterfield and Henrico, including Bon Secours Iron Bridge FSED and 15200 East West Rd. Source for OPP-2026-057 and OPP-2026-059.",
+    },
+    {
+      label: "Richmond BizSense — New Business Licenses: 10.2.26",
+      url: "https://richmondbizsense.com/2026/10/02/new-business-licenses-10-2-26/",
+      kind: "news",
+      retrievedISO: "2026-10-14",
+      note: "Two health-adjacent licences: Vines & Spines Wellness, and Medical Xpress Non Emergency Transportation (a new NEMT operator in Chesterfield — a possible competitor or partner, not a lead).",
+    },
+    {
+      label: "Lantern — Richmond veterinarians directory",
+      url: "https://lantern.llc/va/richmond/pet-services/vets",
+      kind: "directory",
+      retrievedISO: "2026-10-14",
+      note: "36 practices listed; checked against the 35 already on the board to find the ones not yet covered. Every new vet lead was then verified on the practice's own website.",
     },
   ],
 };

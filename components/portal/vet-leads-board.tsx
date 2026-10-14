@@ -47,6 +47,7 @@ import {
   type VetLeadCategory,
   type VetLeadPriority,
 } from "@/lib/data/vet-leads";
+import { formatSweepStamp } from "@/lib/data/opportunities";
 import { SourceLinks } from "@/components/portal/source-links";
 import { NotesThread } from "@/components/portal/notes-thread";
 import { StatusControl } from "@/components/portal/status-control";
@@ -172,7 +173,7 @@ export function VetLeadsBoard() {
           value={String(stats.total)}
           hint={`${
             vetLeads.filter((l) => l.addedISO === LATEST_VET_RUN_ISO).length
-          } new on ${VET_SWEEPS[VET_SWEEPS.length - 1].label} · ${VET_SWEEPS.length} sweeps`}
+          } new on ${VET_SWEEPS[VET_SWEEPS.length - 1].label} · ${VET_SWEEPS.length} sweeps · last run ${formatSweepStamp(VET_SWEEPS[VET_SWEEPS.length - 1])}`}
         />
         <Stat
           label="Physical sites"
@@ -347,7 +348,7 @@ function VetLeadCard({
                 const isNew = l.addedISO === LATEST_VET_RUN_ISO;
                 return (
                   <span
-                    title={`Found on the ${sweep.iso} veterinary sweep`}
+                    title={`Found on the veterinary sweep run ${formatSweepStamp(sweep)}`}
                     className={cn(
                       "inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
                       // HOT is already solid gold, so "new" is an outlined chip to stay distinct.
@@ -356,7 +357,7 @@ function VetLeadCard({
                         : "bg-navy/10 text-navy/70"
                     )}
                   >
-                    {isNew ? `New ${sweep.label}` : sweep.label}
+                    {isNew ? `New · ${sweep.label}` : sweep.label}
                   </span>
                 );
               })()}

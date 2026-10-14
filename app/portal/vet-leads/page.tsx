@@ -3,7 +3,7 @@ import { Stethoscope } from "lucide-react";
 import { PortalPageHeader } from "@/components/portal/portal-ui";
 import { VetLeadsBoard } from "@/components/portal/vet-leads-board";
 import { VET_SWEEPS, vetLeadStats } from "@/lib/data/vet-leads";
-import { formatDate } from "@/lib/utils";
+import { formatSweepStamp } from "@/lib/data/opportunities";
 
 export const metadata: Metadata = {
   title: "Vet Leads — CSL Portal",
@@ -33,8 +33,8 @@ export default function VetLeadsPage() {
           <strong className="font-semibold">
             Veterinary sweep {latest.label}.
           </strong>{" "}
-          {stats.total} practices across {stats.sites} sites, verified{" "}
-          {formatDate(latest.iso)}. Separate from the procurement pipeline on
+          {stats.total} practices across {stats.sites} sites. Last sweep run{" "}
+          {formatSweepStamp(latest)}. Separate from the procurement pipeline on
           purpose — these are businesses to call, not solicitations to bid.
         </span>
       </div>

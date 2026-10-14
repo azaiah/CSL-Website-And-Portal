@@ -7,6 +7,7 @@ import {
   LATEST_RUN_ISO,
   SWEEPS,
   sweepFor,
+  formatSweepStamp,
   type Opportunity,
 } from "@/lib/data/opportunities";
 import { healthFor, todayISO } from "@/lib/health";
@@ -117,7 +118,7 @@ export function OpportunitiesTable() {
               .reverse()
               .map((s) => (
                 <option key={s.iso} value={s.iso}>
-                  {s.label} — {formatDate(s.iso)} (
+                  {s.label} — {formatSweepStamp(s)} (
                   {engineOpps.filter((o) => o.addedISO === s.iso).length})
                 </option>
               ))}
@@ -163,9 +164,9 @@ export function OpportunitiesTable() {
                   <p className="break-words font-medium text-navy-deep">
                     {sweepFor(o) && (
                       <span
-                        title={`Found on the ${formatDate(
-                          sweepFor(o)!.iso
-                        )} sweep`}
+                        title={`Found on the sweep run ${formatSweepStamp(
+                          sweepFor(o)!
+                        )}`}
                         className={cn(
                           "mr-2 inline-flex rounded-full px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide",
                           isNew(o)
@@ -173,7 +174,9 @@ export function OpportunitiesTable() {
                             : "bg-navy/10 text-navy/70"
                         )}
                       >
-                        {sweepFor(o)!.label}
+                        {isNew(o)
+                          ? `New · ${sweepFor(o)!.label}`
+                          : sweepFor(o)!.label}
                       </span>
                     )}
                     {o.title}
